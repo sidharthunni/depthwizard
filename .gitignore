@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+*.pyc
+depth_output.npy
+depth_output_meta.json
+depth_preview.png
