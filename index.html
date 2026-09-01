@@ -31,12 +31,12 @@
     document.body.appendChild(renderer.domElement);
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    scene.add(new THREE.AmbientLight(0xffffff, 1.5));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    scene.add(new THREE.AmbientLight(0xffffff, 2.5));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
     dirLight.position.set(100, 100, 200);
     scene.add(dirLight);
     const loader = new GLTFLoader();
-    loader.load('terrain.glb', (gltf) => {
+    loader.load('terrain2.glb', (gltf) => {
       scene.add(gltf.scene);
       const box = new THREE.Box3().setFromObject(gltf.scene);
       const center = box.getCenter(new THREE.Vector3());
@@ -45,9 +45,9 @@
       camera.position.copy(center).add(new THREE.Vector3(0, -size * 0.7, size * 0.5));
       camera.far = size * 10;
       camera.updateProjectionMatrix();
-      console.log('Loaded terrain.glb');
+      console.log('Loaded terrain2.glb');
     }, undefined, (err) => {
-      console.error('Failed to load terrain.glb', err);
+      console.error('Failed to load terrain2.glb', err);
     });
     function animate() {
       requestAnimationFrame(animate);
