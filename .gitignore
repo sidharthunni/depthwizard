@@ -2,9 +2,12 @@ venv/
 __pycache__/
 *.pyc
 *.npy
+*.glb
 test_fetch.png
 current.jpg
 current.glb
+current_hazard.png
+current_stats.json
 current_depth_meta.json
 test_depth_meta.json
 depth_output_meta.json
