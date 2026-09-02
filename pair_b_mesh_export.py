@@ -115,6 +115,15 @@ def build_mesh(depth_path, image_path, output_path, z_scale=50.0, downsample=4,
     mesh.export(output_path)
     print(f"Saved mesh to {output_path} (Vertices: {len(vertices)}, Faces: {len(faces)})")
 
+    # Export standard Geospatial DSM in GeoTIFF format (SIH26175 requirement)
+    try:
+        import tifffile
+        dsm_metric = (min_elev_m + d_norm * relief_m).astype(np.float32)
+        tifffile.imwrite("current_dsm.tif", dsm_metric)
+        print("Exported standard Geospatial DSM to current_dsm.tif")
+    except Exception as e:
+        print("GeoTIFF DSM export error:", e)
+
     # Save rich metrics JSON for HUD display and Measurement Tools
     stats = {
         "box_size_km": round(float(box_size_km), 2),

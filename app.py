@@ -3,7 +3,7 @@ from pathlib import Path
 from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from fetch_by_coords import fetch_satellite_image
+from fetch_by_coords import fetch_satellite_image, fetch_highres_building_image
 
 app = FastAPI()
 BASE = Path(__file__).parent
@@ -14,6 +14,7 @@ class CoordRequest(BaseModel):
     lon: float
     box_size_km: float = 3.0
     z_scale: float = 45.0
+    source: str = "auto"  # 'auto' | 'highres' | 'copernicus'
 
 
 @app.post("/upload")
@@ -46,8 +47,18 @@ async def upload(file: UploadFile):
 @app.post("/fetch-coords")
 async def fetch_coords(req: CoordRequest):
     img_path = str(BASE / "current.jpg")
-    print(f"Fetching Sentinel-2 for Lat: {req.lat}, Lon: {req.lon} ({req.box_size_km} km box)...")
-    fetch_satellite_image(lat=req.lat, lon=req.lon, box_size_km=req.box_size_km, output_path=img_path)
+
+    # Smart Multi-Source Routing:
+    # If box <= 0.8km or source is explicitly 'highres', use sub-meter aerial imagery (ESRI / World Imagery)
+    # Otherwise use regional Copernicus Sentinel-2 L2A multispectral data
+    use_highres = (req.source == "highres") or (req.source == "auto" and req.box_size_km <= 0.8)
+
+    if use_highres:
+        print(f"Ingesting sub-meter high-res building aerial for Lat: {req.lat}, Lon: {req.lon} ({req.box_size_km} km footprint)...")
+        fetch_highres_building_image(lat=req.lat, lon=req.lon, box_size_km=req.box_size_km, output_path=img_path)
+    else:
+        print(f"Ingesting Copernicus Sentinel-2 for Lat: {req.lat}, Lon: {req.lon} ({req.box_size_km} km footprint)...")
+        fetch_satellite_image(lat=req.lat, lon=req.lon, box_size_km=req.box_size_km, output_path=img_path)
 
     print("Running depth estimation...")
     subprocess.run([
@@ -69,7 +80,7 @@ async def fetch_coords(req: CoordRequest):
         "--lon", str(req.lon)
     ], cwd=BASE, check=True)
 
-    return {"status": "done", "model": "/current.glb"}
+    return {"status": "done", "model": "/current.glb", "source_used": "highres" if use_highres else "sentinel2"}
 
 
 app.mount("/", StaticFiles(directory=BASE, html=True), name="static")
