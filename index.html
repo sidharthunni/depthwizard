@@ -2,13 +2,34 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>DepthWizard Viewer</title>
+  <title>DepthWizard 3D Flythrough Viewer</title>
   <style>
-    body { margin: 0; overflow: hidden; background: #111; }
+    body { margin: 0; overflow: hidden; background: #0f172a; font-family: sans-serif; }
     canvas { display: block; }
+    #ui {
+      position: absolute; top: 15px; left: 15px; z-index: 100;
+      background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px);
+      padding: 12px 18px; border-radius: 8px; color: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+    #ui h3 { margin: 0 0 10px 0; color: #38bdf8; font-size: 16px; }
+    button {
+      background: #2563eb; color: white; border: none; padding: 6px 14px;
+      font-size: 13px; font-weight: 600; border-radius: 4px; cursor: pointer; margin-right: 5px;
+    }
+    button:hover { background: #1d4ed8; }
+    a { color: #94a3b8; text-decoration: none; font-size: 13px; margin-left: 10px; }
+    a:hover { color: #38bdf8; }
   </style>
 </head>
 <body>
+  <div id="ui">
+    <h3>DepthWizard 3D Viewer</h3>
+    <button id="btnFly" onclick="toggleFlythrough()">Start Flythrough</button>
+    <button onclick="resetCamera()">Reset View</button>
+    <a href="/upload.html">← Back to Map</a>
+  </div>
+
   <script type="importmap">
   {
     "imports": {
@@ -21,40 +42,70 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x111111);
+    scene.background = new THREE.Color(0x0f172a);
+
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 10000);
-    camera.position.set(0, -250, 300);
+    camera.position.set(0, -250, 200);
     camera.up.set(0, 0, 1);
+
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
+
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
+
     scene.add(new THREE.AmbientLight(0xffffff, 2.5));
     const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
     dirLight.position.set(100, 100, 200);
     scene.add(dirLight);
+
+    let center = new THREE.Vector3();
+    let size = 100;
+    let isFlying = false;
+    let flyAngle = 0;
+
     const loader = new GLTFLoader();
-    loader.load('terrain2.glb', (gltf) => {
+    loader.load('current.glb?t=' + Date.now(), (gltf) => {
       scene.add(gltf.scene);
       const box = new THREE.Box3().setFromObject(gltf.scene);
-      const center = box.getCenter(new THREE.Vector3());
-      const size = box.getSize(new THREE.Vector3()).length();
+      center = box.getCenter(new THREE.Vector3());
+      size = box.getSize(new THREE.Vector3()).length();
+      resetCamera();
+    });
+
+    window.resetCamera = () => {
+      isFlying = false;
+      document.getElementById('btnFly').innerText = "Start Flythrough";
       controls.target.copy(center);
       camera.position.copy(center).add(new THREE.Vector3(0, -size * 0.7, size * 0.5));
       camera.far = size * 10;
       camera.updateProjectionMatrix();
-      console.log('Loaded terrain2.glb');
-    }, undefined, (err) => {
-      console.error('Failed to load terrain2.glb', err);
-    });
+    };
+
+    window.toggleFlythrough = () => {
+      isFlying = !isFlying;
+      document.getElementById('btnFly').innerText = isFlying ? "Pause Flythrough" : "Start Flythrough";
+    };
+
     function animate() {
       requestAnimationFrame(animate);
+      if (isFlying) {
+        flyAngle += 0.008;
+        const radius = size * 0.65;
+        const height = size * 0.35 + Math.sin(flyAngle * 2) * (size * 0.08);
+        camera.position.x = center.x + Math.cos(flyAngle) * radius;
+        camera.position.y = center.y + Math.sin(flyAngle) * radius;
+        camera.position.z = center.z + height;
+        controls.target.copy(center);
+      }
       controls.update();
       renderer.render(scene, camera);
     }
     animate();
+
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();

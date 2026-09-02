@@ -1,6 +1,12 @@
 venv/
 __pycache__/
 *.pyc
-depth_output.npy
+*.npy
+test_fetch.png
+current.jpg
+current.glb
+current_depth_meta.json
+test_depth_meta.json
 depth_output_meta.json
 depth_preview.png
+write_fetch_script.py
