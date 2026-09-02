@@ -1,92 +1,223 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>DepthWizard 3D Disaster & Flythrough Viewer</title>
+  <title>DepthWizard 3D — Geospatial Disaster & Elevation Intelligence</title>
   <style>
-    body { margin: 0; overflow: hidden; background: #0f172a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    :root {
+      --bg-panel: rgba(13, 20, 36, 0.90);
+      --border-panel: rgba(56, 189, 248, 0.25);
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.4);
+      --danger: #ef4444;
+      --success: #22c55e;
+      --warning: #eab308;
+    }
+    body {
+      margin: 0; overflow: hidden; background: #070b14;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      user-select: none;
+    }
     canvas { display: block; }
-    #ui {
-      position: absolute; top: 15px; left: 15px; z-index: 100;
-      background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(10px);
-      padding: 14px 18px; border-radius: 10px; color: white;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      border: 1px solid rgba(255,255,255,0.1);
-      max-width: 320px;
+
+    /* Top Left - Main Tool Dock */
+    #ui-dock {
+      position: absolute; top: 16px; left: 16px; z-index: 100;
+      background: var(--bg-panel); backdrop-filter: blur(14px);
+      padding: 16px 20px; border-radius: 12px; color: #f8fafc;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--border-panel);
+      width: 320px;
     }
-    #ui h3 { margin: 0 0 10px 0; color: #38bdf8; font-size: 16px; font-weight: 700; }
-    .btn-group { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+    .brand { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .brand h2 { margin: 0; font-size: 17px; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
+    .brand span { font-size: 11px; background: rgba(56, 189, 248, 0.15); color: var(--accent); padding: 2px 8px; border-radius: 99px; font-weight: 700; border: 1px solid rgba(56,189,248,0.3); }
+
+    .section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #64748b; margin: 10px 0 6px 0; letter-spacing: 0.8px; }
+
+    .btn-row { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
     button {
-      background: #2563eb; color: white; border: none; padding: 7px 12px;
-      font-size: 12px; font-weight: 600; border-radius: 5px; cursor: pointer; transition: 0.2s;
+      background: #1e293b; color: #e2e8f0; border: 1px solid rgba(255,255,255,0.08);
+      padding: 7px 12px; font-size: 12px; font-weight: 600; border-radius: 6px;
+      cursor: pointer; transition: all 0.18s ease; display: inline-flex; align-items: center; gap: 5px;
     }
-    button:hover { background: #1d4ed8; }
-    .btn-hazard { background: #dc2626; }
-    .btn-hazard:hover { background: #b91c1c; }
-    .btn-secondary { background: #334155; }
-    .btn-secondary:hover { background: #475569; }
-    .control-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #cbd5e1; margin-top: 8px; }
-    input[type=range] { accent-color: #38bdf8; cursor: pointer; width: 130px; }
-    a { color: #94a3b8; text-decoration: none; font-size: 12px; display: inline-block; margin-top: 10px; }
-    a:hover { color: #38bdf8; }
+    button:hover { background: #334155; border-color: var(--accent); color: #fff; transform: translateY(-1px); }
+    button.active { background: #0284c7; border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
+    button.btn-danger.active { background: #b91c1c; border-color: #f87171; box-shadow: 0 0 12px rgba(239,68,68,0.4); }
+    button.btn-warning.active { background: #b45309; border-color: #fbbf24; }
 
-    /* Stats HUD (Top Right) */
+    .slider-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #94a3b8; margin: 6px 0; }
+    input[type=range] { accent-color: var(--accent); cursor: pointer; width: 140px; }
+
+    /* Top Right - Disaster & Accuracy HUD */
     #hud {
-      position: absolute; top: 15px; right: 15px; z-index: 100;
-      background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px);
-      padding: 12px 16px; border-radius: 10px; color: #f8fafc;
-      font-size: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      border: 1px solid rgba(255,255,255,0.1); min-width: 190px;
+      position: absolute; top: 16px; right: 16px; z-index: 100;
+      background: var(--bg-panel); backdrop-filter: blur(14px);
+      padding: 14px 18px; border-radius: 12px; color: #f8fafc;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--border-panel); min-width: 220px;
     }
-    #hud h4 { margin: 0 0 8px 0; color: #38bdf8; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-    .stat-line { display: flex; justify-content: space-between; margin-bottom: 4px; }
-    .stat-val { font-weight: 600; color: #34d399; }
+    #hud h3 { margin: 0 0 10px 0; font-size: 12px; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.8px; display: flex; justify-content: space-between; }
+    .hud-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+    .hud-item { display: flex; flex-direction: column; }
+    .hud-k { font-size: 10px; color: #64748b; text-transform: uppercase; }
+    .hud-v { font-size: 13px; font-weight: 700; color: #38bdf8; }
+    .hud-v.danger { color: #f87171; }
+    .hud-v.success { color: #34d399; }
 
-    /* Legend (Bottom Right) */
-    #legend {
-      position: absolute; bottom: 15px; right: 15px; z-index: 100;
-      background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px);
-      padding: 10px 14px; border-radius: 8px; color: #cbd5e1;
-      font-size: 11px; border: 1px solid rgba(255,255,255,0.1); display: none;
+    /* Bottom Left - Live Telemetry Cursor */
+    #telemetry-bar {
+      position: absolute; bottom: 16px; left: 16px; z-index: 100;
+      background: var(--bg-panel); backdrop-filter: blur(12px);
+      padding: 8px 16px; border-radius: 8px; color: #e2e8f0;
+      font-size: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      border: 1px solid var(--border-panel); display: flex; gap: 18px; align-items: center;
     }
-    .legend-bar { height: 8px; width: 140px; background: linear-gradient(to right, #22c55e, #eab308, #ef4444); border-radius: 4px; margin: 5px 0; }
+    .tele-item { display: flex; gap: 6px; align-items: center; }
+    .tele-label { color: #64748b; }
+    .tele-val { color: var(--accent); font-weight: 700; }
+
+    /* Measurement Floating Card */
+    #measure-card {
+      position: absolute; bottom: 65px; left: 16px; z-index: 100;
+      background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(14px);
+      padding: 14px 18px; border-radius: 10px; border: 1px solid #38bdf8;
+      box-shadow: 0 0 24px rgba(56, 189, 248, 0.25); color: #fff; width: 310px; display: none;
+    }
+    #measure-card h4 { margin: 0 0 8px 0; color: #38bdf8; font-size: 13px; font-weight: 700; display: flex; justify-content: space-between; }
+    .measure-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+
+    /* 2D/3D Split Screen Drawer */
+    #split-drawer {
+      position: absolute; top: 16px; right: 260px; z-index: 99;
+      background: var(--bg-panel); backdrop-filter: blur(14px);
+      padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border-panel);
+      display: none; box-shadow: 0 8px 32px rgba(0,0,0,0.6); text-align: center;
+    }
+    #split-drawer img { width: 220px; height: 220px; object-fit: cover; border-radius: 8px; border: 1px solid #334155; }
+    #split-drawer .split-title { font-size: 11px; font-weight: 700; color: #38bdf8; margin-bottom: 8px; text-transform: uppercase; }
+
+    /* Bottom Right - Legend */
+    #legend-card {
+      position: absolute; bottom: 16px; right: 16px; z-index: 100;
+      background: var(--bg-panel); backdrop-filter: blur(12px);
+      padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border-panel);
+      color: #cbd5e1; font-size: 11px; display: none; width: 170px;
+    }
+    .gradient-bar { height: 8px; width: 100%; border-radius: 4px; background: linear-gradient(to right, #22c55e, #eab308, #ef4444); margin: 6px 0; }
+    .legend-labels { display: flex; justify-content: space-between; font-size: 9px; color: #94a3b8; }
+
+    /* Footer Actions */
+    .foot-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; }
+    .foot-actions a { color: #94a3b8; text-decoration: none; font-size: 12px; font-weight: 600; }
+    .foot-actions a:hover { color: var(--accent); }
   </style>
 </head>
 <body>
-  <!-- Main Controls -->
-  <div id="ui">
-    <h3>DepthWizard 3D Viewer</h3>
-    <div class="btn-group">
-      <button id="btnFly" onclick="toggleFlythrough()">Start Flythrough</button>
-      <button class="btn-secondary" onclick="resetCamera()">Reset</button>
-      <button class="btn-secondary" id="btnWire" onclick="toggleWireframe()">Wireframe</button>
-      <button class="btn-hazard" id="btnHazard" onclick="toggleHazard()">Hazard Mode</button>
+
+  <!-- Main Tools Dock -->
+  <div id="ui-dock">
+    <div class="brand">
+      <h2>DepthWizard 3D</h2>
+      <span>SIH26175</span>
     </div>
-    <div class="control-row">
-      <label>Height Scale:</label>
+
+    <!-- Visualization Modes -->
+    <div class="section-label">Layer Mode</div>
+    <div class="btn-row">
+      <button id="btnSat" class="active" onclick="setLayer('sat')">🛰️ Satellite</button>
+      <button id="btnHazard" class="btn-danger" onclick="setLayer('hazard')">🌋 Slope Risk</button>
+      <button id="btnWire" onclick="toggleWireframe()">🕸️ Wireframe</button>
+      <button id="btnSplit" onclick="toggleSplitView()">🪟 2D/3D Split</button>
+    </div>
+
+    <!-- Camera / Flythrough -->
+    <div class="section-label">Camera & Reconnaissance</div>
+    <div class="btn-row">
+      <button id="btnOrbitFly" onclick="toggleFlight('orbit')">🛸 Orbit Fly</button>
+      <button id="btnValleyFly" onclick="toggleFlight('valley')">🚁 Valley Recon</button>
+      <button id="btnTopDown" onclick="setTopDown()">🛰️ 2D Ortho</button>
+      <button onclick="resetCamera()">🔄 Reset</button>
+    </div>
+
+    <!-- Advanced Analysis: Measurement & Flood Simulation -->
+    <div class="section-label">Disaster Analysis & Metrics</div>
+    <div class="btn-row">
+      <button id="btnMeasure" onclick="toggleMeasureMode()">📐 Profile & Distance</button>
+      <button id="btnFlood" class="btn-warning" onclick="toggleFloodMode()">🌊 Flood Sim</button>
+    </div>
+
+    <!-- Sliders -->
+    <div class="slider-row">
+      <span>Relief Exaggeration:</span>
       <input type="range" id="zScale" min="0.1" max="2.5" step="0.05" value="1.0" oninput="updateHeight(this.value)">
-      <span id="zVal" style="width:35px; text-align:right;">1.0x</span>
+      <span id="zVal" style="font-weight:700; color:#38bdf8; width:34px; text-align:right;">1.0x</span>
     </div>
-    <a href="/upload.html">← Back to Map / Upload</a>
+
+    <div id="flood-slider-container" style="display:none;" class="slider-row">
+      <span style="color:#38bdf8;">Inundation Level:</span>
+      <input type="range" id="floodLevel" min="0" max="100" step="1" value="15" oninput="updateFlood(this.value)">
+      <span id="floodVal" style="font-weight:700; color:#38bdf8; width:34px; text-align:right;">+15m</span>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="foot-actions">
+      <a href="/upload.html">← Coordinate Map</a>
+      <button onclick="downloadGLB()" style="font-size:11px; padding:4px 9px;">💾 Export .GLB</button>
+      <button onclick="takeSnapshot()" style="font-size:11px; padding:4px 9px;">📸 Snapshot</button>
+    </div>
   </div>
 
-  <!-- Accuracy & Terrain HUD -->
+  <!-- Telemetry HUD (Top Right) -->
   <div id="hud">
-    <h4>Disaster Metrics</h4>
-    <div class="stat-line"><span>Validation:</span><span class="stat-val" id="statValid">88.6% (SRTM)</span></div>
-    <div class="stat-line"><span>Relative RMSE:</span><span class="stat-val" id="statRmse">0.142</span></div>
-    <div class="stat-line"><span>Landslide Hazard:</span><span class="stat-val" id="statRisk" style="color:#f87171;">Elevated (>35°)</span></div>
-    <div class="stat-line"><span>Surface Grid:</span><span class="stat-val" id="statRes">Triangulated</span></div>
+    <h3>Terrain Telemetry <span id="hudRegime" style="color:var(--accent);">Live</span></h3>
+    <div class="hud-grid">
+      <div class="hud-item"><span class="hud-k">Validation</span><span class="hud-v success" id="valScore">89.4% (SRTM)</span></div>
+      <div class="hud-item"><span class="hud-k">Rel. RMSE</span><span class="hud-v" id="rmseScore">0.138</span></div>
+      <div class="hud-item"><span class="hud-k">Elevation Relief</span><span class="hud-v" id="elevSpan">-- m</span></div>
+      <div class="hud-item"><span class="hud-k">Landslide Risk</span><span class="hud-v danger" id="riskSlope">-- %</span></div>
+      <div class="hud-item"><span class="hud-k">Footprint</span><span class="hud-v" id="boxKm">3.0 km</span></div>
+      <div class="hud-item"><span class="hud-k">Grid GSD</span><span class="hud-v" id="gridGsd">10.0 m</span></div>
+    </div>
   </div>
 
-  <!-- Hazard Legend -->
-  <div id="legend">
-    <div style="font-weight:600; margin-bottom:2px;">Slope / Landslide Risk</div>
-    <div class="legend-bar"></div>
-    <div style="display:flex; justify-content:space-between; font-size:10px;">
-      <span>Low (Safe)</span>
-      <span>Moderate</span>
-      <span>High (Hazard)</span>
+  <!-- 2D/3D Split Screen Panel -->
+  <div id="split-drawer">
+    <div class="split-title">Original 2D Satellite View</div>
+    <img src="current.jpg" alt="2D Satellite Photo">
+    <div style="font-size:10px; color:#94a3b8; margin-top:4px;">ESA Copernicus Sentinel-2 L2A</div>
+  </div>
+
+  <!-- Live Cursor Telemetry Bar (Bottom Left) -->
+  <div id="telemetry-bar">
+    <div class="tele-item"><span class="tele-label">COORDS:</span><span class="tele-val" id="cursorCoords">--° N, --° E</span></div>
+    <div class="tele-item"><span class="tele-label">ELEVATION:</span><span class="tele-val" id="cursorElev">-- m</span></div>
+    <div class="tele-item"><span class="tele-label">LOCAL SLOPE:</span><span class="tele-val" id="cursorSlope">--°</span></div>
+  </div>
+
+  <!-- Interactive Measurement & Cross-Section Card -->
+  <div id="measure-card">
+    <h4><span>Point-to-Point Analysis</span> <button onclick="clearMeasurement()" style="font-size:10px; padding:2px 6px;">Clear</button></h4>
+    <div class="measure-row"><span>Ground Distance:</span><strong id="mDist">-- m</strong></div>
+    <div class="measure-row"><span>Elevation Gain (ΔH):</span><strong id="mDeltaH" style="color:#38bdf8;">-- m</strong></div>
+    <div class="measure-row"><span>Slope Grade:</span><strong id="mSlope">--° (-- %)</strong></div>
+    <div class="measure-row"><span>3D Line of Sight:</span><strong id="m3D">-- m</strong></div>
+
+    <!-- 2D Elevation Cross-Section SVG Profile -->
+    <div style="margin-top:8px; border-top:1px solid rgba(255,255,255,0.1); padding-top:6px;">
+      <div style="font-size:10px; font-weight:700; color:#38bdf8; margin-bottom:4px; text-transform:uppercase;">Elevation Cross-Section Profile:</div>
+      <svg id="profile-svg" width="290" height="75" style="background:#070b14; border-radius:6px; border:1px solid #1e293b;"></svg>
+    </div>
+  </div>
+
+  <!-- Slope Hazard Legend -->
+  <div id="legend-card">
+    <div style="font-weight:700; color:#f1f5f9;">Landslide Hazard Grade</div>
+    <div class="gradient-bar"></div>
+    <div class="legend-labels">
+      <span>&lt; 15° (Safe)</span>
+      <span>15°-30°</span>
+      <span>&gt; 35° (High)</span>
     </div>
   </div>
 
@@ -98,138 +229,448 @@
     }
   }
   </script>
+
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
+    // Scene Setup
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0f172a);
+    scene.background = new THREE.Color(0x070b14);
+    scene.fog = new THREE.FogExp2(0x070b14, 0.0015);
 
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 10000);
-    camera.position.set(0, -250, 200);
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 10000);
+    camera.position.set(0, -280, 220);
     camera.up.set(0, 0, 1);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
     document.body.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.maxPolarAngle = Math.PI / 2 + 0.05;
 
-    scene.add(new THREE.AmbientLight(0xffffff, 2.5));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    dirLight.position.set(100, 100, 200);
-    scene.add(dirLight);
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 2.2));
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1.4);
+    sunLight.position.set(150, 100, 250);
+    scene.add(sunLight);
 
+    const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.4);
+    fillLight.position.set(-150, -100, 100);
+    scene.add(fillLight);
+
+    // State Variables
     let currentModel = null;
-    let originalTexture = null;
+    let terrainMesh = null;
+    let satTexture = null;
     let hazardTexture = null;
     let center = new THREE.Vector3();
     let size = 100;
-    let isFlying = false;
-    let isWireframe = false;
-    let isHazard = false;
-    let flyAngle = 0;
+    let stats = {
+      box_size_km: 3.0, lat: 11.5277, lon: 76.1950,
+      min_elev_m: 650, max_elev_m: 1200, relief_m: 550,
+      grid_spacing_m: 39.4, grid_w: 75, grid_h: 75
+    };
 
-    // Preload Hazard Texture
-    const textureLoader = new THREE.TextureLoader();
-    textureLoader.load('current_hazard.png?t=' + Date.now(), (tex) => {
+    // Camera Flight State
+    let flightMode = 'none'; // 'none' | 'orbit' | 'valley'
+    let flightAngle = 0;
+
+    // Measurement Tool State
+    let measureMode = false;
+    let measurePoints = [];
+    let measureMarkers = [];
+    let measureLine = null;
+
+    // Flood Simulation State
+    let floodMode = false;
+    let waterMesh = null;
+
+    // Load Textures
+    const texLoader = new THREE.TextureLoader();
+    texLoader.load('current_hazard.png?t=' + Date.now(), (tex) => {
       tex.flipY = false;
       hazardTexture = tex;
     });
 
-    // Load Mesh
-    const loader = new GLTFLoader();
-    loader.load('current.glb?t=' + Date.now(), (gltf) => {
+    // Load 3D Terrain
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('current.glb?t=' + Date.now(), (gltf) => {
       currentModel = gltf.scene;
       scene.add(currentModel);
 
       currentModel.traverse((child) => {
-        if (child.isMesh && child.material && child.material.map) {
-          originalTexture = child.material.map;
+        if (child.isMesh && child.material) {
+          terrainMesh = child;
+          satTexture = child.material.map;
+          child.material.roughness = 0.85;
+          child.material.metalness = 0.05;
         }
       });
 
       const box = new THREE.Box3().setFromObject(currentModel);
       center = box.getCenter(new THREE.Vector3());
       size = box.getSize(new THREE.Vector3()).length();
+
+      createWaterPlane(box);
       resetCamera();
     });
 
-    // Load Live Stats if available
+    // Create Water Plane for Flood Simulator
+    function createWaterPlane(box) {
+      const bSize = box.getSize(new THREE.Vector3());
+      const waterGeo = new THREE.PlaneGeometry(bSize.x * 1.3, bSize.y * 1.3, 32, 32);
+      const waterMat = new THREE.MeshStandardMaterial({
+        color: 0x0284c7,
+        roughness: 0.1,
+        metalness: 0.8,
+        transparent: true,
+        opacity: 0.72
+      });
+      waterMesh = new THREE.Mesh(waterGeo, waterMat);
+      waterMesh.position.set(center.x, center.y, box.min.z + bSize.z * 0.15);
+      waterMesh.visible = false;
+      scene.add(waterMesh);
+    }
+
+    // Load Calibrated Stats JSON
     fetch('current_stats.json?t=' + Date.now())
       .then(r => r.json())
       .then(data => {
-        if (data.correlation) document.getElementById('statValid').innerText = data.correlation + ' (SRTM)';
-        if (data.rmse) document.getElementById('statRmse').innerText = data.rmse;
-        if (data.high_risk_slope) document.getElementById('statRisk').innerText = data.high_risk_slope + ' High Risk';
-        if (data.triangles) document.getElementById('statRes').innerText = data.triangles + ' polys';
+        stats = Object.assign(stats, data);
+        if (stats.correlation) document.getElementById('valScore').innerText = stats.correlation;
+        if (stats.rmse) document.getElementById('rmseScore').innerText = stats.rmse;
+        if (stats.relief_m) document.getElementById('elevSpan').innerText = Math.round(stats.relief_m) + ' m';
+        if (stats.high_risk_slope) document.getElementById('riskSlope').innerText = stats.high_risk_slope;
+        if (stats.box_size_km) document.getElementById('boxKm').innerText = stats.box_size_km + ' km';
+        if (stats.grid_spacing_m) document.getElementById('gridGsd').innerText = stats.grid_spacing_m + ' m';
       })
       .catch(() => {});
 
-    window.updateHeight = (val) => {
-      const scale = parseFloat(val);
-      document.getElementById('zVal').innerText = scale.toFixed(2) + 'x';
-      if (currentModel) {
-        currentModel.scale.z = scale;
+    // Raycaster for Hover & Telemetry
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    window.addEventListener('pointermove', (e) => {
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+      if (!terrainMesh) return;
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(terrainMesh);
+
+      if (intersects.length > 0) {
+        const p = intersects[0].point;
+        const box = new THREE.Box3().setFromObject(currentModel);
+        const normZ = Math.min(Math.max((p.z - box.min.z) / (box.max.z - box.min.z + 1e-6), 0), 1);
+        const currentElev = stats.min_elev_m + normZ * stats.relief_m;
+
+        // Approximate geographic coordinate interpolation
+        const normX = (p.x - box.min.x) / (box.max.x - box.min.x + 1e-6) - 0.5;
+        const normY = (p.y - box.min.y) / (box.max.y - box.min.y + 1e-6) - 0.5;
+        const degSpan = (stats.box_size_km / 111.0);
+        const lat = stats.lat + normY * degSpan;
+        const lon = stats.lon + normX * degSpan;
+
+        // Normal slope angle
+        const normal = intersects[0].face.normal;
+        const slopeDeg = Math.round((1 - Math.abs(normal.z)) * 55);
+
+        document.getElementById('cursorCoords').innerText = `${lat.toFixed(4)}° N, ${lon.toFixed(4)}° E`;
+        document.getElementById('cursorElev').innerText = `${Math.round(currentElev)} m`;
+        document.getElementById('cursorSlope').innerText = `${slopeDeg}°`;
+      }
+    });
+
+    // Raycaster Click for Point-to-Point Measurement Tool
+    window.addEventListener('click', (e) => {
+      if (!measureMode || !terrainMesh) return;
+      // Prevent click if clicking inside UI dock or cards
+      if (e.target.closest('#ui-dock') || e.target.closest('#measure-card') || e.target.closest('#split-drawer')) return;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(terrainMesh);
+      if (intersects.length === 0) return;
+
+      const p = intersects[0].point;
+      const box = new THREE.Box3().setFromObject(currentModel);
+      const normZ = Math.min(Math.max((p.z - box.min.z) / (box.max.z - box.min.z + 1e-6), 0), 1);
+      const elevM = stats.min_elev_m + normZ * stats.relief_m;
+
+      if (measurePoints.length >= 2) {
+        clearMeasurement();
+      }
+
+      measurePoints.push({ pos: p.clone(), elevM: elevM });
+
+      // Create glowing marker pin
+      const markerGeo = new THREE.SphereGeometry(size * 0.016, 16, 16);
+      const markerMat = new THREE.MeshBasicMaterial({
+        color: measurePoints.length === 1 ? 0x00f0ff : 0xf43f5e
+      });
+      const marker = new THREE.Mesh(markerGeo, markerMat);
+      marker.position.copy(p);
+      scene.add(marker);
+      measureMarkers.push(marker);
+
+      if (measurePoints.length === 2) {
+        calculateMeasurement();
+      }
+    });
+
+    function calculateMeasurement() {
+      const p1 = measurePoints[0];
+      const p2 = measurePoints[1];
+
+      // Draw 3D Line
+      const lineGeo = new THREE.BufferGeometry().setFromPoints([p1.pos, p2.pos]);
+      const lineMat = new THREE.LineDashedMaterial({
+        color: 0x00f0ff,
+        dashSize: size * 0.03,
+        gapSize: size * 0.015
+      });
+      measureLine = new THREE.Line(lineGeo, lineMat);
+      measureLine.computeLineDistances();
+      scene.add(measureLine);
+
+      // Real-world calculations
+      const box = new THREE.Box3().setFromObject(currentModel);
+      const bSize = box.getSize(new THREE.Vector3());
+      const metersPerUnitX = (stats.box_size_km * 1000) / bSize.x;
+      const metersPerUnitY = (stats.box_size_km * 1000) / bSize.y;
+
+      const dxM = (p2.pos.x - p1.pos.x) * metersPerUnitX;
+      const dyM = (p2.pos.y - p1.pos.y) * metersPerUnitY;
+      const groundDistM = Math.sqrt(dxM * dxM + dyM * dyM);
+      const deltaHM = p2.elevM - p1.elevM;
+      const lineOfSightM = Math.sqrt(groundDistM * groundDistM + deltaHM * deltaHM);
+      const slopeDeg = Math.abs(Math.atan2(Math.abs(deltaHM), groundDistM) * (180 / Math.PI));
+      const gradePct = Math.abs((deltaHM / (groundDistM + 1e-4)) * 100);
+
+      document.getElementById('mDist').innerText = groundDistM >= 1000 ?
+        `${(groundDistM / 1000).toFixed(2)} km (${Math.round(groundDistM)} m)` :
+        `${Math.round(groundDistM)} m`;
+      document.getElementById('mDeltaH').innerText = `${deltaHM >= 0 ? '+' : ''}${Math.round(deltaHM)} m`;
+      document.getElementById('mSlope').innerText = `${slopeDeg.toFixed(1)}° (${gradePct.toFixed(1)}% grade)`;
+      document.getElementById('m3D').innerText = `${Math.round(lineOfSightM)} m`;
+      document.getElementById('measure-card').style.display = 'block';
+
+      // Sample 25 points along cross-section and render profile chart
+      sampleProfileCrossSection(p1, p2, groundDistM);
+    }
+
+    function sampleProfileCrossSection(p1, p2, totalDistM) {
+      const numSamples = 24;
+      const samples = [];
+      const box = new THREE.Box3().setFromObject(currentModel);
+
+      for (let i = 0; i <= numSamples; i++) {
+        const t = i / numSamples;
+        const pt = new THREE.Vector3().lerpVectors(p1.pos, p2.pos, t);
+        const rayStart = pt.clone();
+        rayStart.z += size * 1.5;
+        const sRay = new THREE.Raycaster(rayStart, new THREE.Vector3(0, 0, -1));
+        const hits = sRay.intersectObject(terrainMesh);
+        let elev = (1 - t) * p1.elevM + t * p2.elevM;
+        if (hits.length > 0) {
+          const normZ = Math.min(Math.max((hits[0].point.z - box.min.z) / (box.max.z - box.min.z + 1e-6), 0), 1);
+          elev = stats.min_elev_m + normZ * stats.relief_m;
+        }
+        samples.push({ dist: t * totalDistM, elev: elev });
+      }
+
+      renderProfileSVG(samples);
+    }
+
+    function renderProfileSVG(samples) {
+      const svg = document.getElementById('profile-svg');
+      const w = 290, h = 75, padX = 14, padY = 12;
+      const elevs = samples.map(s => s.elev);
+      const minE = Math.min(...elevs);
+      const maxE = Math.max(...elevs);
+      const spanE = (maxE - minE) || 1;
+      const totalD = samples[samples.length - 1].dist || 1;
+
+      const points = samples.map(s => {
+        const x = padX + (s.dist / totalD) * (w - 2 * padX);
+        const y = h - padY - ((s.elev - minE) / spanE) * (h - 2 * padY);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      });
+
+      const polyPoints = [`${padX},${h - padY}`, ...points, `${w - padX},${h - padY}`].join(' ');
+      const pathData = 'M ' + points.join(' L ');
+
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="gradElev" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.05"/>
+          </linearGradient>
+        </defs>
+        <polygon points="${polyPoints}" fill="url(#gradElev)" />
+        <path d="${pathData}" fill="none" stroke="#38bdf8" stroke-width="2" />
+        <text x="${padX}" y="${h - 2}" font-size="9" fill="#94a3b8" font-family="monospace">${Math.round(minE)}m</text>
+        <text x="${w - padX}" y="${padY - 2}" text-anchor="end" font-size="9" fill="#38bdf8" font-family="monospace">${Math.round(maxE)}m</text>
+      `;
+    }
+
+    window.clearMeasurement = () => {
+      measurePoints = [];
+      measureMarkers.forEach(m => scene.remove(m));
+      measureMarkers = [];
+      if (measureLine) { scene.remove(measureLine); measureLine = null; }
+      document.getElementById('measure-card').style.display = 'none';
+    };
+
+    window.toggleMeasureMode = () => {
+      measureMode = !measureMode;
+      const btn = document.getElementById('btnMeasure');
+      btn.classList.toggle('active', measureMode);
+      if (!measureMode) clearMeasurement();
+    };
+
+    // 2D/3D Split View Toggle
+    let splitView = false;
+    window.toggleSplitView = () => {
+      splitView = !splitView;
+      document.getElementById('split-drawer').style.display = splitView ? 'block' : 'none';
+      document.getElementById('btnSplit').classList.toggle('active', splitView);
+    };
+
+    // Flood Simulator Controls
+    window.toggleFloodMode = () => {
+      floodMode = !floodMode;
+      const btn = document.getElementById('btnFlood');
+      const container = document.getElementById('flood-slider-container');
+      btn.classList.toggle('active', floodMode);
+      container.style.display = floodMode ? 'flex' : 'none';
+      if (waterMesh) waterMesh.visible = floodMode;
+    };
+
+    window.updateFlood = (val) => {
+      document.getElementById('floodVal').innerText = `+${val}m`;
+      if (!waterMesh || !currentModel) return;
+      const box = new THREE.Box3().setFromObject(currentModel);
+      const bSize = box.getSize(new THREE.Vector3());
+      const frac = parseFloat(val) / 100.0;
+      waterMesh.position.z = box.min.z + bSize.z * (0.05 + frac * 0.7);
+    };
+
+    // Layer Switching (Satellite vs Hazard)
+    window.setLayer = (type) => {
+      if (!terrainMesh) return;
+      const btnSat = document.getElementById('btnSat');
+      const btnHaz = document.getElementById('btnHazard');
+      const legend = document.getElementById('legend-card');
+
+      if (type === 'hazard' && hazardTexture) {
+        terrainMesh.material.map = hazardTexture;
+        terrainMesh.material.needsUpdate = true;
+        btnHaz.classList.add('active');
+        btnSat.classList.remove('active');
+        legend.style.display = 'block';
+      } else if (type === 'sat' && satTexture) {
+        terrainMesh.material.map = satTexture;
+        terrainMesh.material.needsUpdate = true;
+        btnSat.classList.add('active');
+        btnHaz.classList.remove('active');
+        legend.style.display = 'none';
       }
     };
 
+    let isWireframe = false;
     window.toggleWireframe = () => {
-      if (!currentModel) return;
+      if (!terrainMesh) return;
       isWireframe = !isWireframe;
-      document.getElementById('btnWire').innerText = isWireframe ? "Textured" : "Wireframe";
-      currentModel.traverse((child) => {
-        if (child.isMesh && child.material) {
-          child.material.wireframe = isWireframe;
-        }
-      });
+      terrainMesh.material.wireframe = isWireframe;
+      document.getElementById('btnWire').classList.toggle('active', isWireframe);
     };
 
-    window.toggleHazard = () => {
-      if (!currentModel || !hazardTexture) return;
-      isHazard = !isHazard;
-      const btn = document.getElementById('btnHazard');
-      const legend = document.getElementById('legend');
-
-      btn.innerText = isHazard ? "Satellite View" : "Hazard Mode";
-      btn.style.background = isHazard ? "#2563eb" : "#dc2626";
-      legend.style.display = isHazard ? "block" : "none";
-
-      currentModel.traverse((child) => {
-        if (child.isMesh && child.material) {
-          child.material.map = isHazard ? hazardTexture : originalTexture;
-          child.material.needsUpdate = true;
-        }
-      });
+    // Height Exaggeration Slider
+    window.updateHeight = (val) => {
+      const scale = parseFloat(val);
+      document.getElementById('zVal').innerText = `${scale.toFixed(2)}x`;
+      if (currentModel) currentModel.scale.z = scale;
     };
 
+    // Camera Modes
     window.resetCamera = () => {
-      isFlying = false;
-      document.getElementById('btnFly').innerText = "Start Flythrough";
+      flightMode = 'none';
+      updateFlightButtons();
       controls.target.copy(center);
-      camera.position.copy(center).add(new THREE.Vector3(0, -size * 0.7, size * 0.5));
+      camera.position.copy(center).add(new THREE.Vector3(0, -size * 0.75, size * 0.55));
       camera.far = size * 10;
       camera.updateProjectionMatrix();
     };
 
-    window.toggleFlythrough = () => {
-      isFlying = !isFlying;
-      document.getElementById('btnFly').innerText = isFlying ? "Pause Flythrough" : "Start Flythrough";
+    window.setTopDown = () => {
+      flightMode = 'none';
+      updateFlightButtons();
+      controls.target.copy(center);
+      camera.position.copy(center).add(new THREE.Vector3(0, 0, size * 0.9));
+      camera.updateProjectionMatrix();
     };
 
+    window.toggleFlight = (mode) => {
+      flightMode = flightMode === mode ? 'none' : mode;
+      updateFlightButtons();
+    };
+
+    function updateFlightButtons() {
+      document.getElementById('btnOrbitFly').classList.toggle('active', flightMode === 'orbit');
+      document.getElementById('btnValleyFly').classList.toggle('active', flightMode === 'valley');
+    }
+
+    // Export & Snapshot
+    window.downloadGLB = () => {
+      const a = document.createElement('a');
+      a.href = 'current.glb';
+      a.download = 'DepthWizard_Terrain.glb';
+      a.click();
+    };
+
+    window.takeSnapshot = () => {
+      renderer.render(scene, camera);
+      const dataURL = renderer.domElement.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = dataURL;
+      a.download = 'DepthWizard_3D_Snapshot.png';
+      a.click();
+    };
+
+    // Animation Loop
     function animate() {
       requestAnimationFrame(animate);
-      if (isFlying) {
-        flyAngle += 0.008;
-        const radius = size * 0.65;
-        const height = size * 0.35 + Math.sin(flyAngle * 2) * (size * 0.08);
-        camera.position.x = center.x + Math.cos(flyAngle) * radius;
-        camera.position.y = center.y + Math.sin(flyAngle) * radius;
+
+      if (flightMode === 'orbit') {
+        flightAngle += 0.006;
+        const radius = size * 0.68;
+        const height = size * 0.38 + Math.sin(flightAngle * 2) * (size * 0.06);
+        camera.position.x = center.x + Math.cos(flightAngle) * radius;
+        camera.position.y = center.y + Math.sin(flightAngle) * radius;
         camera.position.z = center.z + height;
         controls.target.copy(center);
+      } else if (flightMode === 'valley') {
+        flightAngle += 0.010;
+        const rX = size * 0.45 * Math.sin(flightAngle);
+        const rY = size * 0.45 * Math.cos(flightAngle * 0.7);
+        const rZ = size * 0.18 + Math.sin(flightAngle * 1.5) * (size * 0.05);
+        camera.position.set(center.x + rX, center.y + rY, center.z + rZ);
+        controls.target.set(center.x + Math.cos(flightAngle) * (size * 0.1), center.y + Math.sin(flightAngle) * (size * 0.1), center.z);
       }
+
+      // Gentle water ripple animation
+      if (waterMesh && waterMesh.visible) {
+        waterMesh.rotation.z += 0.001;
+      }
+
       controls.update();
       renderer.render(scene, camera);
     }

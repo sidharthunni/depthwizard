@@ -2,61 +2,181 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>DepthWizard — Coordinate to 3D Terrain</title>
+  <title>DepthWizard — Geospatial Intelligence & 3D Terrain Reconstruction</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; text-align: center; }
-    h1 { margin-bottom: 5px; color: #38bdf8; }
-    p.subtitle { color: #94a3b8; margin-top: 0; }
-    .card { background: #1e293b; max-width: 850px; margin: 0 auto; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-    #map { height: 350px; border-radius: 8px; margin: 15px 0; }
-    .input-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap; }
-    input { background: #0f172a; border: 1px solid #334155; color: white; padding: 8px 12px; border-radius: 6px; width: 140px; }
-    button { background: #2563eb; color: white; border: none; padding: 10px 20px; font-size: 15px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-    button:hover { background: #1d4ed8; }
-    .btn-preset { background: #334155; font-size: 13px; padding: 6px 12px; }
-    .btn-preset:hover { background: #475569; }
-    #status { margin-top: 15px; font-weight: 500; min-height: 24px; color: #38bdf8; }
-    .upload-fallback { margin-top: 20px; border-top: 1px solid #334155; padding-top: 15px; font-size: 14px; color: #94a3b8; }
+    :root {
+      --bg: #070b14;
+      --card-bg: rgba(15, 23, 42, 0.90);
+      --border: rgba(56, 189, 248, 0.25);
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.35);
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--bg); color: #f8fafc; margin: 0; padding: 24px 16px;
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+    }
+    .container {
+      background: var(--card-bg); backdrop-filter: blur(16px);
+      max-width: 900px; width: 100%; border-radius: 16px;
+      padding: 24px 30px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+      border: 1px solid var(--border); box-sizing: border-box;
+    }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 14px; }
+    .header-titles h1 { margin: 0; font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+    .header-titles p { margin: 4px 0 0 0; font-size: 13px; color: #94a3b8; }
+    .badge-ps {
+      background: rgba(56, 189, 248, 0.15); color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.3); font-weight: 700; font-size: 11px;
+      padding: 4px 10px; border-radius: 99px;
+    }
+
+    /* Global Search Box */
+    .search-box { display: flex; gap: 8px; margin-bottom: 14px; }
+    .search-box input {
+      flex: 1; background: #0b1120; border: 1px solid #334155;
+      color: #fff; padding: 10px 14px; border-radius: 8px; font-size: 14px;
+    }
+    .search-box input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 10px var(--accent-glow); }
+    .btn-search {
+      background: #1e293b; color: #fff; border: 1px solid #334155;
+      padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer;
+    }
+    .btn-search:hover { background: #334155; border-color: var(--accent); }
+
+    /* Preset Chips */
+    .preset-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 6px; letter-spacing: 0.5px; }
+    .presets-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .chip {
+      background: #1e293b; border: 1px solid #334155; color: #cbd5e1;
+      padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.18s;
+    }
+    .chip:hover { background: #334155; border-color: var(--accent); color: #fff; }
+
+    /* Map */
+    #map { height: 360px; border-radius: 10px; border: 1px solid #334155; margin-bottom: 16px; z-index: 1; }
+
+    /* Coordinate Inputs & Options */
+    .grid-params { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+    .param-group { display: flex; flex-direction: column; text-align: left; }
+    .param-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px; }
+    .param-group input, .param-group select {
+      background: #0b1120; border: 1px solid #334155; color: #fff;
+      padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    }
+    .param-group input:focus, .param-group select:focus { border-color: var(--accent); outline: none; }
+
+    /* Big Action Button */
+    .btn-primary {
+      width: 100%; background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #fff; border: none; padding: 14px 20px; font-size: 15px;
+      font-weight: 700; border-radius: 10px; cursor: pointer;
+      box-shadow: 0 4px 18px rgba(37, 99, 235, 0.4); transition: all 0.2s;
+    }
+    .btn-primary:hover { background: linear-gradient(135deg, #0369a1, #1d4ed8); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(37, 99, 235, 0.6); }
+
+    /* Status Bar */
+    #status-card {
+      margin-top: 16px; padding: 12px 16px; border-radius: 8px;
+      background: #0b1120; border: 1px solid #334155;
+      font-size: 13px; font-weight: 500; color: #38bdf8; min-height: 22px; display: none;
+    }
+
+    /* Upload Fallback */
+    .upload-section {
+      margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #94a3b8;
+    }
+    .file-btn { background: #1e293b; color: #fff; border: 1px solid #334155; padding: 6px 14px; border-radius: 6px; cursor: pointer; }
+    .file-btn:hover { background: #334155; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>DepthWizard (SIH26175)</h1>
-    <p class="subtitle">Single-View Satellite Elevation & 3D Reconstruction</p>
 
-    <div style="margin-bottom: 10px;">
-      <span style="font-size: 14px; color: #cbd5e1;">Disaster Presets: </span>
-      <button class="btn-preset" onclick="setPreset(11.5277, 76.1950, 'Wayanad Landslide')">Wayanad Landslide</button>
-      <button class="btn-preset" onclick="setPreset(30.5568, 79.5660, 'Joshimath Subsidence')">Joshimath</button>
-      <button class="btn-preset" onclick="setPreset(10.0889, 77.0595, 'Munnar Ghats')">Munnar</button>
-      <button class="btn-preset" onclick="setPreset(8.5241, 76.9366, 'Trivandrum (Test)')">Trivandrum</button>
+  <div class="container">
+    <div class="header">
+      <div class="header-titles">
+        <h1>DepthWizard Geospatial Portal</h1>
+        <p>Single-View Satellite Elevation & 3D Disaster Reconnaissance</p>
+      </div>
+      <div class="badge-ps">SIH26175 • DISASTER MANAGEMENT</div>
     </div>
 
+    <!-- Location Search Bar -->
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search any city or landmark (e.g. Wayanad, Joshimath, Kedarnath, Munnar)..." onkeydown="if(event.key==='Enter') searchLocation()">
+      <button class="btn-search" onclick="searchLocation()">🔍 Search</button>
+    </div>
+
+    <!-- Disaster & Terrain Presets -->
+    <div class="preset-label">High-Priority Indian Disaster & Terrain Presets:</div>
+    <div class="presets-row">
+      <div class="chip" onclick="setPreset(11.5277, 76.1950, 'Wayanad Landslide, Kerala', 3.0, 50)">🏞️ Wayanad Landslide</div>
+      <div class="chip" onclick="setPreset(30.5568, 79.5660, 'Joshimath Sinking Town, Uttarakhand', 3.0, 60)">🏔️ Joshimath Subsidence</div>
+      <div class="chip" onclick="setPreset(30.7352, 79.0669, 'Kedarnath Valley, Uttarakhand', 4.0, 65)">🌊 Kedarnath Valley</div>
+      <div class="chip" onclick="setPreset(10.0889, 77.0595, 'Munnar Highlands, Western Ghats', 3.0, 45)">⛰️ Munnar Hills</div>
+      <div class="chip" onclick="setPreset(8.5241, 76.9366, 'Thiruvananthapuram Coast', 2.5, 30)">🏖️ Trivandrum Coast</div>
+      <div class="chip" onclick="setPreset(12.2787, 93.8584, 'Barren Island Volcano', 3.5, 55)">🌋 Barren Volcano</div>
+    </div>
+
+    <!-- Leaflet Interactive Map -->
     <div id="map"></div>
 
-    <div class="input-row">
-      <div><label>Lat: </label><input type="number" step="0.0001" id="lat" value="8.5241"></div>
-      <div><label>Lon: </label><input type="number" step="0.0001" id="lon" value="76.9366"></div>
-      <div><label>Box (km): </label><input type="number" step="0.5" id="boxSize" value="3.0"></div>
+    <!-- Extraction Parameters -->
+    <div class="grid-params">
+      <div class="param-group">
+        <label>Latitude (°N)</label>
+        <input type="number" step="0.0001" id="lat" value="11.5277">
+      </div>
+      <div class="param-group">
+        <label>Longitude (°E)</label>
+        <input type="number" step="0.0001" id="lon" value="76.1950">
+      </div>
+      <div class="param-group">
+        <label>Coverage Box</label>
+        <select id="boxSize">
+          <option value="1.5">1.5 km (High Detail)</option>
+          <option value="3.0" selected>3.0 km (Standard Recon)</option>
+          <option value="5.0">5.0 km (Regional Survey)</option>
+        </select>
+      </div>
+      <div class="param-group">
+        <label>Relief Mode</label>
+        <select id="zScale">
+          <option value="25">Urban / Low Relief</option>
+          <option value="45" selected>Hilly / Valley</option>
+          <option value="65">Mountainous / Steep</option>
+        </select>
+      </div>
     </div>
 
-    <button onclick="fetchCoords()">Fetch Sentinel-2 & Generate 3D Terrain</button>
-    <div id="status"></div>
+    <!-- Execute Button -->
+    <button class="btn-primary" onclick="fetchSatellite3D()">
+      🚀 Fetch Sentinel-2 Satellite & Generate 3D Intelligence
+    </button>
 
-    <div class="upload-fallback">
-      Or upload a local image/GeoTIFF:
-      <input type="file" id="fileInput" accept="image/*" style="width: auto;">
-      <button class="btn-preset" onclick="uploadFile()">Upload Image</button>
+    <!-- Progress Status Card -->
+    <div id="status-card"></div>
+
+    <!-- Local File Fallback -->
+    <div class="upload-section">
+      <span>Or upload a custom drone/aerial photo:</span>
+      <div>
+        <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFileUpload(this)">
+        <button class="file-btn" onclick="document.getElementById('fileInput').click()">Upload Image</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const map = L.map('map').setView([8.5241, 76.9366], 12);
+    // Initialize Leaflet Map
+    const map = L.map('map').setView([11.5277, 76.1950], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
 
-    let marker = L.marker([8.5241, 76.9366], { draggable: true }).addTo(map);
+    let marker = L.marker([11.5277, 76.1950], { draggable: true }).addTo(map);
 
     function updateInputs(lat, lon) {
       document.getElementById('lat').value = lat.toFixed(4);
@@ -73,47 +193,86 @@
       updateInputs(pos.lat, pos.lng);
     });
 
-    function setPreset(lat, lon, label) {
+    function setPreset(lat, lon, label, boxKm, z) {
       map.setView([lat, lon], 12);
       marker.setLatLng([lat, lon]);
       updateInputs(lat, lon);
-      document.getElementById('status').innerText = `Selected preset: ${label}`;
+      document.getElementById('boxSize').value = boxKm.toString();
+      document.getElementById('zScale').value = z.toString();
+      showStatus(`Selected: ${label} (${lat}, ${lon})`);
     }
 
-    async function fetchCoords() {
+    async function searchLocation() {
+      const query = document.getElementById('searchInput').value.trim();
+      if (!query) return;
+      showStatus(`Searching location: "${query}"...`);
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
+          map.setView([lat, lon], 13);
+          marker.setLatLng([lat, lon]);
+          updateInputs(lat, lon);
+          showStatus(`Found: ${data[0].display_name}`);
+        } else {
+          showStatus(`Location not found. Try entering coordinates manually.`);
+        }
+      } catch (err) {
+        showStatus(`Search error: ${err.message}`);
+      }
+    }
+
+    function showStatus(text) {
+      const card = document.getElementById('status-card');
+      card.style.display = 'block';
+      card.innerText = text;
+    }
+
+    async function fetchSatellite3D() {
       const lat = parseFloat(document.getElementById('lat').value);
       const lon = parseFloat(document.getElementById('lon').value);
       const box_size_km = parseFloat(document.getElementById('boxSize').value);
+      const z_scale = parseFloat(document.getElementById('zScale').value);
 
-      const status = document.getElementById('status');
-      status.innerText = "Querying Copernicus CDSE & fetching Sentinel-2 bands...";
+      showStatus("🛰️ [Step 1/3] Querying Copernicus CDSE Sentinel-2 Multispectral API...");
 
       try {
         const res = await fetch('/fetch-coords', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ lat, lon, box_size_km })
+          body: JSON.stringify({ lat, lon, box_size_km, z_scale })
         });
+        showStatus("🧠 [Step 2/3] Estimating depth with Depth Anything V2 & Building 3D Mesh...");
+
         const data = await res.json();
         if (data.status === 'done') {
-          status.innerText = "3D Terrain generated! Redirecting to 3D viewer...";
+          showStatus("✅ [Step 3/3] Reconstruction complete! Launching 3D Intelligence Viewer...");
           setTimeout(() => { window.location.href = '/index.html?t=' + Date.now(); }, 500);
+        } else {
+          showStatus("Reconstruction failed: " + JSON.stringify(data));
         }
       } catch (e) {
-        status.innerText = "Error: " + e.message;
+        showStatus("Error: " + e.message);
       }
     }
 
-    async function uploadFile() {
-      const file = document.getElementById('fileInput').files[0];
-      if (!file) return alert('Select a file');
-      document.getElementById('status').innerText = "Processing image...";
+    async function handleFileUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      showStatus("Uploading and processing image with Depth Anything V2...");
       const fd = new FormData();
       fd.append('file', file);
-      const res = await fetch('/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (data.status === 'done') {
-        window.location.href = '/index.html?t=' + Date.now();
+      try {
+        const res = await fetch('/upload', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.status === 'done') {
+          showStatus("3D Mesh Generated! Redirecting to viewer...");
+          setTimeout(() => { window.location.href = '/index.html?t=' + Date.now(); }, 500);
+        }
+      } catch (err) {
+        showStatus("Upload error: " + err.message);
       }
     }
   </script>
