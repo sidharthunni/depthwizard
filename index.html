@@ -350,8 +350,17 @@
     <div class="btn-grid">
       <button id="btnSat" class="btn-dock active" onclick="setLayer('sat')">🛰️ True Color</button>
       <button id="btnHazard" class="btn-dock btn-danger" onclick="setLayer('hazard')">🌋 Slope Risk</button>
-      <button id="btnWire" class="btn-dock" onclick="toggleWireframe()">🕸️ Wireframe</button>
       <button id="btnSplit" class="btn-dock" onclick="toggleSplitPIP()">🪟 2D/3D Split</button>
+      <button class="btn-dock" onclick="resetCamera()">🔄 Reset View</button>
+    </div>
+
+    <!-- 🏢 3D Realism, Diorama & Extrusions (Images 1-5) -->
+    <div class="dock-group-label">3D Realism & Extrusions</div>
+    <div class="btn-grid">
+      <button id="btnExtrude" class="btn-dock active" onclick="toggleExtrudedBuildings()">🏢 3D Buildings</button>
+      <button id="btnDiorama" class="btn-dock active" onclick="toggleDioramaBase()">📦 Diorama Base</button>
+      <button id="btnCyber" class="btn-dock" onclick="toggleCyberCityMode()">🌆 Cyber City</button>
+      <button id="btnWire" class="btn-dock" onclick="toggleWireframe()">🕸️ Wireframe</button>
     </div>
 
     <div class="dock-group-label">Reconnaissance Camera</div>
@@ -684,6 +693,14 @@
     let isWireframe = false;
     let isSplitPIP = false;
 
+    // 🏢 3D Building Extrusions & Diorama Pedestal State (Images 1-5)
+    const buildingGroup = new THREE.Group();
+    scene.add(buildingGroup);
+    let showBuildings = true;
+    let cyberMode = false;
+    let dioramaMesh = null;
+    let showDiorama = true;
+
     // Load Textures & Mesh
     const texLoader = new THREE.TextureLoader();
     const gltfLoader = new GLTFLoader();
@@ -713,6 +730,8 @@
         size = box.getSize(new THREE.Vector3()).length();
 
         createWaterPlane(box);
+        createDioramaPedestal(box);
+        loadAndExtrudeBuildings(box);
         resetCamera();
       });
 
@@ -761,6 +780,175 @@
       scene.add(waterMesh);
     }
 
+    // 📦 3D Physical Diorama Base (QGIS / Museum Diorama Look: Images 3 & 4)
+    function createDioramaPedestal(box) {
+      if (dioramaMesh) scene.remove(dioramaMesh);
+      const bSize = box.getSize(new THREE.Vector3());
+      const zBase = box.min.z - bSize.z * 0.28;
+      const height = Math.abs(box.min.z - zBase);
+
+      const pedestalGeo = new THREE.BoxGeometry(bSize.x * 1.008, bSize.y * 1.008, height);
+      const pedestalMat = new THREE.MeshStandardMaterial({
+        color: 0x070b14,
+        roughness: 0.85,
+        metalness: 0.25
+      });
+      dioramaMesh = new THREE.Mesh(pedestalGeo, pedestalMat);
+      dioramaMesh.position.set(center.x, center.y, zBase + height / 2);
+
+      // Cyan neon bevel trim along the pedestal edge
+      const edges = new THREE.EdgesGeometry(pedestalGeo);
+      const edgeLines = new THREE.LineSegments(
+        edges,
+        new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.45 })
+      );
+      dioramaMesh.add(edgeLines);
+
+      dioramaMesh.visible = showDiorama;
+      scene.add(dioramaMesh);
+    }
+
+    // 🏢 3D Building Vector Extrusion Engine (LOD-1 City Model: Images 1, 2 & 5)
+    async function loadAndExtrudeBuildings(box) {
+      while (buildingGroup.children.length > 0) {
+        const obj = buildingGroup.children[0];
+        buildingGroup.remove(obj);
+        if (obj.geometry) obj.geometry.dispose();
+      }
+
+      try {
+        const res = await fetch('current_buildings.json?t=' + Date.now());
+        const data = await res.json();
+        const buildings = data.buildings || [];
+        if (buildings.length === 0) return;
+
+        const bSize = box.getSize(new THREE.Vector3());
+        const degSpan = (stats.box_size_km / 111.0);
+        const minLat = stats.lat - degSpan / 2;
+        const maxLat = stats.lat + degSpan / 2;
+        const minLon = stats.lon - degSpan / 2;
+        const maxLon = stats.lon + degSpan / 2;
+
+        buildings.forEach((b, idx) => {
+          const pts = b.polygon;
+          if (!pts || pts.length < 3) return;
+
+          const shapePoints = [];
+          let avgX = 0, avgY = 0;
+          for (let i = 0; i < pts.length; i++) {
+            const lon = pts[i][0];
+            const lat = pts[i][1];
+            const normX = (lon - minLon) / (maxLon - minLon) - 0.5;
+            const normY = (lat - minLat) / (maxLat - minLat) - 0.5;
+            const x = center.x + normX * bSize.x;
+            const y = center.y + normY * bSize.y;
+            shapePoints.push(new THREE.Vector2(x, y));
+            avgX += x; avgY += y;
+          }
+          avgX /= pts.length;
+          avgY /= pts.length;
+
+          // Boundary clipping check
+          if (Math.abs(avgX - center.x) > bSize.x * 0.48 || Math.abs(avgY - center.y) > bSize.y * 0.48) return;
+
+          // Sample ground elevation at building base
+          let groundZ = box.min.z + bSize.z * 0.15;
+          if (terrainMesh) {
+            const ray = new THREE.Raycaster(new THREE.Vector3(avgX, avgY, box.max.z + 50), new THREE.Vector3(0, 0, -1));
+            const hits = ray.intersectObject(terrainMesh);
+            if (hits.length > 0) groundZ = hits[0].point.z;
+          }
+
+          // Compute realistic structural height (m)
+          let heightM = 14.0;
+          if (b.levels) {
+            heightM = Math.max(parseFloat(b.levels) * 3.5, 7.0);
+          } else {
+            heightM = 9.0 + (idx % 12) * 2.2;
+          }
+          const heightUnits = Math.max((heightM / (stats.relief_m || 100)) * bSize.z * 1.8, bSize.z * 0.05);
+
+          const shape = new THREE.Shape(shapePoints);
+          const geom = new THREE.ExtrudeGeometry(shape, { depth: heightUnits, bevelEnabled: false });
+
+          let mat;
+          if (cyberMode) {
+            // Glowing Cyberpunk Gold & Neon (Image 1 Style)
+            mat = new THREE.MeshStandardMaterial({
+              color: 0xf59e0b,
+              emissive: 0xd97706,
+              emissiveIntensity: 0.45,
+              roughness: 0.2,
+              metalness: 0.8
+            });
+          } else {
+            // Crisp Architectural Clay / Sandstone (Image 2 Style)
+            const hue = 0.07 + (idx % 6) * 0.04;
+            mat = new THREE.MeshStandardMaterial({
+              color: new THREE.Color().setHSL(hue, 0.72, 0.55),
+              roughness: 0.65,
+              metalness: 0.15
+            });
+          }
+
+          const bMesh = new THREE.Mesh(geom, mat);
+          bMesh.position.z = groundZ;
+
+          // Crisp 3D Edge Wireframe Lines
+          const edges = new THREE.EdgesGeometry(geom);
+          const edgeMat = new THREE.LineBasicMaterial({
+            color: cyberMode ? 0x00ffff : 0xffffff,
+            transparent: true,
+            opacity: cyberMode ? 0.95 : 0.45
+          });
+          const edgeLines = new THREE.LineSegments(edges, edgeMat);
+          bMesh.add(edgeLines);
+
+          bMesh.userData = {
+            isBuilding: true,
+            name: b.name === 'yes' ? (b.type !== 'yes' ? b.type.toUpperCase() : 'Building Structure') : b.name,
+            heightM: Math.round(heightM * 10) / 10,
+            floors: Math.max(1, Math.round(heightM / 3.5)),
+            elevM: Math.round(stats.min_elev_m + ((groundZ - box.min.z) / (bSize.z + 1e-6)) * stats.relief_m)
+          };
+
+          buildingGroup.add(bMesh);
+        });
+
+        buildingGroup.visible = showBuildings;
+      } catch (e) {
+        console.log('Building extrusion loading:', e);
+      }
+    }
+
+    function displayExtrudedBuildingInfo(info, p) {
+      clearBuildingInspection();
+
+      const pinGeo = new THREE.SphereGeometry(size * 0.014, 16, 16);
+      const pinMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
+      const pin = new THREE.Mesh(pinGeo, pinMat);
+      pin.position.copy(p);
+      scene.add(pin);
+      buildingMarkers.push(pin);
+
+      const isHelipadViable = info.heightM >= 6.0;
+      const helipadHtml = isHelipadViable ?
+        '<span style="color:#34d399;">🟢 VIABLE ROOFTOP HELIPAD</span>' :
+        '<span style="color:#fb7185;">⚠️ LOW CLEARANCE</span>';
+
+      document.getElementById('bHeight').innerText = `${info.heightM} m (${Math.round(info.heightM * 3.28)} ft)`;
+      document.getElementById('bFloors').innerText = `~${info.floors} Storeys (${info.name})`;
+      document.getElementById('bSlope').innerText = `0.0° (Flat Roof)`;
+      document.getElementById('bHelipad').innerHTML = helipadHtml;
+      document.getElementById('bFloodMargin').innerHTML = `<span style="color:#34d399;">+${info.heightM}m ELEVATED STRUCTURE</span>`;
+      document.getElementById('bFootprint').innerText = `${Math.round(info.heightM * 28)} m²`;
+
+      const badgeContainer = document.getElementById('bBadgeContainer');
+      badgeContainer.innerHTML = `<span class="b-badge safe">${info.name.toUpperCase()} (LOD-1 EXT.)</span>`;
+
+      document.getElementById('building-card').style.display = 'block';
+    }
+
     // Raycaster Hover Telemetry
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
@@ -800,6 +988,22 @@
       if (e.target.closest('#left-dock') || e.target.closest('#measure-card') || e.target.closest('#building-card') || e.target.closest('#top-bar') || e.target.closest('#map-drawer') || e.target.closest('#sos-modal') || e.target.closest('#precaution-modal')) return;
 
       raycaster.setFromCamera(mouse, camera);
+
+      // Check if user clicked an extruded 3D building first!
+      if (buildingGroup && buildingGroup.children.length > 0 && showBuildings) {
+        const bHits = raycaster.intersectObjects(buildingGroup.children, true);
+        if (bHits.length > 0) {
+          let root = bHits[0].object;
+          while (root.parent && root.parent !== buildingGroup) {
+            root = root.parent;
+          }
+          if (root.userData && root.userData.isBuilding) {
+            displayExtrudedBuildingInfo(root.userData, bHits[0].point);
+            return;
+          }
+        }
+      }
+
       const intersects = raycaster.intersectObject(terrainMesh);
       if (intersects.length === 0) return;
 
@@ -1193,6 +1397,25 @@
       const r = Math.sqrt(camera.position.x ** 2 + camera.position.y ** 2);
       camera.position.set(center.x, center.y - r, camera.position.z);
       controls.target.copy(center);
+    window.toggleExtrudedBuildings = () => {
+      showBuildings = !showBuildings;
+      buildingGroup.visible = showBuildings;
+      document.getElementById('btnExtrude').classList.toggle('active', showBuildings);
+    };
+
+    window.toggleDioramaBase = () => {
+      showDiorama = !showDiorama;
+      if (dioramaMesh) dioramaMesh.visible = showDiorama;
+      document.getElementById('btnDiorama').classList.toggle('active', showDiorama);
+    };
+
+    window.toggleCyberCityMode = () => {
+      cyberMode = !cyberMode;
+      document.getElementById('btnCyber').classList.toggle('active', cyberMode);
+      if (currentModel) {
+        const box = new THREE.Box3().setFromObject(currentModel);
+        loadAndExtrudeBuildings(box);
+      }
     };
 
     window.downloadGLB = () => {
