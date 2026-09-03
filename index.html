@@ -705,6 +705,26 @@
     const texLoader = new THREE.TextureLoader();
     const gltfLoader = new GLTFLoader();
 
+    function updateFlightButtons() {
+      const bOrbit = document.getElementById('btnOrbitFly');
+      const bValley = document.getElementById('btnValleyFly');
+      if (bOrbit) bOrbit.classList.toggle('active', flightMode === 'orbit');
+      if (bValley) bValley.classList.toggle('active', flightMode === 'valley');
+    }
+    window.updateFlightButtons = updateFlightButtons;
+
+    function resetCamera() {
+      flightMode = 'none';
+      updateFlightButtons();
+      if (controls && center) controls.target.copy(center);
+      if (camera && center) {
+        camera.position.copy(center).add(new THREE.Vector3(0, -size * 0.75, size * 0.55));
+        camera.far = size * 10;
+        camera.updateProjectionMatrix();
+      }
+    }
+    window.resetCamera = resetCamera;
+
     window.loadCurrent3DModel = function() {
       texLoader.load('current_hazard.png?t=' + Date.now(), (tex) => {
         tex.flipY = false;
@@ -1373,15 +1393,6 @@
       if (currentModel) currentModel.scale.z = scale;
     };
 
-    window.resetCamera = () => {
-      flightMode = 'none';
-      updateFlightButtons();
-      controls.target.copy(center);
-      camera.position.copy(center).add(new THREE.Vector3(0, -size * 0.75, size * 0.55));
-      camera.far = size * 10;
-      camera.updateProjectionMatrix();
-    };
-
     window.setTopDown = () => {
       flightMode = 'none';
       updateFlightButtons();
@@ -1394,11 +1405,6 @@
       flightMode = flightMode === mode ? 'none' : mode;
       updateFlightButtons();
     };
-
-    function updateFlightButtons() {
-      document.getElementById('btnOrbitFly').classList.toggle('active', flightMode === 'orbit');
-      document.getElementById('btnValleyFly').classList.toggle('active', flightMode === 'valley');
-    }
 
     window.resetBearing = () => {
       const r = Math.sqrt(camera.position.x ** 2 + camera.position.y ** 2);
