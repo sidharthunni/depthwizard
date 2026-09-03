@@ -1545,39 +1545,57 @@
       p.style.display = p.style.display === 'block' ? 'none' : 'block';
     };
 
-    window.setPreset = function(lat, lon, label, boxKm, z) {
+    window.applyLocationSelection = function(lat, lon, label, boxKm = 1.0, z = 45, autoReconstruct = false) {
       initDrawerMap();
-      drawerMap.setView([lat, lon], boxKm <= 0.5 ? 16 : 12);
-      drawerMarker.setLatLng([lat, lon]);
-      document.getElementById('dLat').value = lat.toFixed(4);
-      document.getElementById('dLon').value = lon.toFixed(4);
-      document.getElementById('qLat').value = lat.toFixed(4);
-      document.getElementById('qLon').value = lon.toFixed(4);
-      document.getElementById('dBox').value = boxKm.toString();
-      document.getElementById('dZ').value = z.toString();
+      const numLat = parseFloat(lat) || 11.5277;
+      const numLon = parseFloat(lon) || 76.1950;
+      const numBox = parseFloat(boxKm) || 1.0;
+      const numZ = parseFloat(z) || 45.0;
+
+      drawerMap.setView([numLat, numLon], numBox <= 0.8 ? 16 : 13);
+      drawerMarker.setLatLng([numLat, numLon]);
+      document.getElementById('dLat').value = numLat.toFixed(4);
+      document.getElementById('dLon').value = numLon.toFixed(4);
+      document.getElementById('qLat').value = numLat.toFixed(4);
+      document.getElementById('qLon').value = numLon.toFixed(4);
+      document.getElementById('dBox').value = numBox.toString();
+      document.getElementById('dZ').value = numZ.toString();
       document.getElementById('targetLocationName').innerText = label;
+
+      if (autoReconstruct) {
+        window.triggerReconstruction();
+      }
+    };
+
+    window.setPreset = function(lat, lon, label, boxKm, z) {
+      window.applyLocationSelection(lat, lon, label, boxKm, z, true);
     };
 
     window.searchLocation = async function(textQuery = null) {
       const q = textQuery || document.getElementById('drawerSearchInput').value.trim();
       if (!q) return;
+
+      // 1. Check if user typed direct coordinates, e.g. "10.0889, 77.0595" or "10.0889 77.0595"
+      const coordMatch = q.match(/^([-+]?[0-9]*\.?[0-9]+)[\s,]+([-+]?[0-9]*\.?[0-9]+)$/);
+      if (coordMatch) {
+        const lat = parseFloat(coordMatch[1]);
+        const lon = parseFloat(coordMatch[2]);
+        window.applyLocationSelection(lat, lon, `Coords (${lat.toFixed(4)}, ${lon.toFixed(4)})`, 0.8, 45, true);
+        return;
+      }
+
+      // 2. Query robust backend dual geocoder (Nominatim + Photon OSM)
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);
+        const res = await fetch('/geocode?q=' + encodeURIComponent(q));
         const data = await res.json();
-        if (data && data.length > 0) {
-          const lat = parseFloat(data[0].lat);
-          const lon = parseFloat(data[0].lon);
-          initDrawerMap();
-          drawerMap.setView([lat, lon], 16);
-          drawerMarker.setLatLng([lat, lon]);
-          document.getElementById('dLat').value = lat.toFixed(4);
-          document.getElementById('dLon').value = lon.toFixed(4);
-          document.getElementById('qLat').value = lat.toFixed(4);
-          document.getElementById('qLon').value = lon.toFixed(4);
-          document.getElementById('dBox').value = "0.5";
-          document.getElementById('targetLocationName').innerText = data[0].display_name.split(',')[0];
+        if (data.status === 'ok') {
+          const isMicro = (data.type === 'building' || data.type === 'hospital' || data.type === 'hotel' || data.type === 'amenity' || data.type === 'house');
+          const boxKm = isMicro ? 0.5 : 2.0;
+          const zVal = isMicro ? 35 : 45;
+          const shortName = data.name.split(',')[0];
+          window.applyLocationSelection(data.lat, data.lon, shortName, boxKm, zVal, true);
         } else {
-          alert('Location or building not found. Try entering coordinates directly.');
+          alert(`Could not find "${q}". Try adding state/country (e.g. "Kedarnath Uttarakhand" or "Meppadi Kerala") or enter latitude and longitude.`);
         }
       } catch (err) {
         alert('Search error: ' + err.message);
@@ -1660,21 +1678,21 @@
 
     // Trigger Ingestion from Header Quick Coordinates
     window.triggerQuickCoords = function() {
-      const lat = parseFloat(document.getElementById('qLat').value);
-      const lon = parseFloat(document.getElementById('qLon').value);
-      document.getElementById('dLat').value = lat;
-      document.getElementById('dLon').value = lon;
-      triggerReconstruction();
+      const lat = parseFloat(document.getElementById('qLat').value) || 11.5277;
+      const lon = parseFloat(document.getElementById('qLon').value) || 76.1950;
+      window.applyLocationSelection(lat, lon, `Coordinates (${lat.toFixed(4)}, ${lon.toFixed(4)})`, 2.0, 45, true);
     };
 
     window.triggerReconstruction = async function() {
-      const lat = parseFloat(document.getElementById('dLat').value);
-      const lon = parseFloat(document.getElementById('dLon').value);
-      const box_size_km = parseFloat(document.getElementById('dBox').value);
-      const z_scale = parseFloat(document.getElementById('dZ').value);
+      const lat = parseFloat(document.getElementById('dLat').value) || 11.5277;
+      const lon = parseFloat(document.getElementById('dLon').value) || 76.1950;
+      const dBoxEl = document.getElementById('dBox');
+      const box_size_km = (dBoxEl && parseFloat(dBoxEl.value)) || 3.0;
+      const dZEl = document.getElementById('dZ');
+      const z_scale = (dZEl && parseFloat(dZEl.value)) || 45.0;
 
       const d = document.getElementById('map-drawer');
-      if (d.classList.contains('open')) d.classList.remove('open');
+      if (d && d.classList.contains('open')) d.classList.remove('open');
 
       const overlay = document.getElementById('radar-overlay');
       const text = document.getElementById('radarText');

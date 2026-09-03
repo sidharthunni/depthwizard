@@ -3,6 +3,7 @@ import subprocess
 import urllib.parse
 import urllib.request
 from pathlib import Path
+from typing import Optional
 
 from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
@@ -17,9 +18,62 @@ BASE = Path(__file__).parent
 class CoordRequest(BaseModel):
     lat: float
     lon: float
-    box_size_km: float = 3.0
-    z_scale: float = 45.0
-    source: str = "auto"  # 'auto' | 'highres' | 'copernicus'
+    box_size_km: Optional[float] = 3.0
+    z_scale: Optional[float] = 45.0
+    source: Optional[str] = "auto"  # 'auto' | 'highres' | 'copernicus'
+
+
+@app.get("/geocode")
+def geocode_place(q: str):
+    """
+    Robust dual-engine geocoding (Nominatim + Photon OSM) for buildings, landmarks, and disaster zones.
+    """
+    q = q.strip()
+    if not q:
+        return {"status": "error", "message": "Query string is empty"}
+
+    # 1. Try OSM Nominatim
+    try:
+        url = f"https://nominatim.openstreetmap.org/search?format=json&q={urllib.parse.quote(q)}"
+        req = urllib.request.Request(url, headers={"User-Agent": "DepthWizard/2.0 (SIH26175)"})
+        with urllib.request.urlopen(req, timeout=6) as r:
+            data = json.loads(r.read())
+            if data and len(data) > 0:
+                item = data[0]
+                return {
+                    "status": "ok",
+                    "lat": float(item["lat"]),
+                    "lon": float(item["lon"]),
+                    "name": item.get("display_name", q),
+                    "type": item.get("type", "landmark")
+                }
+    except Exception as e:
+        print("Nominatim error:", e)
+
+    # 2. Try Photon (Komoot OSM geocoder)
+    try:
+        url = f"https://photon.komoot.io/api/?q={urllib.parse.quote(q)}&limit=1"
+        req = urllib.request.Request(url, headers={"User-Agent": "DepthWizard/2.0"})
+        with urllib.request.urlopen(req, timeout=6) as r:
+            pdata = json.loads(r.read())
+            if pdata.get("features"):
+                feat = pdata["features"][0]
+                coords = feat["geometry"]["coordinates"]
+                props = feat.get("properties", {})
+                name = props.get("name", q)
+                city = props.get("city", props.get("state", props.get("country", "")))
+                full_name = f"{name}, {city}" if city else name
+                return {
+                    "status": "ok",
+                    "lat": float(coords[1]),
+                    "lon": float(coords[0]),
+                    "name": full_name,
+                    "type": props.get("osm_value", "place")
+                }
+    except Exception as e:
+        print("Photon error:", e)
+
+    return {"status": "not_found", "message": f"Could not locate '{q}'. Try entering coordinates directly."}
 
 
 def fetch_osm_buildings(lat: float, lon: float, box_size_km: float = 1.0, output_path=None):
@@ -105,17 +159,23 @@ async def upload(file: UploadFile):
 async def fetch_coords(req: CoordRequest):
     img_path = str(BASE / "current.jpg")
 
-    use_highres = (req.source == "highres") or (req.source == "auto" and req.box_size_km <= 0.8)
+    lat = float(req.lat)
+    lon = float(req.lon)
+    box_size_km = float(req.box_size_km) if req.box_size_km is not None else 3.0
+    z_scale = float(req.z_scale) if req.z_scale is not None else 45.0
+    source = req.source or "auto"
+
+    use_highres = (source == "highres") or (source == "auto" and box_size_km <= 0.8)
 
     if use_highres:
-        print(f"Ingesting sub-meter high-res building aerial for Lat: {req.lat}, Lon: {req.lon} ({req.box_size_km} km footprint)...")
-        fetch_highres_building_image(lat=req.lat, lon=req.lon, box_size_km=req.box_size_km, output_path=img_path)
+        print(f"Ingesting sub-meter high-res building aerial for Lat: {lat}, Lon: {lon} ({box_size_km} km footprint)...")
+        fetch_highres_building_image(lat=lat, lon=lon, box_size_km=box_size_km, output_path=img_path)
     else:
-        print(f"Ingesting Copernicus Sentinel-2 for Lat: {req.lat}, Lon: {req.lon} ({req.box_size_km} km footprint)...")
-        fetch_satellite_image(lat=req.lat, lon=req.lon, box_size_km=req.box_size_km, output_path=img_path)
+        print(f"Ingesting Copernicus Sentinel-2 for Lat: {lat}, Lon: {lon} ({box_size_km} km footprint)...")
+        fetch_satellite_image(lat=lat, lon=lon, box_size_km=box_size_km, output_path=img_path)
 
     # Concurrently extract vector building footprints
-    fetch_osm_buildings(req.lat, req.lon, req.box_size_km, str(BASE / "current_buildings.json"))
+    fetch_osm_buildings(lat, lon, box_size_km, str(BASE / "current_buildings.json"))
 
     print("Running depth estimation...")
     subprocess.run([
@@ -130,11 +190,11 @@ async def fetch_coords(req: CoordRequest):
         "--depth", "current_depth.npy",
         "--image", "current.jpg",
         "--output", "current.glb",
-        "--z_scale", str(req.z_scale),
+        "--z_scale", str(z_scale),
         "--downsample", "4",
-        "--box_size_km", str(req.box_size_km),
-        "--lat", str(req.lat),
-        "--lon", str(req.lon)
+        "--box_size_km", str(box_size_km),
+        "--lat", str(lat),
+        "--lon", str(lon)
     ], cwd=BASE, check=True)
 
     return {"status": "done", "model": "/current.glb", "source_used": "highres" if use_highres else "sentinel2"}
