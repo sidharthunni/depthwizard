@@ -728,11 +728,12 @@
         const box = new THREE.Box3().setFromObject(currentModel);
         center = box.getCenter(new THREE.Vector3());
         size = box.getSize(new THREE.Vector3()).length();
-
         createWaterPlane(box);
-        createDioramaPedestal(box);
-        loadAndExtrudeBuildings(box);
+        try { createDioramaPedestal(box); } catch(e) { console.error('Diorama init error:', e); }
+        try { loadAndExtrudeBuildings(box); } catch(e) { console.error('Building extrusion init error:', e); }
         resetCamera();
+      }, undefined, (err) => {
+        console.error('GLTF loading error:', err);
       });
 
       fetch('current_stats.json?t=' + Date.now())
@@ -866,53 +867,59 @@
           } else {
             heightM = 9.0 + (idx % 12) * 2.2;
           }
-          const heightUnits = Math.max((heightM / (stats.relief_m || 100)) * bSize.z * 1.8, bSize.z * 0.05);
+          try {
+            const shape = new THREE.Shape();
+            shape.moveTo(shapePoints[0].x, shapePoints[0].y);
+            for (let pIdx = 1; pIdx < shapePoints.length; pIdx++) {
+              shape.lineTo(shapePoints[pIdx].x, shapePoints[pIdx].y);
+            }
+            const geom = new THREE.ExtrudeGeometry(shape, { depth: heightUnits, bevelEnabled: false });
 
-          const shape = new THREE.Shape(shapePoints);
-          const geom = new THREE.ExtrudeGeometry(shape, { depth: heightUnits, bevelEnabled: false });
+            let mat;
+            if (cyberMode) {
+              // Glowing Cyberpunk Gold & Neon (Image 1 Style)
+              mat = new THREE.MeshStandardMaterial({
+                color: 0xf59e0b,
+                emissive: 0xd97706,
+                emissiveIntensity: 0.45,
+                roughness: 0.2,
+                metalness: 0.8
+              });
+            } else {
+              // Crisp Architectural Clay / Sandstone (Image 2 Style)
+              const hue = 0.07 + (idx % 6) * 0.04;
+              mat = new THREE.MeshStandardMaterial({
+                color: new THREE.Color().setHSL(hue, 0.72, 0.55),
+                roughness: 0.65,
+                metalness: 0.15
+              });
+            }
 
-          let mat;
-          if (cyberMode) {
-            // Glowing Cyberpunk Gold & Neon (Image 1 Style)
-            mat = new THREE.MeshStandardMaterial({
-              color: 0xf59e0b,
-              emissive: 0xd97706,
-              emissiveIntensity: 0.45,
-              roughness: 0.2,
-              metalness: 0.8
+            const bMesh = new THREE.Mesh(geom, mat);
+            bMesh.position.z = groundZ;
+
+            // Crisp 3D Edge Wireframe Lines
+            const edges = new THREE.EdgesGeometry(geom);
+            const edgeMat = new THREE.LineBasicMaterial({
+              color: cyberMode ? 0x00ffff : 0xffffff,
+              transparent: true,
+              opacity: cyberMode ? 0.95 : 0.45
             });
-          } else {
-            // Crisp Architectural Clay / Sandstone (Image 2 Style)
-            const hue = 0.07 + (idx % 6) * 0.04;
-            mat = new THREE.MeshStandardMaterial({
-              color: new THREE.Color().setHSL(hue, 0.72, 0.55),
-              roughness: 0.65,
-              metalness: 0.15
-            });
+            const edgeLines = new THREE.LineSegments(edges, edgeMat);
+            bMesh.add(edgeLines);
+
+            bMesh.userData = {
+              isBuilding: true,
+              name: b.name === 'yes' ? (b.type !== 'yes' ? b.type.toUpperCase() : 'Building Structure') : b.name,
+              heightM: Math.round(heightM * 10) / 10,
+              floors: Math.max(1, Math.round(heightM / 3.5)),
+              elevM: Math.round(stats.min_elev_m + ((groundZ - box.min.z) / (bSize.z + 1e-6)) * stats.relief_m)
+            };
+
+            buildingGroup.add(bMesh);
+          } catch (polyErr) {
+            // skip problematic polygon
           }
-
-          const bMesh = new THREE.Mesh(geom, mat);
-          bMesh.position.z = groundZ;
-
-          // Crisp 3D Edge Wireframe Lines
-          const edges = new THREE.EdgesGeometry(geom);
-          const edgeMat = new THREE.LineBasicMaterial({
-            color: cyberMode ? 0x00ffff : 0xffffff,
-            transparent: true,
-            opacity: cyberMode ? 0.95 : 0.45
-          });
-          const edgeLines = new THREE.LineSegments(edges, edgeMat);
-          bMesh.add(edgeLines);
-
-          bMesh.userData = {
-            isBuilding: true,
-            name: b.name === 'yes' ? (b.type !== 'yes' ? b.type.toUpperCase() : 'Building Structure') : b.name,
-            heightM: Math.round(heightM * 10) / 10,
-            floors: Math.max(1, Math.round(heightM / 3.5)),
-            elevM: Math.round(stats.min_elev_m + ((groundZ - box.min.z) / (bSize.z + 1e-6)) * stats.relief_m)
-          };
-
-          buildingGroup.add(bMesh);
         });
 
         buildingGroup.visible = showBuildings;
@@ -1397,6 +1404,8 @@
       const r = Math.sqrt(camera.position.x ** 2 + camera.position.y ** 2);
       camera.position.set(center.x, center.y - r, camera.position.z);
       controls.target.copy(center);
+    };
+
     window.toggleExtrudedBuildings = () => {
       showBuildings = !showBuildings;
       buildingGroup.visible = showBuildings;
