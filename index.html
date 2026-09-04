@@ -785,6 +785,10 @@
             satTexture = child.material.map;
             child.material.roughness = 0.85;
             child.material.metalness = 0.05;
+            child.material.wireframe = false;
+            isWireframe = false;
+            const bWire = document.getElementById('btnWire');
+            if (bWire) bWire.classList.remove('active');
           }
         });
 
@@ -915,12 +919,30 @@
           // Boundary clipping check
           if (Math.abs(avgX - center.x) > bSize.x * 0.48 || Math.abs(avgY - center.y) > bSize.y * 0.48) return;
 
-          // Sample ground elevation at building base
-          let groundZ = box.min.z + bSize.z * 0.15;
+          // Perimeter ground elevation sampling to anchor foundation firmly into terrain
+          let minGroundZ = Infinity;
+          let maxGroundZ = -Infinity;
+          let sampledCount = 0;
+
           if (terrainMesh) {
-            const ray = new THREE.Raycaster(new THREE.Vector3(avgX, avgY, box.max.z + 50), new THREE.Vector3(0, 0, -1));
-            const hits = ray.intersectObject(terrainMesh);
-            if (hits.length > 0) groundZ = hits[0].point.z;
+            for (let pIdx = 0; pIdx < shapePoints.length; pIdx++) {
+              const ray = new THREE.Raycaster(
+                new THREE.Vector3(shapePoints[pIdx].x, shapePoints[pIdx].y, box.max.z + 100),
+                new THREE.Vector3(0, 0, -1)
+              );
+              const hits = ray.intersectObject(terrainMesh);
+              if (hits.length > 0) {
+                const zVal = hits[0].point.z;
+                if (zVal < minGroundZ) minGroundZ = zVal;
+                if (zVal > maxGroundZ) maxGroundZ = zVal;
+                sampledCount++;
+              }
+            }
+          }
+
+          if (sampledCount === 0) {
+            minGroundZ = box.min.z + bSize.z * 0.15;
+            maxGroundZ = minGroundZ;
           }
 
           // Compute realistic structural height (m)
@@ -934,7 +956,11 @@
           }
 
           const floors = Math.max(1, Math.round(heightM / 3.2));
-          const heightUnits = Math.max((heightM / (stats.relief_m || 100)) * bSize.z * 1.8, bSize.z * 0.04);
+          const heightUnits = Math.max((heightM / (stats.relief_m || 100)) * bSize.z * 1.5, bSize.z * 0.04);
+
+          // Anchor building foundation into terrain (base starts below minGroundZ to prevent floating gaps)
+          const baseZ = minGroundZ - (bSize.z * 0.012);
+          const totalDepth = Math.max((maxGroundZ - baseZ) + heightUnits, bSize.z * 0.05);
 
           try {
             const shape = new THREE.Shape();
@@ -942,7 +968,7 @@
             for (let pIdx = 1; pIdx < shapePoints.length; pIdx++) {
               shape.lineTo(shapePoints[pIdx].x, shapePoints[pIdx].y);
             }
-            const geom = new THREE.ExtrudeGeometry(shape, { depth: heightUnits, bevelEnabled: false });
+            const geom = new THREE.ExtrudeGeometry(shape, { depth: totalDepth, bevelEnabled: false });
 
             // Chromatic Dual-Tone Material Palette (Ref: media_1788490030733.jpg)
             // Towers (>=7 floors): Deep Amber Wall + Bright Gold Sunlit Roof
@@ -969,18 +995,18 @@
 
             const wallMat = new THREE.MeshStandardMaterial({
               color: wallColor,
-              roughness: 0.55,
-              metalness: 0.15
+              roughness: 0.52,
+              metalness: 0.16
             });
             const roofMat = new THREE.MeshStandardMaterial({
               color: roofColor,
-              roughness: 0.35,
+              roughness: 0.32,
               metalness: 0.08
             });
 
             // ExtrudeGeometry faces: group 0 = walls, group 1 = top/bottom caps
             const bMesh = new THREE.Mesh(geom, [wallMat, roofMat]);
-            bMesh.position.z = groundZ;
+            bMesh.position.z = baseZ;
 
             // Crisp Architectural Corner Outlines (25 deg threshold)
             const edges = new THREE.EdgesGeometry(geom, 25);
@@ -991,6 +1017,23 @@
             });
             const edgeLines = new THREE.LineSegments(edges, edgeMat);
             bMesh.add(edgeLines);
+
+            // Subtle floor-plate lines for multi-storey buildings (Ref: media_1788490030733.jpg)
+            if (floors >= 2 && !cyberMode) {
+              for (let f = 1; f < floors; f++) {
+                const fFrac = f / floors;
+                const fZ = (maxGroundZ - baseZ) + (heightUnits * fFrac);
+                const fGeo = new THREE.BufferGeometry().setFromPoints(shapePoints);
+                const fMat = new THREE.LineBasicMaterial({
+                  color: 0xffffff,
+                  transparent: true,
+                  opacity: 0.20
+                });
+                const fLine = new THREE.LineLoop(fGeo, fMat);
+                fLine.position.z = fZ;
+                bMesh.add(fLine);
+              }
+            }
 
             bMesh.userData = {
               isBuilding: true,
