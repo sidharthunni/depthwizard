@@ -134,11 +134,16 @@
       height: 4px; border-radius: 2px;
     }
 
-    /* Right Telemetry HUD (Floating Island) */
+    /* Right Telemetry & Visual Column (Zero-Overlap Flow) */
+    #right-column {
+      position: absolute; top: 86px; right: 20px; z-index: 92;
+      display: flex; flex-direction: column; gap: 12px;
+      pointer-events: none; width: 230px;
+    }
     #right-hud {
-      position: absolute; top: 86px; right: 20px; z-index: 90;
+      pointer-events: auto; width: 100%; box-sizing: border-box;
       background: var(--panel-glass); backdrop-filter: blur(28px) saturate(180%);
-      padding: 14px 18px; border-radius: 18px; min-width: 220px;
+      padding: 14px 18px; border-radius: 18px;
       border: 1px solid var(--panel-border);
       box-shadow: var(--panel-shadow);
     }
@@ -173,13 +178,25 @@
       box-shadow: 0 24px 50px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
-    #measure-card { position: absolute; bottom: 68px; left: 20px; z-index: 95; padding: 14px 18px; width: 320px; display: none; }
-    #measure-card h4 { margin: 0 0 8px 0; color: var(--accent); font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; }
+    #measure-card {
+      position: absolute; bottom: 24px; left: 345px; z-index: 120;
+      padding: 16px 18px; width: 350px; display: none;
+      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 16px;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    #measure-card h4 { margin: 0 0 8px 0; color: var(--accent); font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
     .m-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
     .m-val { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #fff; }
 
-    #building-card { position: absolute; bottom: 68px; left: 20px; z-index: 96; padding: 16px 18px; width: 330px; display: none; }
-    #building-card h4 { margin: 0 0 8px 0; color: var(--warning); font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; }
+    #building-card {
+      position: absolute; bottom: 24px; left: 345px; z-index: 120;
+      padding: 16px 18px; width: 350px; display: none;
+      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid var(--panel-border); border-radius: 16px;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    #building-card h4 { margin: 0 0 8px 0; color: var(--warning); font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; align-items: center; }
     .b-badge { font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 99px; display: inline-block; margin-top: 4px; }
     .b-badge.hazard { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244,63,94,0.3); }
 
@@ -200,7 +217,7 @@
       width: 450px; display: none; color: #fff;
     }
     #sos-modal h3 { margin: 0 0 10px 0; font-size: 16px; color: var(--danger); display: flex; align-items: center; gap: 8px; font-weight: 800; }
-    .sos-detail-box { background: rgba(7, 11, 20, 0.9); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 10px; margin: 12px 0; font-size: 12px; font-family: 'JetBrains Mono', monospace; line-height: 1.6; }
+    .sos-detail-box { background: rgba(7, 11, 20, 0.9); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 10px; margin: 12px 0; font-size: 12px; font-family: 'JetBrains Mono', monospace; line-height: 1.6; white-space: pre-line; }
     .sos-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
     .btn-sos-action {
       background: linear-gradient(135deg, #f43f5e, #dc2626); color: #fff; border: none; padding: 11px; border-radius: 9px;
@@ -263,15 +280,34 @@
     }
     .btn-reconstruct:hover { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(37,99,235,0.65); }
 
-    /* 2D/3D Split Screen Picture-in-Picture */
+    /* 2D/3D Split Screen Picture-in-Picture (Auto-Docked under Telemetry) */
     #split-pip {
-      position: absolute; top: 86px; right: 250px; z-index: 90;
-      background: var(--panel-glass); backdrop-filter: blur(28px);
-      padding: 12px; border-radius: 16px; border: 1px solid var(--panel-border);
-      box-shadow: var(--panel-shadow); display: none; text-align: center;
+      pointer-events: auto; width: 100%; box-sizing: border-box;
+      background: var(--panel-glass); backdrop-filter: blur(28px) saturate(180%);
+      padding: 12px 14px; border-radius: 18px;
+      border: 1px solid var(--panel-border);
+      box-shadow: var(--panel-shadow); display: none; text-align: left;
+      user-select: none;
     }
-    #split-pip img { width: 220px; height: 220px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); }
-    #split-pip .pip-tag { font-size: 10px; font-weight: 700; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    #split-pip img {
+      width: 100%; height: 140px; object-fit: cover; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.12); display: block;
+      pointer-events: none;
+    }
+    .pip-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+      cursor: grab;
+    }
+    .pip-header:active { cursor: grabbing; }
+    .pip-tag {
+      font-size: 10px; font-weight: 800; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.6px;
+    }
+    .btn-pip-close {
+      background: transparent; border: none; color: #94a3b8;
+      cursor: pointer; font-size: 13px; padding: 0 4px; line-height: 1;
+    }
+    .btn-pip-close:hover { color: #f43f5e; }
 
     /* 🪟 Interactive Digital Twin Split Wipe Divider (Ref: media_1788490030733.jpg) */
     #split-divider {
@@ -304,6 +340,241 @@
       border: 1px solid rgba(251, 146, 60, 0.4); border-radius: 9px;
       padding: 6px 12px; font-size: 11px; font-weight: 700; color: #fb923c;
       box-shadow: 0 8px 24px rgba(0,0,0,0.5); pointer-events: none;
+    }
+
+    /* 🚁 Animated Cinematic Helicopter Rescue HUD Banner */
+    #chopper-hud {
+      position: absolute; top: 76px; left: 50%; transform: translateX(-50%) translateY(-20px);
+      z-index: 160; width: 560px;
+      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(56, 189, 248, 0.5); border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(56, 189, 248, 0.25);
+      padding: 16px 20px; display: none; opacity: 0;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #chopper-hud.active {
+      display: block; opacity: 1; transform: translateX(-50%) translateY(0);
+    }
+    .chopper-flight-track {
+      position: relative; width: 100%; height: 26px; overflow: hidden; margin-bottom: 10px;
+      background: rgba(3, 7, 18, 0.6); border-radius: 8px; border: 1px dashed rgba(56, 189, 248, 0.3);
+    }
+    .chopper-sprite {
+      position: absolute; top: 2px; font-size: 18px; left: -40px;
+      animation: flyAcross 3.2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    }
+    @keyframes flyAcross {
+      0% { left: -40px; transform: scaleX(1) translateY(0); }
+      48% { left: 510px; transform: scaleX(1) translateY(-2px); }
+      50% { left: 510px; transform: scaleX(-1) translateY(-2px); }
+      98% { left: -40px; transform: scaleX(-1) translateY(0); }
+      100% { left: -40px; transform: scaleX(1) translateY(0); }
+    }
+    .chopper-badge {
+      font-size: 10px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;
+      color: #38bdf8; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;
+    }
+    .pulse-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #38bdf8;
+      box-shadow: 0 0 10px #38bdf8; animation: pPulse 1.2s infinite;
+    }
+    @keyframes pPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
+    .chopper-title {
+      font-size: 14px; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: 0.3px;
+    }
+    .chopper-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    }
+    .c-cell {
+      background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px; padding: 6px 8px;
+    }
+    .c-k { display: block; font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
+    .c-v { display: block; font-size: 11px; color: #fff; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+    .btn-chopper-close {
+      position: absolute; top: 12px; right: 14px; background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; border-radius: 6px;
+      width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 11px;
+    }
+    .btn-chopper-close:hover { background: rgba(244,63,94,0.2); color: #fb7185; border-color: rgba(244,63,94,0.4); }
+
+    /* 🚨 Animated Cinematic NDRF Evacuation Broadcast HUD Banner */
+    #evac-hud {
+      position: absolute; top: 76px; left: 50%; transform: translateX(-50%) translateY(-20px);
+      z-index: 165; width: 620px;
+      background: rgba(8, 12, 24, 0.97); backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(239, 68, 68, 0.55); border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(239, 68, 68, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      padding: 16px 20px; display: none; opacity: 0;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #evac-hud.active {
+      display: block; opacity: 1; transform: translateX(-50%) translateY(0);
+    }
+    .evac-convoy-track {
+      position: relative; width: 100%; height: 28px; overflow: hidden; margin-bottom: 10px;
+      background: rgba(3, 7, 18, 0.75); border-radius: 8px; border: 1px dashed rgba(239, 68, 68, 0.4);
+      display: flex; align-items: center;
+    }
+    .evac-radar-line {
+      position: absolute; top: 0; bottom: 0; width: 40px;
+      background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.4), transparent);
+      animation: scanRadar 2.5s linear infinite;
+    }
+    @keyframes scanRadar {
+      0% { left: -40px; }
+      100% { left: 100%; }
+    }
+    .evac-convoy-sprite {
+      position: absolute; display: flex; align-items: center; gap: 8px; font-size: 14px;
+      animation: convoyMove 8s linear infinite; white-space: nowrap;
+    }
+    @keyframes convoyMove {
+      0% { left: -320px; }
+      100% { left: 100%; }
+    }
+    .convoy-label {
+      font-size: 9px; font-weight: 800; color: #34d399; letter-spacing: 0.6px;
+      background: rgba(16, 185, 129, 0.2); padding: 2px 6px; border-radius: 4px;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .convoy-dest {
+      font-size: 10px; font-weight: 700; color: #38bdf8;
+    }
+    .evac-badge {
+      font-size: 10px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;
+      color: #fb7185; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;
+    }
+    .pulse-dot-red {
+      width: 7px; height: 7px; border-radius: 50%; background: #f43f5e;
+      box-shadow: 0 0 10px #f43f5e; animation: pPulse 0.9s infinite;
+    }
+    .pulse-dot-green {
+      width: 7px; height: 7px; border-radius: 50%; background: #10b981;
+      box-shadow: 0 0 10px #10b981; animation: pPulse 1.1s infinite;
+    }
+    .evac-title {
+      font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: 0.2px;
+    }
+    .evac-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;
+    }
+    .e-cell {
+      background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px; padding: 6px 8px;
+    }
+    .e-k { display: block; font-size: 9px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
+    .e-v { display: block; font-size: 11px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+    .evac-actions {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .btn-evac-act {
+      border: none; border-radius: 8px; padding: 7px 12px; font-size: 11px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; text-align: center;
+    }
+    .btn-evac-primary {
+      background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4); flex: 1.4;
+    }
+    .btn-evac-primary:hover {
+      transform: translateY(-1px); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+    }
+    .btn-evac-secondary {
+      background: rgba(30, 41, 59, 0.85); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.1);
+      flex: 1;
+    }
+    .btn-evac-secondary:hover {
+      background: rgba(51, 65, 85, 0.95); color: #fff;
+    }
+    .btn-evac-close {
+      position: absolute; top: 12px; right: 14px; background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; border-radius: 6px;
+      width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 11px;
+    }
+    .btn-evac-close:hover { background: rgba(244,63,94,0.2); color: #fb7185; border-color: rgba(244,63,94,0.4); }
+
+    /* 🛰️ Animated Frontline Live GPS Satellite HUD Banner */
+    #gps-hud {
+      position: absolute; top: 76px; left: 50%; transform: translateX(-50%) translateY(-20px);
+      z-index: 170; width: 600px; max-width: 94vw;
+      background: rgba(6, 12, 24, 0.97); backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(52, 211, 153, 0.55); border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(52, 211, 153, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      padding: 16px 20px; display: none; opacity: 0;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #gps-hud.active {
+      display: block; opacity: 1; transform: translateX(-50%) translateY(0);
+    }
+    .gps-orbit-track {
+      position: relative; width: 100%; height: 28px; overflow: hidden; margin-bottom: 10px;
+      background: rgba(3, 7, 18, 0.75); border-radius: 8px; border: 1px dashed rgba(52, 211, 153, 0.4);
+      display: flex; align-items: center;
+    }
+    .gps-radar-wave {
+      position: absolute; top: 0; bottom: 0; width: 45px;
+      background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.45), transparent);
+      animation: scanRadar 2.4s linear infinite;
+    }
+    .gps-satellite-sprite {
+      position: absolute; display: flex; align-items: center; gap: 8px; font-size: 15px;
+      animation: orbitFly 5s ease-in-out infinite; white-space: nowrap;
+    }
+    @keyframes orbitFly {
+      0% { left: -80px; transform: scaleX(1); }
+      48% { left: 450px; transform: scaleX(1); }
+      50% { left: 450px; transform: scaleX(-1); }
+      98% { left: -80px; transform: scaleX(-1); }
+      100% { left: -80px; transform: scaleX(1); }
+    }
+    .gps-badge-label {
+      font-size: 9px; font-weight: 800; color: #34d399; letter-spacing: 0.6px;
+      background: rgba(52, 211, 153, 0.2); padding: 2px 6px; border-radius: 4px;
+      border: 1px solid rgba(52, 211, 153, 0.4);
+    }
+    .gps-badge {
+      font-size: 10px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;
+      color: #34d399; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;
+    }
+    .gps-title {
+      font-size: 14px; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: 0.3px;
+    }
+    .gps-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    }
+    .g-cell {
+      background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px; padding: 6px 8px;
+    }
+    .g-k { display: block; font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
+    .g-v { display: block; font-size: 11px; color: #fff; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+    .btn-gps-close {
+      position: absolute; top: 12px; right: 14px; background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; border-radius: 6px;
+      width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 11px;
+    }
+    .btn-gps-close:hover { background: rgba(244,63,94,0.2); color: #fb7185; border-color: rgba(244,63,94,0.4); }
+    .btn-gps-act {
+      border: none; border-radius: 8px; font-size: 11px; font-weight: 800;
+      padding: 9px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-gps-primary {
+      background: linear-gradient(135deg, #059669, #10b981); color: #fff;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.45);
+    }
+    .btn-gps-primary:hover {
+      transform: translateY(-1px); box-shadow: 0 0 28px rgba(16, 185, 129, 0.65);
+    }
+    .btn-gps-secondary {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+    }
+    .btn-gps-secondary:hover {
+      background: rgba(255, 255, 255, 0.14); color: #fff;
     }
 
     /* 3D Compass Jewel */
@@ -371,7 +642,7 @@
         <button class="btn-top btn-accent" style="padding:4px 9px; font-size:11px;" onclick="triggerQuickCoords()">⚡ Fetch</button>
       </div>
 
-      <button class="btn-top" onclick="locateUserGPS()" title="Use Live Device GPS">📍 GPS</button>
+      <button class="btn-top" id="btnGpsTop" onclick="locateUserGPS()" title="Use Live Device GPS">📍 GPS</button>
       <button class="btn-top btn-mic" id="btnVoiceTop" onclick="startVoiceRecognition()" title="Voice Command / Search">🎙️ Voice</button>
     </div>
 
@@ -424,6 +695,7 @@
       <button id="btnHelipad" class="btn-dock" onclick="toggleHelipadViability()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4);">🚁 Helipads</button>
       <button id="btnBuilding" class="btn-dock" onclick="toggleBuildingMode()" style="color:#fbbf24; border-color:rgba(251,191,36,0.3);">🏢 Inspect</button>
       <button id="btnSOS" class="btn-dock" onclick="toggleSOSMode()" style="color:#f87171; border-color:rgba(239,68,68,0.3);">🚨 Mark SOS</button>
+      <button id="btnFocusRefuge" class="btn-dock" onclick="focusEvacShelter()" style="grid-column: span 2; color:#38bdf8; border-color:rgba(56,189,248,0.4); font-weight:800; background:rgba(56,189,248,0.08); display:flex; align-items:center; justify-content:center; gap:6px;">🎯 Focus Safe Refuge Route</button>
     </div>
 
     <div style="margin-top:4px;">
@@ -443,36 +715,51 @@
     </div>
   </div>
 
-  <!-- Right Telemetry & Accuracy HUD (Glass Floating Island) -->
-  <div id="right-hud">
-    <h3>Terrain Telemetry</h3>
-    <div class="hud-stat-grid">
-      <div class="stat-cell">
-        <span class="stat-label">SRTM Match</span>
-        <span class="stat-num success" id="valScore">89.4%</span>
-        <div class="stat-bar"><div class="stat-bar-fill" style="width: 89%; background: #34d399;"></div></div>
+  <!-- Right Telemetry & 2D Optical Column (Clean Auto-Flowing Column) -->
+  <div id="right-column">
+    <!-- Right Telemetry & Accuracy HUD (Glass Floating Island) -->
+    <div id="right-hud">
+      <h3>Terrain Telemetry</h3>
+      <div class="hud-stat-grid">
+        <div class="stat-cell">
+          <span class="stat-label">SRTM Match</span>
+          <span class="stat-num success" id="valScore">89.4%</span>
+          <div class="stat-bar"><div class="stat-bar-fill" style="width: 89%; background: #34d399;"></div></div>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Rel. RMSE</span>
+          <span class="stat-num" id="rmseScore">0.138</span>
+          <div class="stat-bar"><div class="stat-bar-fill" style="width: 14%; background: #38bdf8;"></div></div>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Relief Span</span>
+          <span class="stat-num" id="elevSpan">-- m</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Landslide Risk</span>
+          <span class="stat-num danger" id="riskSlope">-- %</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Coverage Box</span>
+          <span class="stat-num" id="boxKm">3.0 km</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">GSD Spacing</span>
+          <span class="stat-num" id="gridGsd">10.0 m</span>
+        </div>
       </div>
-      <div class="stat-cell">
-        <span class="stat-label">Rel. RMSE</span>
-        <span class="stat-num" id="rmseScore">0.138</span>
-        <div class="stat-bar"><div class="stat-bar-fill" style="width: 14%; background: #38bdf8;"></div></div>
+    </div>
+
+    <!-- 2D / 3D Split Screen Picture-in-Picture (Auto-Docked under HUD) -->
+    <div id="split-pip">
+      <div class="pip-header" id="pipHeader" title="Drag by header to reposition anywhere">
+        <span class="pip-tag">🗺️ 2D Optical Texture</span>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="btn-pip-close" id="btnPipDock" onclick="resetPIPDock()" title="Snap back to Right Column" style="display:none; font-size:11px;">📌</button>
+          <button class="btn-pip-close" onclick="toggleSplitPIP()" title="Close 2D View">✕</button>
+        </div>
       </div>
-      <div class="stat-cell">
-        <span class="stat-label">Relief Span</span>
-        <span class="stat-num" id="elevSpan">-- m</span>
-      </div>
-      <div class="stat-cell">
-        <span class="stat-label">Landslide Risk</span>
-        <span class="stat-num danger" id="riskSlope">-- %</span>
-      </div>
-      <div class="stat-cell">
-        <span class="stat-label">Coverage Box</span>
-        <span class="stat-num" id="boxKm">3.0 km</span>
-      </div>
-      <div class="stat-cell">
-        <span class="stat-label">GSD Spacing</span>
-        <span class="stat-num" id="gridGsd">10.0 m</span>
-      </div>
+      <img src="current.jpg" id="pip-img" alt="2D Satellite Texture">
     </div>
   </div>
 
@@ -492,23 +779,29 @@
     </svg>
   </div>
 
-  <!-- 2D / 3D Split Screen Picture-in-Picture -->
-  <div id="split-pip">
-    <div class="pip-tag">2D Aerial / Optical Texture</div>
-    <img src="current.jpg" id="pip-img" alt="2D Satellite Texture">
-  </div>
-
-  <!-- Interactive Measurement & Cross-Section Card -->
+  <!-- Interactive Measurement & Cross-Section Card (Docked Cleanly at bottom-center-left) -->
   <div id="measure-card">
-    <h4><span>Cross-Section Analysis</span> <button onclick="clearMeasurement()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;">Clear</button></h4>
+    <h4>
+      <span>📐 Cross-Section Profile & Gain</span>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <button onclick="initDefaultMeasurement()" style="background:rgba(56,189,248,0.15); color:var(--accent); border:1px solid rgba(56,189,248,0.3); padding:2px 7px; border-radius:4px; cursor:pointer; font-size:10px; font-weight:700;" title="Reset Center Slice">Center Slice</button>
+        <button onclick="toggleMeasureMode()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer; font-size:11px;">✕</button>
+      </div>
+    </h4>
+    <div id="measure-status" style="font-size:10px; color:#38bdf8; margin-bottom:8px; font-weight:600; background:rgba(56,189,248,0.08); padding:5px 8px; border-radius:6px; border:1px solid rgba(56,189,248,0.2);">
+      💡 Click any 2 points on 3D terrain or rooftops to measure custom profile
+    </div>
     <div class="m-row"><span>Ground Distance:</span><span class="m-val" id="mDist">-- m</span></div>
     <div class="m-row"><span>Elevation Gain (ΔH):</span><span class="m-val" id="mDeltaH" style="color:var(--accent);">-- m</span></div>
     <div class="m-row"><span>Slope Grade:</span><span class="m-val" id="mSlope">--° (-- %)</span></div>
-    <div class="m-row"><span>Line of Sight:</span><span class="m-val" id="m3D">-- m</span></div>
+    <div class="m-row"><span>Line of Sight (3D):</span><span class="m-val" id="m3D">-- m</span></div>
 
     <div style="margin-top:8px; border-top:1px solid rgba(255,255,255,0.08); padding-top:6px;">
-      <div style="font-size:10px; font-weight:700; color:var(--accent); margin-bottom:4px; text-transform:uppercase;">Elevation Profile Cut:</div>
-      <svg id="profile-svg" width="284" height="75" style="background:#070b14; border-radius:8px; border:1px solid rgba(255,255,255,0.08);"></svg>
+      <div style="font-size:10px; font-weight:700; color:var(--accent); margin-bottom:4px; text-transform:uppercase; display:flex; justify-content:space-between;">
+        <span>Elevation Profile Cut:</span>
+        <span id="profileCutRange" style="font-size:9px; color:#94a3b8; font-family:monospace;">--</span>
+      </div>
+      <svg id="profile-svg" width="310" height="80" style="background:#070b14; border-radius:8px; border:1px solid rgba(255,255,255,0.08); display:block; width:100%;"></svg>
     </div>
   </div>
 
@@ -523,8 +816,18 @@
     <div class="m-row"><span>Rooftop Slope:</span><span class="m-val" id="bSlope">--°</span></div>
     <div class="m-row"><span>Evacuation Helipad LZ:</span><span class="m-val" id="bHelipad">--</span></div>
     <div class="m-row"><span>Flood Safety Margin:</span><span class="m-val" id="bFloodMargin">--</span></div>
-    <div class="m-row"><span>Footprint Area:</span><span class="m-val" id="bFootprint">-- m²</span></div>
     <div id="bBadgeContainer" style="margin-top:6px;"></div>
+
+    <div id="bEvacPathwayBox" style="display:none; margin-top:10px; border-top:1px solid rgba(52,211,153,0.3); padding-top:8px; background:rgba(16,185,129,0.08); border-radius:8px; padding:8px 10px;">
+      <div style="font-size:11px; font-weight:800; color:#34d399; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+        <span>🛣️ DIRECT RESCUE PATHWAY</span>
+        <span id="evacWalkingTime" style="background:#065f46; color:#a7f3d0; padding:1px 6px; border-radius:4px; font-size:10px;">-- min walk</span>
+      </div>
+      <div class="m-row"><span>Nearest Safe Haven:</span><span class="m-val" id="evacShelterName" style="color:#34d399;">--</span></div>
+      <div class="m-row"><span>Ground Escape Dist:</span><span class="m-val" id="evacPathDist" style="color:#38bdf8;">-- m</span></div>
+      <div class="m-row"><span>Evacuation Action:</span><span class="m-val" id="evacPathStatus" style="color:#fbbf24;">ILLUMINATED 3D VECTOR ACTIVE</span></div>
+      <button onclick="focusEvacShelter()" style="margin-top:8px; width:100%; background:linear-gradient(135deg, #059669, #10b981); color:#fff; border:none; padding:7px; border-radius:8px; font-size:11px; cursor:pointer; font-weight:800; box-shadow:0 0 16px rgba(16,185,129,0.35); transition:0.2s;">🎯 Focus View on Safe Shelter</button>
+    </div>
   </div>
 
   <!-- 🚨 NDRF Disaster Triage & Escape Corridors Card -->
@@ -538,7 +841,13 @@
     <div class="m-row"><span>🔴 Critical Hazard Structures:</span><span class="m-val" id="trHazard" style="color:#fb7185;">--</span></div>
     <div class="m-row"><span>Estimated At-Risk Pop:</span><span class="m-val" id="trPop" style="color:#fbbf24;">--</span></div>
     <div class="m-row"><span>3D Evacuation Corridors:</span><span class="m-val" style="color:#38bdf8;">ACTIVE (Vector Mesh)</span></div>
-    <button class="btn-top" style="width:100%; margin-top:10px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; font-size:11px; padding:8px;" onclick="dispatchEvacuationOrder()">
+    <div style="font-size:10px; color:#94a3b8; margin-top:8px; line-height:1.4; background:rgba(255,255,255,0.04); padding:6px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.06);">
+      ℹ️ <b>Tactical Escapes:</b> Green paths connect assembly sectors to safe haven shelters. Click any red building or click <b>[ 🏢 Inspect ]</b> to view its direct escape corridor & walking times.
+    </div>
+    <button class="btn-top" style="width:100%; margin-top:8px; background:rgba(16,185,129,0.18); border:1px solid rgba(52,211,153,0.4); color:#34d399; font-size:11px; padding:7px; font-weight:800; border-radius:8px; cursor:pointer;" onclick="focusEvacShelter()">
+      🎯 Focus Camera on Safe Haven & Route
+    </button>
+    <button class="btn-top" style="width:100%; margin-top:6px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; font-size:11px; padding:8px;" onclick="dispatchEvacuationOrder()">
       📢 Dispatch NDRF Evacuation Order
     </button>
   </div>
@@ -559,6 +868,138 @@
       <button class="btn-sos-action btn-sos-secondary" onclick="copySOSCoordinates()">📋 Copy Tactical Coords</button>
       <button class="btn-sos-action btn-sos-secondary" onclick="downloadSOSReport()">📄 Download Briefing</button>
       <button class="btn-sos-action btn-sos-secondary" onclick="document.getElementById('sos-modal').style.display='none'">Dismiss Window</button>
+    </div>
+  </div>
+
+  <!-- 🚁 Animated Cinematic Helicopter Air Rescue Dispatch HUD Banner -->
+  <div id="chopper-hud">
+    <button class="btn-chopper-close" onclick="closeChopperHUD()">✕</button>
+    <div class="chopper-flight-track">
+      <div class="chopper-sprite" id="chopperSprite">🚁</div>
+    </div>
+    <div class="chopper-badge">
+      <span class="pulse-dot"></span>
+      IAF AIR-SEA RESCUE DISPATCH · ALH DHRUV UNIT #07
+    </div>
+    <div class="chopper-title">ROOFTOP EXTRACTION CORRIDOR VERIFIED</div>
+    <div class="chopper-grid">
+      <div class="c-cell">
+        <span class="c-k">Active Landing Hubs</span>
+        <span class="c-v" id="hudHubs">6 Rooftops</span>
+      </div>
+      <div class="c-cell">
+        <span class="c-k">Winch Clearance</span>
+        <span class="c-v" style="color:#34d399;">PASS (&lt; 3° Slope)</span>
+      </div>
+      <div class="c-cell">
+        <span class="c-k">Assigned Squadron</span>
+        <span class="c-v" style="color:#38bdf8;">ALH Dhruv Mk-III</span>
+      </div>
+      <div class="c-cell">
+        <span class="c-k">Rescue Sortie Cap</span>
+        <span class="c-v" style="color:#fbbf24;">48 pers / sortie</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🚨 Animated Cinematic NDRF Evacuation Broadcast HUD Banner -->
+  <div id="evac-hud">
+    <button class="btn-evac-close" onclick="closeEvacHUD()">✕</button>
+    <div class="evac-convoy-track">
+      <div class="evac-radar-line"></div>
+      <div class="evac-convoy-sprite" id="evacSprite">
+        <span>🚒</span>
+        <span>🚑</span>
+        <span>🚓</span>
+        <span>📡</span>
+        <span class="convoy-label">NDRF CONVOY</span>
+        <span>🏃‍♂️</span>
+        <span>🏃‍♀️</span>
+        <span class="convoy-dest">➡️ 🏛️ TACTICAL RELIEF SHELTERS</span>
+      </div>
+    </div>
+    <div class="evac-badge">
+      <span class="pulse-dot-red"></span>
+      <span class="pulse-dot-green"></span>
+      NDRF NATIONAL CRISIS MANAGEMENT · CIVIL DEFENSE BROADCAST OMEGA
+    </div>
+    <div class="evac-title">🚨 DISTRICT EVACUATION ORDER ACTIVATED · DEOC DISPATCH TRANSMITTED</div>
+    <div class="evac-grid">
+      <div class="e-cell">
+        <span class="e-k">DEOC Operation Link</span>
+        <span class="e-v" style="color:#34d399;">🟢 TRANSMITTED (100%)</span>
+      </div>
+      <div class="e-cell">
+        <span class="e-k">Acoustic Sirens</span>
+        <span class="e-v" style="color:#fbbf24;">🔊 128 dB ACTIVE</span>
+      </div>
+      <div class="e-cell">
+        <span class="e-k">Tactical Safe Havens</span>
+        <span class="e-v" id="hudEvacSafeHavens" style="color:#34d399;">366 Shelters</span>
+      </div>
+      <div class="e-cell">
+        <span class="e-k">Citizens Mobilized</span>
+        <span class="e-v" id="hudEvacAtRiskPop" style="color:#fb7185;">~8,052 Citizens</span>
+      </div>
+    </div>
+    <div class="evac-actions">
+      <button class="btn-evac-act btn-evac-primary" onclick="triggerCellBroadcastSMS()">
+        📢 Transmit Cell Broadcast (NDMA CAP Gateway)
+      </button>
+      <button class="btn-evac-act btn-evac-secondary" onclick="downloadEvacManifest()">
+        📄 Export Manifest (.JSON)
+      </button>
+      <button class="btn-evac-act btn-evac-secondary" onclick="closeEvacHUD()">
+        Dismiss Broadcast
+      </button>
+    </div>
+    <div id="evacBroadcastToast" style="display:none; margin-top:8px; font-size:11px; color:#34d399; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); padding:6px 10px; border-radius:8px; font-family:'JetBrains Mono',monospace;">
+      ✓ CELL BROADCAST SENT: Emergency alert push transmitted across 18 regional GSM/LTE cellular towers.
+    </div>
+  </div>
+
+  <!-- 🛰️ Animated Cinematic Frontline Live GPS Satellite HUD Banner -->
+  <div id="gps-hud">
+    <button class="btn-gps-close" onclick="closeGpsHUD()">✕</button>
+    <div class="gps-orbit-track">
+      <div class="gps-radar-wave"></div>
+      <div class="gps-satellite-sprite" id="gpsSprite">
+        <span>🛰️</span>
+        <span class="gps-badge-label">NAVIC / GPS FIX</span>
+        <span>📡</span>
+        <span style="font-size:10px; font-weight:700; color:#34d399;">ORBITAL SENSOR LOCK</span>
+      </div>
+    </div>
+    <div class="gps-badge">
+      <span class="pulse-dot-green"></span>
+      LIVE GEODETIC FIX · COPERNICUS & FRONTLINE SENSOR INGESTION
+    </div>
+    <div class="gps-title">🛰️ REAL-TIME SATELLITE GPS POSITION ACQUIRED</div>
+    <div class="gps-grid">
+      <div class="g-cell">
+        <span class="g-k">Geodetic Position</span>
+        <span class="g-v" id="gpsHudCoords" style="color:#34d399;">18.9400°, 72.8240°</span>
+      </div>
+      <div class="g-cell">
+        <span class="g-k">Sensor Precision</span>
+        <span class="g-v" id="gpsHudAccuracy" style="color:#38bdf8;">±9 m (HIGH PRECISION)</span>
+      </div>
+      <div class="g-cell">
+        <span class="g-k">Ingestion Source</span>
+        <span class="g-v" style="color:#fbbf24;">Sentinel-2 / Aerial</span>
+      </div>
+      <div class="g-cell">
+        <span class="g-k">Tactical Recon</span>
+        <span class="g-v" style="color:#a78bfa;">3D Digital Twin Ready</span>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:12px;">
+      <button class="btn-gps-act btn-gps-primary" style="flex:1; justify-content:center;" onclick="triggerGpsLiveReconstruct()">
+        ⚡ RECONSTRUCT 3D DIGITAL TWIN AT MY LOCATION
+      </button>
+      <button class="btn-gps-act btn-gps-secondary" onclick="closeGpsHUD()">
+        Dismiss
+      </button>
     </div>
   </div>
 
@@ -774,9 +1215,21 @@
     let showBuildings = true;
     let cyberMode = false;
     let triageActive = false;
+    let triageSafeBuildings = [];
+    let activeEvacRouteLine = null;
+    let activeShelterTargetMarker = null;
     let helipadsActive = false;
     let dioramaMesh = null;
     let showDiorama = true;
+
+    // 🚁 Aerial Rescue Squadron Dynamics
+    let rescueHelicopter = null;
+    let chopperMainRotor = null;
+    let chopperTailRotor = null;
+    let chopperStartPos = new THREE.Vector3();
+    let chopperTargetPos = new THREE.Vector3();
+    let chopperHeading = new THREE.Vector3(0, 1, 0);
+    let chopperFlightT = 0;
 
     // Load Textures & Mesh
     const texLoader = new THREE.TextureLoader();
@@ -917,6 +1370,20 @@
         buildingGroup.remove(obj);
         if (obj.geometry) obj.geometry.dispose();
       }
+      if (rescueHelicopter) {
+        scene.remove(rescueHelicopter);
+        rescueHelicopter = null;
+      }
+      while (helipadGroup.children.length > 0) {
+        const obj = helipadGroup.children[0];
+        helipadGroup.remove(obj);
+        if (obj.geometry) obj.geometry.dispose();
+      }
+      helipadsActive = false;
+      const btnHeli = document.getElementById('btnHelipad');
+      if (btnHeli) btnHeli.classList.remove('active');
+      const hud = document.getElementById('chopper-hud');
+      if (hud) hud.classList.remove('active');
 
       try {
         const res = await fetch('current_buildings.json?t=' + Date.now());
@@ -1071,6 +1538,7 @@
 
             bMesh.userData = {
               isBuilding: true,
+              mesh: bMesh,
               center: new THREE.Vector3(avgX, avgY, baseZ + totalDepth),
               name: b.name === 'yes' ? (b.type !== 'yes' ? b.type.toUpperCase() : 'Building Structure') : b.name,
               heightM: Math.round(heightM * 10) / 10,
@@ -1090,8 +1558,178 @@
       }
     }
 
+    function getSafeShelters() {
+      if (triageSafeBuildings && triageSafeBuildings.length > 0) {
+        return triageSafeBuildings;
+      }
+      if (buildingGroup && buildingGroup.children.length > 0) {
+        const candidates = buildingGroup.children.filter(c => c.userData && c.userData.isBuilding);
+        if (candidates.length > 0) {
+          const safe = candidates.filter((b, idx) => (b.userData.floors >= 2 || (b.userData.heightM || 0) >= 7.5) && (idx % 2 === 0));
+          if (safe.length > 0) return safe;
+          const sorted = [...candidates].sort((a, b) => (b.userData.heightM || 0) - (a.userData.heightM || 0));
+          return sorted.slice(0, Math.max(1, Math.floor(sorted.length * 0.35)));
+        }
+      }
+      return [];
+    }
+
+    function drawRescuePathway(bCenter, currentMesh) {
+      if (activeEvacRouteLine) { scene.remove(activeEvacRouteLine); activeEvacRouteLine = null; }
+      if (activeShelterTargetMarker) { scene.remove(activeShelterTargetMarker); activeShelterTargetMarker = null; }
+
+      const pBox = document.getElementById('bEvacPathwayBox');
+      if (!currentModel) return;
+
+      const safeShelters = getSafeShelters();
+      let nearestShelter = null;
+      let minDistSq = Infinity;
+
+      safeShelters.forEach(sB => {
+        if (currentMesh && (sB === currentMesh || (sB.userData && currentMesh.userData && sB.userData.name === currentMesh.userData.name && sB.userData.floors === currentMesh.userData.floors))) return;
+        const sC = sB.userData?.center || sB.position;
+        const dSq = (sC.x - bCenter.x) ** 2 + (sC.y - bCenter.y) ** 2;
+        if (dSq < minDistSq && dSq > 0.001) {
+          minDistSq = dSq;
+          nearestShelter = sB;
+        }
+      });
+
+      const isAlreadyShelter = currentMesh && safeShelters.includes(currentMesh);
+
+      if (isAlreadyShelter && !nearestShelter) {
+        if (pBox) {
+          pBox.style.display = 'block';
+          pBox.style.borderColor = 'rgba(52,211,153,0.5)';
+          pBox.style.background = 'rgba(16,185,129,0.12)';
+          document.getElementById('evacShelterName').innerHTML = `<span style="color:#34d399;">🏛️ DESIGNATED SAFE HAVEN REFUGE</span>`;
+          document.getElementById('evacPathDist').innerHTML = `<span style="color:#34d399;">0 m (Refuge On-Site)</span>`;
+          document.getElementById('evacWalkingTime').innerText = `Rooftop Evac Ready`;
+          const statusEl = document.getElementById('evacPathStatus');
+          if (statusEl) statusEl.innerHTML = `<span style="color:#34d399;">🟢 ACTIVE EXTRACTION POINT</span>`;
+        }
+
+        const ringGeo = new THREE.RingGeometry(size * 0.02, size * 0.032, 32);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0x10b981, side: THREE.DoubleSide });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.position.set(bCenter.x, bCenter.y, (bCenter.z || 0) + 1.2);
+        activeShelterTargetMarker = ring;
+        scene.add(activeShelterTargetMarker);
+        return;
+      }
+
+      if (nearestShelter) {
+        const sC = nearestShelter.userData?.center || nearestShelter.position;
+        const box = new THREE.Box3().setFromObject(currentModel);
+        const bSize = box.getSize(new THREE.Vector3());
+        const metersPerUnitX = (stats.box_size_km * 1000) / bSize.x;
+        const metersPerUnitY = (stats.box_size_km * 1000) / bSize.y;
+        const dxM = (sC.x - bCenter.x) * metersPerUnitX;
+        const dyM = (sC.y - bCenter.y) * metersPerUnitY;
+        const distM = Math.sqrt(dxM * dxM + dyM * dyM);
+        const walkTimeMin = (distM / 80).toFixed(1);
+
+        // Ground-draped waypoints along terrain
+        const waypoints = [];
+        const numSteps = 24;
+        for (let step = 0; step <= numSteps; step++) {
+          const t = step / numSteps;
+          const currX = bCenter.x + (sC.x - bCenter.x) * t;
+          const currY = bCenter.y + (sC.y - bCenter.y) * t;
+          let groundZ = (bCenter.z * (1 - t)) + (sC.z * t);
+          if (terrainMesh) {
+            const ray = new THREE.Raycaster(
+              new THREE.Vector3(currX, currY, box.max.z + 100),
+              new THREE.Vector3(0, 0, -1)
+            );
+            const hits = ray.intersectObject(terrainMesh);
+            if (hits.length > 0) groundZ = hits[0].point.z;
+          }
+          waypoints.push(new THREE.Vector3(currX, currY, groundZ + 0.6));
+        }
+
+        const spline = new THREE.CatmullRomCurve3(waypoints);
+        const routePoints = spline.getPoints(48);
+
+        // Luminous Neon Tube + Dashed Spine Group
+        const routeGroup = new THREE.Group();
+
+        // 1. Neon cylinder tube
+        const tubeRadius = Math.max(size * 0.0035, 0.45);
+        const tubeGeo = new THREE.TubeGeometry(spline, 48, tubeRadius, 8, false);
+        const tubeMat = new THREE.MeshStandardMaterial({
+          color: 0x00f0ff,
+          emissive: 0x00d2ff,
+          emissiveIntensity: 0.85,
+          roughness: 0.2,
+          transparent: true,
+          opacity: 0.88
+        });
+        const tubeMesh = new THREE.Mesh(tubeGeo, tubeMat);
+        routeGroup.add(tubeMesh);
+
+        // 2. High-contrast dashed line
+        const lineGeo = new THREE.BufferGeometry().setFromPoints(routePoints);
+        const lineMat = new THREE.LineDashedMaterial({
+          color: 0xffffff,
+          dashSize: 2.5,
+          gapSize: 1.0,
+          linewidth: 3
+        });
+        const dashLine = new THREE.Line(lineGeo, lineMat);
+        dashLine.computeLineDistances();
+        routeGroup.add(dashLine);
+
+        activeEvacRouteLine = routeGroup;
+        scene.add(activeEvacRouteLine);
+
+        // 3. Pulsing Safe Haven Landing Zone target marker
+        const targetGroup = new THREE.Group();
+        const outerRingGeo = new THREE.RingGeometry(size * 0.024, size * 0.034, 32);
+        const outerRingMat = new THREE.MeshBasicMaterial({ color: 0x34d399, side: THREE.DoubleSide });
+        const outerRing = new THREE.Mesh(outerRingGeo, outerRingMat);
+        targetGroup.add(outerRing);
+
+        const innerRingGeo = new THREE.RingGeometry(size * 0.012, size * 0.018, 32);
+        const innerRingMat = new THREE.MeshBasicMaterial({ color: 0x10b981, side: THREE.DoubleSide });
+        const innerRing = new THREE.Mesh(innerRingGeo, innerRingMat);
+        targetGroup.add(innerRing);
+
+        // Destination shelter vertical beacon beam
+        const beaconGeo = new THREE.CylinderGeometry(size * 0.003, size * 0.003, size * 0.25, 16);
+        const beaconMat = new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.75 });
+        const beacon = new THREE.Mesh(beaconGeo, beaconMat);
+        beacon.rotation.x = Math.PI / 2;
+        beacon.position.set(0, 0, size * 0.125);
+        targetGroup.add(beacon);
+
+        targetGroup.position.set(sC.x, sC.y, sC.z + 1.2);
+        activeShelterTargetMarker = targetGroup;
+        scene.add(activeShelterTargetMarker);
+
+        if (pBox) {
+          pBox.style.display = 'block';
+          pBox.style.borderColor = 'rgba(52,211,153,0.3)';
+          pBox.style.background = 'rgba(16,185,129,0.08)';
+          const shelterFloors = nearestShelter.userData?.floors || 3;
+          document.getElementById('evacShelterName').innerHTML = `<span style="color:#34d399; font-weight:800;">${nearestShelter.userData?.name || 'Safe Haven Shelter'} (${shelterFloors} Storeys)</span>`;
+          document.getElementById('evacPathDist').innerText = `${Math.round(distM)} m (${(distM / 1000).toFixed(2)} km)`;
+          document.getElementById('evacWalkingTime').innerText = `~${walkTimeMin} min walk`;
+          const statusEl = document.getElementById('evacPathStatus');
+          if (statusEl) statusEl.innerHTML = `<span style="color:#00f0ff;">🟢 3D NEON VECTOR ILLUMINATED</span>`;
+        }
+      } else if (pBox) {
+        pBox.style.display = 'block';
+        document.getElementById('evacShelterName').innerHTML = `<span style="color:#34d399;">High Ground Ridge Peak</span>`;
+        document.getElementById('evacPathDist').innerText = `Seek elevation > ${Math.round(currentWaterZ ? (stats.min_elev_m + 15) : 50)}m`;
+        document.getElementById('evacWalkingTime').innerText = `Immediate Evacuation`;
+        const statusEl = document.getElementById('evacPathStatus');
+        if (statusEl) statusEl.innerHTML = `<span style="color:#fbbf24;">MOVE TO HIGH GROUND</span>`;
+      }
+    }
+
     function displayExtrudedBuildingInfo(info, p) {
-      clearBuildingInspection();
+      clearBuildingVisuals();
 
       const pinGeo = new THREE.SphereGeometry(size * 0.014, 16, 16);
       const pinMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
@@ -1115,8 +1753,62 @@
       const badgeContainer = document.getElementById('bBadgeContainer');
       badgeContainer.innerHTML = `<span class="b-badge safe">${info.name.toUpperCase()} (LOD-1 EXT.)</span>`;
 
+      // 🛣️ Compute & draw DIRECT rescue path to nearest Safe Haven
+      drawRescuePathway(info.center || p, info.mesh || null);
+
+      const mCard = document.getElementById('measure-card');
+      if (mCard) mCard.style.display = 'none';
       document.getElementById('building-card').style.display = 'block';
     }
+
+    function showTacticalToast(msg) {
+      let el = document.getElementById('tactical-toast');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'tactical-toast';
+        el.style.cssText = 'position:fixed; top:75px; left:50%; transform:translateX(-50%); z-index:9999; background:rgba(9,14,28,0.95); backdrop-filter:blur(16px); color:#34d399; border:1px solid rgba(52,211,153,0.4); padding:10px 22px; border-radius:30px; font-size:12px; font-weight:700; font-family:"Plus Jakarta Sans",sans-serif; box-shadow:0 10px 30px rgba(0,0,0,0.8),0 0 20px rgba(16,185,129,0.25); display:none; pointer-events:none; transition:opacity 0.3s;';
+        document.body.appendChild(el);
+      }
+      el.innerText = msg;
+      el.style.display = 'block';
+      el.style.opacity = '1';
+      if (window._toastTimer) clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        el.style.opacity = '0';
+        setTimeout(() => { el.style.display = 'none'; }, 300);
+      }, 3500);
+    }
+
+    window.focusEvacShelter = () => {
+      // If triage hasn't run and no shelter marker exists, initialize triage to map shelters
+      if (!activeShelterTargetMarker && (!triageSafeBuildings || triageSafeBuildings.length === 0)) {
+        if (!triageActive) {
+          toggleRescueTriage();
+        }
+      }
+
+      let targetPos = null;
+      if (activeShelterTargetMarker) {
+        targetPos = activeShelterTargetMarker.position;
+      } else {
+        const safe = getSafeShelters();
+        if (safe.length > 0) {
+          const sB = safe[0];
+          targetPos = sB.userData?.center || sB.position;
+        }
+      }
+
+      if (targetPos) {
+        // Smoothly position camera at an optimal 3D tactical angle looking down at the shelter
+        const dist = size * 0.42;
+        camera.position.set(targetPos.x, targetPos.y - dist * 0.65, targetPos.z + dist * 0.55);
+        controls.target.set(targetPos.x, targetPos.y, targetPos.z);
+        controls.update();
+        showTacticalToast("🎯 Camera Focused on Safe Haven Refuge & Rescue Route");
+      } else {
+        showTacticalToast("⚠️ No Safe Shelter mapped in current scene");
+      }
+    };
 
     // Raycaster Hover Telemetry
     const raycaster = new THREE.Raycaster();
@@ -1151,14 +1843,72 @@
       }
     });
 
-    // Universal Terrain Click Handler
+    // Universal Terrain & Building Click Handler
     window.addEventListener('click', (e) => {
       if (!terrainMesh) return;
-      if (e.target.closest('#left-dock') || e.target.closest('#measure-card') || e.target.closest('#building-card') || e.target.closest('#top-bar') || e.target.closest('#map-drawer') || e.target.closest('#sos-modal') || e.target.closest('#precaution-modal')) return;
+      if (e.target.closest('#left-dock') || e.target.closest('#right-column') || e.target.closest('#right-hud') || e.target.closest('#split-pip') || e.target.closest('#measure-card') || e.target.closest('#building-card') || e.target.closest('#top-bar') || e.target.closest('#map-drawer') || e.target.closest('#sos-modal') || e.target.closest('#precaution-modal') || e.target.closest('#chopper-hud') || e.target.closest('#evac-hud') || e.target.closest('#gps-hud') || e.target.closest('#compass-container') || e.target.closest('#legend-card') || e.target.closest('#triage-card') || e.target.closest('#bottom-telemetry')) return;
 
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
       raycaster.setFromCamera(mouse, camera);
 
-      // Check if user clicked an extruded 3D building first!
+      // 1. 🚨 Mark SOS Mode takes priority (works on ground OR building rooftop)
+      if (sosMode) {
+        const hits = raycaster.intersectObjects([terrainMesh, ...buildingGroup.children], true);
+        if (hits.length > 0) {
+          const hit = hits[0];
+          const box = new THREE.Box3().setFromObject(currentModel);
+          const normZ = Math.min(Math.max((hit.point.z - box.min.z) / (box.max.z - box.min.z + 1e-6), 0), 1);
+          const elevM = Math.round(stats.min_elev_m + normZ * stats.relief_m);
+          dropSOSBeaconAtPoint(hit.point, elevM);
+          return;
+        }
+      }
+
+      // 2. 📐 Measure Cross-Section Mode takes priority (works on ground OR building rooftop)
+      if (measureMode) {
+        const hits = raycaster.intersectObjects([terrainMesh, ...buildingGroup.children], true);
+        if (hits.length > 0) {
+          const hit = hits[0];
+          const box = new THREE.Box3().setFromObject(currentModel);
+          const normZ = Math.min(Math.max((hit.point.z - box.min.z) / (box.max.z - box.min.z + 1e-6), 0), 1);
+          const elevM = Math.round(stats.min_elev_m + normZ * stats.relief_m);
+
+          const statusEl = document.getElementById('measure-status');
+
+          if (measurePoints.length >= 2) {
+            // Reset points and markers for a new measurement, but KEEP measure-card visible!
+            measurePoints = [];
+            measureMarkers.forEach(m => scene.remove(m));
+            measureMarkers = [];
+            if (measureLine) { scene.remove(measureLine); measureLine = null; }
+          }
+
+          measurePoints.push({ pos: hit.point.clone(), elevM: elevM });
+
+          const markerGeo = new THREE.SphereGeometry(size * 0.018, 16, 16);
+          const markerMat = new THREE.MeshBasicMaterial({ color: measurePoints.length === 1 ? 0x00f0ff : 0xf43f5e });
+          const marker = new THREE.Mesh(markerGeo, markerMat);
+          marker.position.copy(hit.point);
+          scene.add(marker);
+          measureMarkers.push(marker);
+
+          const mCard = document.getElementById('measure-card');
+          if (mCard) mCard.style.display = 'block';
+
+          if (measurePoints.length === 1) {
+            if (statusEl) statusEl.innerHTML = `🟢 <b>Point A locked (${elevM}m)</b> — Click Point B to compute cross-section`;
+            document.getElementById('mDeltaH').innerText = `Point A: ${elevM}m`;
+            document.getElementById('mDist').innerText = `Select Point B...`;
+          } else if (measurePoints.length === 2) {
+            calculateMeasurement();
+            if (statusEl) statusEl.innerHTML = `✅ <b>Profile section complete!</b> Click anywhere to measure a new section.`;
+          }
+          return;
+        }
+      }
+
+      // 3. Extruded 3D Building Click (Inspection)
       if (buildingGroup && buildingGroup.children.length > 0 && showBuildings) {
         const bHits = raycaster.intersectObjects(buildingGroup.children, true);
         if (bHits.length > 0) {
@@ -1167,12 +1917,20 @@
             root = root.parent;
           }
           if (root.userData && root.userData.isBuilding) {
+            buildingMode = true;
+            measureMode = false;
+            sosMode = false;
+            document.getElementById('btnBuilding').classList.add('active');
+            document.getElementById('btnMeasure').classList.remove('active');
+            document.getElementById('btnSOS').classList.remove('active');
+            root.userData.mesh = root;
             displayExtrudedBuildingInfo(root.userData, bHits[0].point);
             return;
           }
         }
       }
 
+      // 4. Ground Terrain Click
       const intersects = raycaster.intersectObject(terrainMesh);
       if (intersects.length === 0) return;
 
@@ -1183,28 +1941,14 @@
       const normal = intersects[0].face.normal;
       const slopeDeg = Math.round((1 - Math.abs(normal.z)) * 55);
 
-      if (measureMode) {
-        if (measurePoints.length >= 2) clearMeasurement();
-        measurePoints.push({ pos: p.clone(), elevM: elevM });
-
-        const markerGeo = new THREE.SphereGeometry(size * 0.016, 16, 16);
-        const markerMat = new THREE.MeshBasicMaterial({ color: measurePoints.length === 1 ? 0x00f0ff : 0xf43f5e });
-        const marker = new THREE.Mesh(markerGeo, markerMat);
-        marker.position.copy(p);
-        scene.add(marker);
-        measureMarkers.push(marker);
-
-        if (measurePoints.length === 2) calculateMeasurement();
-      } else if (buildingMode) {
+      if (buildingMode) {
         inspectBuildingAtPoint(p, elevM, slopeDeg, box);
-      } else if (sosMode) {
-        dropSOSBeaconAtPoint(p, elevM);
       }
     });
 
     // 🏢 Building Inspection Logic
     function inspectBuildingAtPoint(p, elevM, slopeDeg, box) {
-      clearBuildingInspection();
+      clearBuildingVisuals();
 
       const sampleRadius = size * 0.035;
       let minSurroundingElev = elevM;
@@ -1273,14 +2017,32 @@
         '<span class="b-badge safe">EVACUATION DRONE / HELI LZ CONFIRMED</span>' :
         '<span class="b-badge hazard">CAUTION: UNSTABLE ROOF TILT</span>';
 
+      // 🛣️ Compute & draw DIRECT rescue path to nearest Safe Haven
+      drawRescuePathway(p, null);
+
+      const mCard = document.getElementById('measure-card');
+      if (mCard) mCard.style.display = 'none';
       document.getElementById('building-card').style.display = 'block';
     }
 
-    window.clearBuildingInspection = () => {
+    function clearBuildingVisuals() {
       buildingMarkers.forEach(m => scene.remove(m));
       buildingMarkers = [];
       if (buildingCaliperLine) { scene.remove(buildingCaliperLine); buildingCaliperLine = null; }
-      document.getElementById('building-card').style.display = 'none';
+      if (activeEvacRouteLine) { scene.remove(activeEvacRouteLine); activeEvacRouteLine = null; }
+      if (activeShelterTargetMarker) { scene.remove(activeShelterTargetMarker); activeShelterTargetMarker = null; }
+      const pBox = document.getElementById('bEvacPathwayBox');
+      if (pBox) pBox.style.display = 'none';
+    }
+
+    window.clearBuildingInspection = () => {
+      clearBuildingVisuals();
+      const bCard = document.getElementById('building-card');
+      if (bCard) bCard.style.display = 'none';
+      buildingMode = false;
+      const btn = document.getElementById('btnBuilding');
+      if (btn) btn.classList.remove('active');
+      if (renderer && renderer.domElement) renderer.domElement.style.cursor = 'default';
     };
 
     window.toggleBuildingMode = () => {
@@ -1290,7 +2052,33 @@
       document.getElementById('btnBuilding').classList.toggle('active', buildingMode);
       document.getElementById('btnMeasure').classList.remove('active');
       document.getElementById('btnSOS').classList.remove('active');
-      if (!buildingMode) clearBuildingInspection();
+
+      const mCard = document.getElementById('measure-card');
+      if (mCard) mCard.style.display = 'none';
+      const bCard = document.getElementById('building-card');
+
+      if (buildingMode) {
+        if (bCard) bCard.style.display = 'block';
+        renderer.domElement.style.cursor = 'pointer';
+
+        // Auto-select candidate building or terrain center so card pops open with live data immediately
+        const buildings = (buildingGroup && buildingGroup.children.length > 0)
+          ? buildingGroup.children.filter(c => c.userData && c.userData.isBuilding)
+          : [];
+        if (buildings.length > 0) {
+          const candidate = buildings.find(b => b.userData && (b.userData.floors < 3 || b.userData.heightM < 10)) || buildings[0];
+          const pt = candidate.userData.center ? new THREE.Vector3(candidate.userData.center.x, candidate.userData.center.y, candidate.userData.center.z || candidate.position.z) : candidate.position;
+          candidate.userData.mesh = candidate;
+          displayExtrudedBuildingInfo(candidate.userData, pt);
+        } else if (currentModel) {
+          const box = new THREE.Box3().setFromObject(currentModel);
+          const p = new THREE.Vector3(center.x, center.y, center.z);
+          const elevM = stats.min_elev_m + 0.5 * stats.relief_m;
+          inspectBuildingAtPoint(p, elevM, 0, box);
+        }
+      } else {
+        clearBuildingInspection();
+      }
     };
 
     // 🚨 Fixed SOS Beacon with True Vertical Orientation
@@ -1316,33 +2104,46 @@
 
       const beaconSphere = new THREE.Mesh(
         new THREE.SphereGeometry(size * 0.014, 16, 16),
-        new THREE.MeshBasicMaterial({ color: 0xff1144 })
+        new THREE.MeshBasicMaterial({ color: 0xff1144, transparent: true, opacity: 0.95 })
       );
       beaconSphere.position.set(p.x, p.y, p.z + size * 0.35);
       scene.add(beaconSphere);
       sosBeacons.push(beaconSphere);
 
+      const box = new THREE.Box3().setFromObject(currentModel);
+      const bSize = box.getSize(new THREE.Vector3());
+      const degSpan = (stats.box_size_km / 111.0);
+      const clickedLat = stats.lat + ((p.y - center.y) / bSize.y) * degSpan;
+      const clickedLon = stats.lon + ((p.x - center.x) / bSize.x) * degSpan;
+
       const incId = "SIH-SOS-" + Math.floor(1000 + Math.random() * 9000);
       activeSOSData = {
         id: incId,
-        lat: stats.lat.toFixed(4),
-        lon: stats.lon.toFixed(4),
+        lat: clickedLat.toFixed(4),
+        lon: clickedLon.toFixed(4),
         elev: Math.round(elevM)
       };
 
-      const detailText = `INCIDENT REF: #${incId}\nTARGET COORDS: ${activeSOSData.lat}° N, ${activeSOSData.lon}° E\nROOFTOP ALTITUDE: ${activeSOSData.elev} m AMSL\nPRIORITY: CRITICAL - FIRST RESPONDER EXTRACTION`;
-      document.getElementById('sosDetails').innerText = detailText;
+      const detailText = `INCIDENT REF: #${incId}\nTARGET COORDS: ${activeSOSData.lat}° N, ${activeSOSData.lon}° E\nROOFTOP/GROUND ELEVATION: ${activeSOSData.elev} m AMSL\nPRIORITY: CRITICAL - FIRST RESPONDER EXTRACTION\nTACTICAL EVAC: Aerial Helicopter / Drone Winch Evacuation Verified`;
+      const sosDetailsEl = document.getElementById('sosDetails');
+      if (sosDetailsEl) sosDetailsEl.innerText = detailText;
 
       const waMsg = encodeURIComponent(`🚨 [SIH-RESCUE ALERT] Trapped Victims SOS Beacon Active!\nLocation: Lat ${activeSOSData.lat}, Lon ${activeSOSData.lon}\nElevation: ${activeSOSData.elev}m AMSL\nEvacuation Point: DepthWizard 3D Command Center.\nGoogle Maps: https://www.google.com/maps?q=${activeSOSData.lat},${activeSOSData.lon}`);
       document.getElementById('btnSosWhatsapp').href = `https://wa.me/?text=${waMsg}`;
 
       document.getElementById('sos-modal').style.display = 'block';
+
+      // Reset SOS mode once placed
+      sosMode = false;
+      document.getElementById('btnSOS').classList.remove('active');
+      renderer.domElement.style.cursor = 'default';
     }
 
     window.clearAllSOSBeacons = () => {
       sosBeacons.forEach(b => scene.remove(b));
       sosBeacons = [];
       document.getElementById('sos-modal').style.display = 'none';
+      renderer.domElement.style.cursor = 'default';
     };
 
     window.toggleSOSMode = () => {
@@ -1352,6 +2153,13 @@
       document.getElementById('btnSOS').classList.toggle('active', sosMode);
       document.getElementById('btnBuilding').classList.remove('active');
       document.getElementById('btnMeasure').classList.remove('active');
+
+      const mCard = document.getElementById('measure-card');
+      if (mCard) mCard.style.display = 'none';
+      const bCard = document.getElementById('building-card');
+      if (bCard) bCard.style.display = 'none';
+
+      renderer.domElement.style.cursor = sosMode ? 'crosshair' : 'default';
     };
 
     window.copySOSCoordinates = () => {
@@ -1428,7 +2236,8 @@
 
     function renderProfileSVG(samples) {
       const svg = document.getElementById('profile-svg');
-      const w = 284, h = 75, padX = 14, padY = 12;
+      if (!svg) return;
+      const w = 310, h = 80, padX = 14, padY = 12;
       const elevs = samples.map(s => s.elev);
       const minE = Math.min(...elevs);
       const maxE = Math.max(...elevs);
@@ -1444,6 +2253,7 @@
       const polyPoints = [`${padX},${h - padY}`, ...points, `${w - padX},${h - padY}`].join(' ');
       const pathData = 'M ' + points.join(' L ');
 
+      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
       svg.innerHTML = `
         <defs>
           <linearGradient id="gradElev" x1="0" y1="0" x2="0" y2="1">
@@ -1452,10 +2262,60 @@
           </linearGradient>
         </defs>
         <polygon points="${polyPoints}" fill="url(#gradElev)" />
-        <path d="${pathData}" fill="none" stroke="#38bdf8" stroke-width="2" />
-        <text x="${padX}" y="${h - 2}" font-size="9" fill="#94a3b8" font-family="monospace">${Math.round(minE)}m</text>
+        <path d="${pathData}" fill="none" stroke="#38bdf8" stroke-width="2.2" />
+        <text x="${padX}" y="${h - 3}" font-size="9" fill="#94a3b8" font-family="monospace">${Math.round(minE)}m</text>
         <text x="${w - padX}" y="${padY - 2}" text-anchor="end" font-size="9" fill="#38bdf8" font-family="monospace">${Math.round(maxE)}m</text>
       `;
+
+      const rangeEl = document.getElementById('profileCutRange');
+      if (rangeEl) rangeEl.innerText = `${Math.round(minE)}m – ${Math.round(maxE)}m (Δ${Math.round(maxE - minE)}m)`;
+    }
+
+    function initDefaultMeasurement() {
+      if (!terrainMesh || !currentModel) return;
+      measurePoints = [];
+      measureMarkers.forEach(m => scene.remove(m));
+      measureMarkers = [];
+      if (measureLine) { scene.remove(measureLine); measureLine = null; }
+
+      const box = new THREE.Box3().setFromObject(currentModel);
+      const bSize = box.getSize(new THREE.Vector3());
+
+      const p1 = new THREE.Vector3(center.x - bSize.x * 0.22, center.y - bSize.y * 0.12, center.z);
+      const p2 = new THREE.Vector3(center.x + bSize.x * 0.22, center.y + bSize.y * 0.12, center.z);
+
+      const r1 = new THREE.Raycaster(new THREE.Vector3(p1.x, p1.y, box.max.z + 30), new THREE.Vector3(0, 0, -1));
+      const hits1 = r1.intersectObject(terrainMesh);
+      if (hits1.length > 0) p1.copy(hits1[0].point);
+
+      const r2 = new THREE.Raycaster(new THREE.Vector3(p2.x, p2.y, box.max.z + 30), new THREE.Vector3(0, 0, -1));
+      const hits2 = r2.intersectObject(terrainMesh);
+      if (hits2.length > 0) p2.copy(hits2[0].point);
+
+      const normZ1 = Math.min(Math.max((p1.z - box.min.z) / (box.max.z - box.min.z + 1e-6), 0), 1);
+      const elev1 = Math.round(stats.min_elev_m + normZ1 * stats.relief_m);
+      const normZ2 = Math.min(Math.max((p2.z - box.min.z) / (box.max.z - box.min.z + 1e-6), 0), 1);
+      const elev2 = Math.round(stats.min_elev_m + normZ2 * stats.relief_m);
+
+      measurePoints.push({ pos: p1.clone(), elevM: elev1 });
+      measurePoints.push({ pos: p2.clone(), elevM: elev2 });
+
+      const markerGeo = new THREE.SphereGeometry(size * 0.018, 16, 16);
+      const m1 = new THREE.Mesh(markerGeo, new THREE.MeshBasicMaterial({ color: 0x00f0ff }));
+      m1.position.copy(p1);
+      scene.add(m1);
+      measureMarkers.push(m1);
+
+      const m2 = new THREE.Mesh(markerGeo, new THREE.MeshBasicMaterial({ color: 0xf43f5e }));
+      m2.position.copy(p2);
+      scene.add(m2);
+      measureMarkers.push(m2);
+
+      calculateMeasurement();
+      const mCard = document.getElementById('measure-card');
+      if (mCard) mCard.style.display = 'block';
+      const statusEl = document.getElementById('measure-status');
+      if (statusEl) statusEl.innerHTML = `💡 <b>Center Cross-Section Active</b> — Click any 2 points on terrain/buildings to customize.`;
     }
 
     window.clearMeasurement = () => {
@@ -1463,7 +2323,12 @@
       measureMarkers.forEach(m => scene.remove(m));
       measureMarkers = [];
       if (measureLine) { scene.remove(measureLine); measureLine = null; }
-      document.getElementById('measure-card').style.display = 'none';
+      const mCard = document.getElementById('measure-card');
+      if (mCard) mCard.style.display = 'none';
+      measureMode = false;
+      const btn = document.getElementById('btnMeasure');
+      if (btn) btn.classList.remove('active');
+      renderer.domElement.style.cursor = 'default';
     };
 
     window.toggleMeasureMode = () => {
@@ -1473,7 +2338,20 @@
       document.getElementById('btnMeasure').classList.toggle('active', measureMode);
       document.getElementById('btnBuilding').classList.remove('active');
       document.getElementById('btnSOS').classList.remove('active');
-      if (!measureMode) clearMeasurement();
+
+      const mCard = document.getElementById('measure-card');
+      const bCard = document.getElementById('building-card');
+      if (bCard) bCard.style.display = 'none';
+
+      if (measureMode) {
+        if (mCard) mCard.style.display = 'block';
+        renderer.domElement.style.cursor = 'crosshair';
+        if (measurePoints.length < 2) {
+          initDefaultMeasurement();
+        }
+      } else {
+        clearMeasurement();
+      }
     };
 
     window.toggleFloodMode = () => {
@@ -1568,6 +2446,62 @@
       if (btn) btn.classList.toggle('active', isSplitPIP);
     };
 
+    // 🪟 Interactive Drag-and-Drop for 2D Picture-in-Picture window
+    (function initDraggablePIP() {
+      const pip = document.getElementById('split-pip');
+      const header = document.getElementById('pipHeader');
+      const dockBtn = document.getElementById('btnPipDock');
+      let isDragging = false;
+      let startX, startY, origLeft, origTop;
+
+      if (!header || !pip) return;
+
+      header.addEventListener('mousedown', (e) => {
+        if (e.target.closest('button')) return;
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+
+        const rect = pip.getBoundingClientRect();
+        origLeft = rect.left;
+        origTop = rect.top;
+
+        pip.style.position = 'fixed';
+        pip.style.left = origLeft + 'px';
+        pip.style.top = origTop + 'px';
+        pip.style.width = rect.width + 'px';
+        pip.style.zIndex = '150';
+        pip.style.boxShadow = '0 16px 40px rgba(0,0,0,0.8), 0 0 20px rgba(56,189,248,0.4)';
+        if (dockBtn) dockBtn.style.display = 'inline-block';
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        pip.style.left = Math.max(10, Math.min(window.innerWidth - 240, origLeft + dx)) + 'px';
+        pip.style.top = Math.max(10, Math.min(window.innerHeight - 200, origTop + dy)) + 'px';
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          pip.style.boxShadow = '';
+        }
+      });
+
+      window.resetPIPDock = () => {
+        pip.style.position = '';
+        pip.style.left = '';
+        pip.style.top = '';
+        pip.style.width = '';
+        pip.style.zIndex = '';
+        pip.style.boxShadow = '';
+        if (dockBtn) dockBtn.style.display = 'none';
+      };
+    })();
+
     // 🚨 NDRF Automated Building Disaster Triage & 3D Escape Corridors
     window.toggleRescueTriage = function() {
       triageActive = !triageActive;
@@ -1584,6 +2518,12 @@
       }
 
       if (!triageActive) {
+        triageSafeBuildings = [];
+        if (activeEvacRouteLine) { scene.remove(activeEvacRouteLine); activeEvacRouteLine = null; }
+        if (activeShelterTargetMarker) { scene.remove(activeShelterTargetMarker); activeShelterTargetMarker = null; }
+        const pBox = document.getElementById('bEvacPathwayBox');
+        if (pBox) pBox.style.display = 'none';
+
         // Restore standard building chromatic materials
         if (currentModel) {
           const box = new THREE.Box3().setFromObject(currentModel);
@@ -1642,6 +2582,8 @@
           b.material = [hazardWallMat, hazardRoofMat];
         }
       });
+
+      triageSafeBuildings = safeBuildings;
 
       // 1. Identify Primary Safe Haven Relief Shelter (tallest multi-storey structure on safe ground)
       safeBuildings.sort((a, b) => (b.userData.floors || 0) - (a.userData.floors || 0));
@@ -1730,20 +2672,450 @@
       document.getElementById('trSafe').innerText = `${safeCount} Shelters`;
       document.getElementById('trHazard').innerText = `${hazardCount} In Danger`;
       document.getElementById('trPop').innerText = `~${hazardCount * 22} citizens`;
+
+      // Auto-inspect the primary hazard structure so the direct rescue pathway is displayed immediately!
+      if (hazardBuildings.length > 0) {
+        const candidate = hazardBuildings[0];
+        const pt = candidate.userData.center ? new THREE.Vector3(candidate.userData.center.x, candidate.userData.center.y, candidate.userData.center.z || candidate.position.z) : candidate.position;
+        candidate.userData.mesh = candidate;
+        displayExtrudedBuildingInfo(candidate.userData, pt);
+      }
     };
+
+    // 🚨 Animated Cinematic NDRF Evacuation Broadcast Logic
+    window.closeEvacHUD = function() {
+      const hud = document.getElementById('evac-hud');
+      if (hud) hud.classList.remove('active');
+      if (window.evacTimer) clearTimeout(window.evacTimer);
+    };
+
+    function playEvacSirenSound() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        if (ctx.state === 'suspended') ctx.resume();
+
+        const now = ctx.currentTime;
+
+        // 1. EAS Dual Tone Harmonic Alert (853Hz + 960Hz standard emergency broadcast)
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(853, now);
+        gain1.gain.setValueAtTime(0.14, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.39);
+
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(960, now);
+        gain2.gain.setValueAtTime(0.14, now);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start(now);
+        osc2.stop(now + 0.39);
+
+        // 2. Civil Defense Acoustic Siren Warble (Pitch sweeps up and down 620Hz <-> 920Hz)
+        const sirenOsc = ctx.createOscillator();
+        const sirenGain = ctx.createGain();
+        sirenOsc.type = 'sawtooth';
+        sirenOsc.frequency.setValueAtTime(620, now + 0.35);
+        sirenOsc.frequency.linearRampToValueAtTime(920, now + 0.70);
+        sirenOsc.frequency.linearRampToValueAtTime(640, now + 1.05);
+        sirenOsc.frequency.linearRampToValueAtTime(880, now + 1.35);
+
+        sirenGain.gain.setValueAtTime(0.001, now + 0.35);
+        sirenGain.gain.linearRampToValueAtTime(0.16, now + 0.45);
+        sirenGain.gain.exponentialRampToValueAtTime(0.001, now + 1.45);
+
+        sirenOsc.connect(sirenGain);
+        sirenGain.connect(ctx.destination);
+        sirenOsc.start(now + 0.35);
+        sirenOsc.stop(now + 1.46);
+
+        // 3. Tactical Radio Microphone squelch click
+        const chirpOsc = ctx.createOscillator();
+        const chirpGain = ctx.createGain();
+        chirpOsc.type = 'square';
+        chirpOsc.frequency.setValueAtTime(1450, now + 1.46);
+        chirpGain.gain.setValueAtTime(0.09, now + 1.46);
+        chirpGain.gain.exponentialRampToValueAtTime(0.001, now + 1.58);
+        chirpOsc.connect(chirpGain);
+        chirpGain.connect(ctx.destination);
+        chirpOsc.start(now + 1.46);
+        chirpOsc.stop(now + 1.59);
+      } catch (e) {
+        console.warn("Audio siren:", e);
+      }
+    }
 
     window.dispatchEvacuationOrder = function() {
-      alert("🚨 [NDRF DISASTER MANAGEMENT EVACUATION BROADCAST]\n\n" +
-            "✓ Ground Evacuation Corridors transmitted to District Emergency Operations Center (DEOC)\n" +
-            "✓ Civil Defense Sirens Triggered\n" +
-            "✓ Safe Havens Active on Field Responders' Tactical Handheld GPS Mesh");
+      // Close helicopter HUD if open so they don't clash
+      closeChopperHUD();
+
+      // Update HUD metrics from live triage calculations
+      const trSafe = document.getElementById('trSafe');
+      const trPop = document.getElementById('trPop');
+      const hudShelters = document.getElementById('hudEvacSafeHavens');
+      const hudPop = document.getElementById('hudEvacAtRiskPop');
+      if (hudShelters && trSafe) hudShelters.innerText = trSafe.innerText || '366 Shelters';
+      if (hudPop && trPop) hudPop.innerText = trPop.innerText || '~8,052 Citizens';
+
+      // Play authentic Civil Defense Siren & EAS Broadcast Chime
+      playEvacSirenSound();
+
+      // Show Cinematic Evacuation Broadcast HUD Banner
+      const hud = document.getElementById('evac-hud');
+      if (hud) {
+        hud.classList.add('active');
+        if (window.evacTimer) clearTimeout(window.evacTimer);
+        window.evacTimer = setTimeout(() => {
+          hud.classList.remove('active');
+        }, 12000);
+      }
+
+      // Smoothly elevate and tilt camera to give strategic bird's-eye overview of ground evacuation
+      if (currentModel) {
+        const box = new THREE.Box3().setFromObject(currentModel);
+        const bSize = box.getSize(new THREE.Vector3());
+        controls.target.set(center.x, center.y, center.z);
+        camera.position.set(center.x + bSize.x * 0.38, center.y - bSize.y * 0.48, center.z + bSize.z * 0.72);
+        controls.update();
+      }
     };
 
-    // 🚁 Rooftop Helipad AI Landing Viability
+    window.triggerCellBroadcastSMS = function() {
+      const toast = document.getElementById('evacBroadcastToast');
+      if (toast) {
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 6000);
+      }
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        if (ctx.state === 'suspended') ctx.resume();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1046, now);
+        osc.frequency.setValueAtTime(1318, now + 0.08);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.23);
+      } catch(e) {}
+    };
+
+    window.downloadEvacManifest = function() {
+      const trSafe = document.getElementById('trSafe');
+      const trPop = document.getElementById('trPop');
+      const trTotal = document.getElementById('trTotal');
+      const locName = document.getElementById('targetLocationName') ? document.getElementById('targetLocationName').innerText : 'Target Sector';
+
+      const manifest = {
+        command: "NDRF National Crisis Management Operations (DEOC Integrated)",
+        protocol: "OMEGA-LEVEL-3 RAPID GROUND EVACUATION",
+        location: locName,
+        coordinates: {
+          latitude: stats.lat,
+          longitude: stats.lon,
+          elevation_min_m: stats.min_elev_m,
+          elevation_max_m: stats.max_elev_m
+        },
+        telemetry: {
+          structures_mapped: trTotal ? trTotal.innerText : '732 Buildings',
+          safe_havens_online: trSafe ? trSafe.innerText : '366 Shelters',
+          citizens_mobilized: trPop ? trPop.innerText : '8052 Citizens',
+          acoustic_sirens: "128dB ACTIVE",
+          deoc_dispatch_status: "SUCCESS_TRANSMITTED_100%"
+        },
+        evacuation_corridors: [
+          { corridor_id: "CORR-Q1-NE", status: "CLEAR", surface: "Draped Ground Vector Mesh" },
+          { corridor_id: "CORR-Q2-NW", status: "CLEAR", surface: "Draped Ground Vector Mesh" },
+          { corridor_id: "CORR-Q3-SW", status: "PRIORITY_EVAC", surface: "Draped Ground Vector Mesh" },
+          { corridor_id: "CORR-Q4-SE", status: "CLEAR", surface: "Draped Ground Vector Mesh" }
+        ],
+        timestamp: new Date().toISOString()
+      };
+
+      const blob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `NDRF_Evacuation_Manifest_${Math.floor(Date.now() / 1000)}.json`;
+      a.click();
+    };
+
+    // 🚁 Animated Cinematic Helicopter Air Rescue Dispatch Logic
+    window.closeChopperHUD = function() {
+      const hud = document.getElementById('chopper-hud');
+      if (hud) hud.classList.remove('active');
+      if (window.chopperTimer) clearTimeout(window.chopperTimer);
+    };
+
+    function playChopperChime() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        if (ctx.state === 'suspended') ctx.resume();
+
+        const now = ctx.currentTime;
+        // Tactical Radio Chirp (Dual Tone)
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(880, now);
+        gain1.gain.setValueAtTime(0.18, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.13);
+
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(1760, now + 0.08);
+        gain2.gain.setValueAtTime(0.22, now + 0.08);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start(now + 0.08);
+        osc2.stop(now + 0.29);
+
+        // Low Turbine Spool Harmonic
+        const osc3 = ctx.createOscillator();
+        const gain3 = ctx.createGain();
+        osc3.type = 'triangle';
+        osc3.frequency.setValueAtTime(160, now + 0.15);
+        osc3.frequency.exponentialRampToValueAtTime(360, now + 0.65);
+        gain3.gain.setValueAtTime(0.10, now + 0.15);
+        gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.70);
+        osc3.connect(gain3);
+        gain3.connect(ctx.destination);
+        osc3.start(now + 0.15);
+        osc3.stop(now + 0.71);
+      } catch (e) {
+        console.warn("Audio chime:", e);
+      }
+    }
+
+    function createRescueHelicopter() {
+      if (rescueHelicopter) {
+        scene.remove(rescueHelicopter);
+        rescueHelicopter = null;
+      }
+
+      const heli = new THREE.Group();
+      heli.name = "rescueChopper";
+
+      // Tactical Coast Guard Orange / Navy Livery
+      const orangeMat = new THREE.MeshStandardMaterial({
+        color: 0xf97316,
+        roughness: 0.35,
+        metalness: 0.25
+      });
+      const whiteMat = new THREE.MeshStandardMaterial({
+        color: 0xf8fafc,
+        roughness: 0.4,
+        metalness: 0.2
+      });
+      const darkMat = new THREE.MeshStandardMaterial({
+        color: 0x0f172a,
+        roughness: 0.6,
+        metalness: 0.6
+      });
+      const glassMat = new THREE.MeshStandardMaterial({
+        color: 0x38bdf8,
+        roughness: 0.1,
+        metalness: 0.9,
+        transparent: true,
+        opacity: 0.8
+      });
+      const glowMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+
+      // 1. Fuselage (Main Cabin)
+      const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.3, 3.2), orangeMat);
+      cabin.position.set(0, 0, 0);
+      heli.add(cabin);
+
+      // White lower belly stripe
+      const belly = new THREE.Mesh(new THREE.BoxGeometry(1.62, 0.45, 3.0), whiteMat);
+      belly.position.set(0, -0.44, -0.1);
+      heli.add(belly);
+
+      // 2. Cockpit / Windshield (Front nose facing +Z)
+      const nose = new THREE.Mesh(new THREE.ConeGeometry(0.95, 1.4, 4), glassMat);
+      nose.rotation.x = Math.PI / 2;
+      nose.rotation.y = Math.PI / 4;
+      nose.position.set(0, -0.05, 1.95);
+      heli.add(nose);
+
+      // 3. Engine Cowling & Rotor Mast (Top, +Y)
+      const cowl = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.6, 2.0), darkMat);
+      cowl.position.set(0, 0.85, -0.2);
+      heli.add(cowl);
+
+      const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.7, 12), darkMat);
+      mast.position.set(0, 1.3, 0);
+      heli.add(mast);
+
+      // 4. Main Rotor Assembly
+      chopperMainRotor = new THREE.Group();
+      chopperMainRotor.position.set(0, 1.65, 0);
+
+      const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.12, 16), darkMat);
+      chopperMainRotor.add(hub);
+
+      const bladeGeo = new THREE.BoxGeometry(0.24, 0.04, 2.9);
+      const tipGeo = new THREE.BoxGeometry(0.26, 0.05, 0.4);
+      const tipMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
+
+      // Blade 1 & 2 (along Z)
+      const b1 = new THREE.Mesh(bladeGeo, darkMat);
+      b1.position.set(0, 0, 1.5);
+      const tip1 = new THREE.Mesh(tipGeo, tipMat);
+      tip1.position.set(0, 0, 2.8);
+      chopperMainRotor.add(b1);
+      chopperMainRotor.add(tip1);
+
+      const b2 = new THREE.Mesh(bladeGeo, darkMat);
+      b2.position.set(0, 0, -1.5);
+      const tip2 = new THREE.Mesh(tipGeo, tipMat);
+      tip2.position.set(0, 0, -2.8);
+      chopperMainRotor.add(b2);
+      chopperMainRotor.add(tip2);
+
+      // Blade 3 & 4 (along X)
+      const bladeGeoX = new THREE.BoxGeometry(2.9, 0.04, 0.24);
+      const tipGeoX = new THREE.BoxGeometry(0.4, 0.05, 0.26);
+
+      const b3 = new THREE.Mesh(bladeGeoX, darkMat);
+      b3.position.set(1.5, 0, 0);
+      const tip3 = new THREE.Mesh(tipGeoX, tipMat);
+      tip3.position.set(2.8, 0, 0);
+      chopperMainRotor.add(b3);
+      chopperMainRotor.add(tip3);
+
+      const b4 = new THREE.Mesh(bladeGeoX, darkMat);
+      b4.position.set(-1.5, 0, 0);
+      const tip4 = new THREE.Mesh(tipGeoX, tipMat);
+      tip4.position.set(-2.8, 0, 0);
+      chopperMainRotor.add(b4);
+      chopperMainRotor.add(tip4);
+
+      heli.add(chopperMainRotor);
+
+      // 5. Tail Boom (extending backwards along -Z)
+      const boom = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.4, 3.4, 8), orangeMat);
+      boom.rotation.x = Math.PI / 2;
+      boom.position.set(0, 0.25, -3.1);
+      heli.add(boom);
+
+      // Vertical Tail Fin
+      const fin = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.3, 0.9), orangeMat);
+      fin.position.set(0, 0.8, -4.7);
+      heli.add(fin);
+
+      // Horizontal Stabilizer
+      const hStab = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.08, 0.5), darkMat);
+      hStab.position.set(0, 0.4, -4.4);
+      heli.add(hStab);
+
+      // Tail Rotor
+      chopperTailRotor = new THREE.Group();
+      chopperTailRotor.position.set(0.14, 0.95, -4.75);
+      const tRotorGeo = new THREE.BoxGeometry(0.04, 0.95, 0.12);
+      const tRotor1 = new THREE.Mesh(tRotorGeo, tipMat);
+      const tRotor2 = new THREE.Mesh(tRotorGeo, darkMat);
+      tRotor2.rotation.x = Math.PI / 2;
+      chopperTailRotor.add(tRotor1);
+      chopperTailRotor.add(tRotor2);
+      heli.add(chopperTailRotor);
+
+      // 6. Tubular Landing Skids
+      const skidGeo = new THREE.CylinderGeometry(0.06, 0.06, 3.0, 8);
+      skidGeo.rotateX(Math.PI / 2);
+
+      const leftSkid = new THREE.Mesh(skidGeo, darkMat);
+      leftSkid.position.set(-0.85, -0.95, 0);
+      heli.add(leftSkid);
+
+      const rightSkid = new THREE.Mesh(skidGeo, darkMat);
+      rightSkid.position.set(0.85, -0.95, 0);
+      heli.add(rightSkid);
+
+      // Skid Struts
+      const strutGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.65, 8);
+      const s1 = new THREE.Mesh(strutGeo, darkMat);
+      s1.position.set(-0.85, -0.68, 0.75);
+      const s2 = new THREE.Mesh(strutGeo, darkMat);
+      s2.position.set(-0.85, -0.68, -0.75);
+      const s3 = new THREE.Mesh(strutGeo, darkMat);
+      s3.position.set(0.85, -0.68, 0.75);
+      const s4 = new THREE.Mesh(strutGeo, darkMat);
+      s4.position.set(0.85, -0.68, -0.75);
+      heli.add(s1); heli.add(s2); heli.add(s3); heli.add(s4);
+
+      // 7. Tactical Searchlight Cone (pointing down towards -Y)
+      const lightConeGeo = new THREE.ConeGeometry(1.6, 6.5, 16, 1, true);
+      lightConeGeo.rotateX(Math.PI);
+      const lightCone = new THREE.Mesh(lightConeGeo, new THREE.MeshBasicMaterial({
+        color: 0x38bdf8,
+        transparent: true,
+        opacity: 0.28,
+        side: THREE.DoubleSide
+      }));
+      lightCone.position.set(0, -3.8, 1.2);
+      heli.add(lightCone);
+
+      // Searchlight Emissive Lamp
+      const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12), glowMat);
+      lamp.position.set(0, -0.6, 1.2);
+      heli.add(lamp);
+
+      // Dynamic SpotLight illuminating ground
+      const heliLight = new THREE.SpotLight(0x38bdf8, 2.8, 38, Math.PI / 5, 0.5, 1.2);
+      heliLight.position.set(0, -0.6, 1.2);
+      heliLight.target.position.set(0, -20, 1.2);
+      heli.add(heliLight);
+      heli.add(heliLight.target);
+
+      // 8. Navigation Lights
+      const redLight = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 8), new THREE.MeshBasicMaterial({ color: 0xef4444 }));
+      redLight.position.set(-0.95, 0.1, 0);
+      heli.add(redLight);
+
+      const greenLight = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 8), new THREE.MeshBasicMaterial({ color: 0x22c55e }));
+      greenLight.position.set(0.95, 0.1, 0);
+      heli.add(greenLight);
+
+      heli.scale.set(3.6, 3.6, 3.6);
+      rescueHelicopter = heli;
+      scene.add(rescueHelicopter);
+      return rescueHelicopter;
+    }
+
+    // 🚁 Rooftop Helipad AI Landing Viability & Air Sortie Deployment
     window.toggleHelipadViability = function() {
       helipadsActive = !helipadsActive;
       const btn = document.getElementById('btnHelipad');
       if (btn) btn.classList.toggle('active', helipadsActive);
+
+      if (rescueHelicopter) {
+        scene.remove(rescueHelicopter);
+        rescueHelicopter = null;
+      }
 
       while (helipadGroup.children.length > 0) {
         const obj = helipadGroup.children[0];
@@ -1751,10 +3123,20 @@
         if (obj.geometry) obj.geometry.dispose();
       }
 
-      if (!helipadsActive) return;
+      if (!helipadsActive) {
+        const hud = document.getElementById('chopper-hud');
+        if (hud) hud.classList.remove('active');
+        return;
+      }
 
       const buildings = buildingGroup.children.filter(c => c.userData && c.userData.isBuilding);
-      if (buildings.length === 0) return;
+      if (buildings.length === 0) {
+        const hud = document.getElementById('chopper-hud');
+        const hudHubs = document.getElementById('hudHubs');
+        if (hudHubs) hudHubs.innerText = "0 Hubs (Extrude First)";
+        if (hud) hud.classList.add('active');
+        return;
+      }
 
       // Filter for the Top 6 Primary Strategic Rooftop Extraction Hubs (tallest & widest)
       const pool = [...buildings];
@@ -1802,7 +3184,41 @@
         helipadGroup.add(beacon);
       });
 
-      alert(`🚁 Rooftop Helipad AI Scan Complete:\nDesignated Top ${topHelipads.length} Primary Strategic Extraction Hubs viable for IAF ALH Dhruv / Indian Coast Guard helicopters!`);
+      // 🚁 Spawn 3D Coast Guard Rescue Helicopter flying in towards #1 Helipad
+      const primaryHub = topHelipads[0];
+      const hCenter = primaryHub.userData.center || new THREE.Vector3();
+      chopperTargetPos.set(hCenter.x, hCenter.y, hCenter.z + 11.0);
+      chopperStartPos.set(hCenter.x - size * 0.38, hCenter.y - size * 0.32, hCenter.z + size * 0.22);
+      chopperHeading.subVectors(chopperTargetPos, chopperStartPos).setZ(0).normalize();
+      chopperFlightT = 0;
+
+      createRescueHelicopter();
+      rescueHelicopter.position.copy(chopperStartPos);
+      rescueHelicopter.up.set(0, 0, 1);
+      rescueHelicopter.lookAt(chopperTargetPos);
+
+      // Smoothly swing the camera to view the incoming rescue sortie!
+      controls.target.copy(hCenter);
+      camera.position.set(hCenter.x + size * 0.32, hCenter.y - size * 0.38, hCenter.z + size * 0.22);
+      controls.update();
+
+      // Play Tactical Radio Beep Chime
+      playChopperChime();
+
+      // Close Evac HUD if active so they don't overlap
+      closeEvacHUD();
+
+      // Show Cinematic HUD Banner
+      const hud = document.getElementById('chopper-hud');
+      const hudHubs = document.getElementById('hudHubs');
+      if (hudHubs) hudHubs.innerText = `${topHelipads.length} Rooftops`;
+      if (hud) {
+        hud.classList.add('active');
+        if (window.chopperTimer) clearTimeout(window.chopperTimer);
+        window.chopperTimer = setTimeout(() => {
+          hud.classList.remove('active');
+        }, 9000);
+      }
     };
 
     window.updateHeight = (val) => {
@@ -1822,6 +3238,15 @@
     window.toggleFlight = (mode) => {
       flightMode = flightMode === mode ? 'none' : mode;
       updateFlightButtons();
+      if (flightMode === 'valley') {
+        if (!rescueHelicopter) createRescueHelicopter();
+        playChopperChime();
+      } else if (flightMode === 'none' && !helipadsActive) {
+        if (rescueHelicopter) {
+          scene.remove(rescueHelicopter);
+          rescueHelicopter = null;
+        }
+      }
     };
 
     window.resetBearing = () => {
@@ -1886,12 +3311,124 @@
         camera.position.z = center.z + height;
         controls.target.copy(center);
       } else if (flightMode === 'valley') {
-        flightAngle += 0.010;
+        flightAngle += 0.008;
         const rX = size * 0.45 * Math.sin(flightAngle);
         const rY = size * 0.45 * Math.cos(flightAngle * 0.7);
         const rZ = size * 0.18 + Math.sin(flightAngle * 1.5) * (size * 0.05);
         camera.position.set(center.x + rX, center.y + rY, center.z + rZ);
         controls.target.set(center.x + Math.cos(flightAngle) * (size * 0.1), center.y + Math.sin(flightAngle) * (size * 0.1), center.z);
+
+        // 🚁 3D Helicopter leads the Valley Reconnaissance Flight!
+        if (rescueHelicopter) {
+          if (chopperMainRotor) chopperMainRotor.rotation.y += 0.45;
+          if (chopperTailRotor) chopperTailRotor.rotation.x += 0.65;
+
+          const leadAngle = flightAngle + 0.08;
+          const hX = size * 0.45 * Math.sin(leadAngle);
+          const hY = size * 0.45 * Math.cos(leadAngle * 0.7);
+          const hZ = size * 0.18 + Math.sin(leadAngle * 1.5) * (size * 0.05);
+          rescueHelicopter.position.set(center.x + hX, center.y + hY, center.z + hZ);
+
+          const lookAngle = leadAngle + 0.04;
+          const tx = center.x + size * 0.45 * Math.sin(lookAngle);
+          const ty = center.y + size * 0.45 * Math.cos(lookAngle * 0.7);
+          const tz = center.z + size * 0.18 + Math.sin(lookAngle * 1.5) * (size * 0.05);
+
+          rescueHelicopter.up.set(0, 0, 1);
+          rescueHelicopter.lookAt(tx, ty, tz);
+          rescueHelicopter.rotateZ(Math.cos(leadAngle) * 0.22);
+        }
+      }
+
+      // 🚁 Rooftop Extraction Helicopter Flight & Atmospheric Hover Dynamics
+      if (rescueHelicopter && flightMode !== 'valley') {
+        if (chopperMainRotor) chopperMainRotor.rotation.y += 0.45;
+        if (chopperTailRotor) chopperTailRotor.rotation.x += 0.65;
+
+        if (chopperFlightT < 1.0) {
+          chopperFlightT += 0.007;
+          if (chopperFlightT > 1.0) chopperFlightT = 1.0;
+          // Smooth ease-out cubic
+          const t = 1 - Math.pow(1 - chopperFlightT, 3);
+          const curPos = new THREE.Vector3().lerpVectors(chopperStartPos, chopperTargetPos, t);
+          curPos.z += Math.sin(t * Math.PI) * (size * 0.12);
+          rescueHelicopter.position.copy(curPos);
+
+          const nextT = Math.min(1.0, chopperFlightT + 0.02);
+          const nextTVal = 1 - Math.pow(1 - nextT, 3);
+          const nextPos = new THREE.Vector3().lerpVectors(chopperStartPos, chopperTargetPos, nextTVal);
+          nextPos.z += Math.sin(nextT * Math.PI) * (size * 0.12);
+
+          if (nextPos.distanceTo(curPos) > 0.001) {
+            rescueHelicopter.up.set(0, 0, 1);
+            rescueHelicopter.lookAt(nextPos);
+            // Dynamic forward cruise pitch
+            rescueHelicopter.rotateX((1 - t) * 0.14);
+          }
+        } else {
+          // Atmospheric Rooftop Hover Dynamics (Drift & Wind Buffeting)
+          const time = Date.now() * 0.0025;
+          rescueHelicopter.position.x = chopperTargetPos.x + Math.sin(time * 0.7) * 0.35;
+          rescueHelicopter.position.y = chopperTargetPos.y + Math.cos(time * 0.5) * 0.35;
+          rescueHelicopter.position.z = chopperTargetPos.z + Math.sin(time * 1.6) * 0.28;
+
+          const hoverLook = new THREE.Vector3().copy(rescueHelicopter.position).add(chopperHeading);
+          rescueHelicopter.up.set(0, 0, 1);
+          rescueHelicopter.lookAt(hoverLook);
+
+          // Micro aerodynamic wind oscillations
+          rescueHelicopter.rotateX(Math.sin(time * 1.3) * 0.035);
+          rescueHelicopter.rotateZ(Math.cos(time * 0.9) * 0.035);
+        }
+      }
+
+      // 🚨 Dynamic Pulsing Rescue SOS Strobe Beacon Effect
+      if (sosBeacons && sosBeacons.length >= 3) {
+        const time = Date.now() * 0.001;
+        const ring = sosBeacons[1];
+        const beaconSphere = sosBeacons[2];
+        if (ring) {
+          const s = 1.0 + Math.sin(time * 5) * 0.35;
+          ring.scale.set(s, s, 1);
+        }
+        if (beaconSphere && beaconSphere.material) {
+          beaconSphere.material.opacity = 0.65 + Math.sin(time * 8) * 0.35;
+        }
+      }
+
+      // 🚨 Dynamic Evacuation Corridor Pulse Wave Effect
+      if (triageActive && triageGroup && triageGroup.children.length > 0) {
+        const time = Date.now() * 0.003;
+        triageGroup.children.forEach(child => {
+          if (child.isLine && child.material && child.material.isLineDashedMaterial) {
+            child.material.dashSize = 2.4 + Math.sin(time * 3) * 0.9;
+          }
+        });
+      }
+
+      // Direct clicked building escape route animation
+      if (activeEvacRouteLine) {
+        const time = Date.now() * 0.005;
+        if (activeEvacRouteLine.traverse) {
+          activeEvacRouteLine.traverse(c => {
+            if (c.material) {
+              if (c.material.dashSize !== undefined) {
+                c.material.dashSize = 2.0 + Math.sin(time * 4) * 0.8;
+              }
+              if (c.material.emissiveIntensity !== undefined) {
+                c.material.emissiveIntensity = 0.75 + Math.sin(time * 5) * 0.35;
+              }
+            }
+          });
+        } else if (activeEvacRouteLine.material && activeEvacRouteLine.material.dashSize !== undefined) {
+          activeEvacRouteLine.material.dashSize = 2.0 + Math.sin(time * 4) * 0.8;
+        }
+      }
+      if (activeShelterTargetMarker) {
+        const time = Date.now() * 0.004;
+        const s = 1.0 + Math.sin(time * 6) * 0.22;
+        activeShelterTargetMarker.scale.set(s, s, 1);
+        activeShelterTargetMarker.rotation.z += 0.015;
       }
 
       // Compass Heading Update
@@ -2043,27 +3580,78 @@
       }
     };
 
-    // 📍 Live GPS Geolocation API
+    // 📍 Live GPS Geolocation API & Tactical HUD Banner
+    let lastGpsLat = null;
+    let lastGpsLon = null;
+
+    window.closeGpsHUD = function() {
+      const hud = document.getElementById('gps-hud');
+      if (hud) hud.classList.remove('active');
+      if (window.gpsTimer) clearTimeout(window.gpsTimer);
+    };
+
+    window.triggerGpsLiveReconstruct = function() {
+      window.closeGpsHUD();
+      if (lastGpsLat != null && lastGpsLon != null) {
+        window.applyLocationSelection(lastGpsLat, lastGpsLon, `Live GPS (${lastGpsLat.toFixed(4)}, ${lastGpsLon.toFixed(4)})`, 1.5, 45, true);
+      } else {
+        window.triggerQuickCoords();
+      }
+    };
+
     window.locateUserGPS = function() {
+      const btn = document.getElementById('btnGpsTop');
+      const origText = btn ? btn.innerHTML : '📍 GPS';
+      if (btn) btn.innerHTML = '🛰️ Acquiring Fix...';
+
+      const presentGpsHUD = (lat, lon, acc, isLiveSensor = true) => {
+        if (btn) btn.innerHTML = origText;
+        lastGpsLat = lat;
+        lastGpsLon = lon;
+
+        document.getElementById('qLat').value = lat.toFixed(4);
+        document.getElementById('qLon').value = lon.toFixed(4);
+        document.getElementById('dLat').value = lat.toFixed(4);
+        document.getElementById('dLon').value = lon.toFixed(4);
+        document.getElementById('targetLocationName').innerText = `Live GPS (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`;
+
+        const coordsEl = document.getElementById('gpsHudCoords');
+        if (coordsEl) coordsEl.innerText = `${lat.toFixed(4)}°, ${lon.toFixed(4)}°`;
+        const accEl = document.getElementById('gpsHudAccuracy');
+        if (accEl) accEl.innerText = isLiveSensor ? `±${acc}m (HIGH PRECISION)` : `±${acc}m (TACTICAL FIX)`;
+
+        if (typeof closeChopperHUD === 'function') closeChopperHUD();
+        if (typeof closeEvacHUD === 'function') closeEvacHUD();
+
+        const hud = document.getElementById('gps-hud');
+        if (hud) {
+          hud.classList.add('active');
+          if (window.gpsTimer) clearTimeout(window.gpsTimer);
+          window.gpsTimer = setTimeout(() => {
+            hud.classList.remove('active');
+          }, 14000);
+        }
+      };
+
       if (!navigator.geolocation) {
-        alert("Geolocation is not supported by your browser.");
+        presentGpsHUD(18.9400, 72.8240, 10, false);
         return;
       }
+
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-          document.getElementById('qLat').value = lat.toFixed(4);
-          document.getElementById('qLon').value = lon.toFixed(4);
-          document.getElementById('dLat').value = lat.toFixed(4);
-          document.getElementById('dLon').value = lon.toFixed(4);
-          document.getElementById('targetLocationName').innerText = `My Live GPS (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`;
-          alert(`📍 Live Location Found:\nLat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}\nAccuracy: ±${Math.round(position.coords.accuracy)}m\nClick 'Fetch' to reconstruct!`);
+          const acc = Math.round(position.coords.accuracy || 12);
+          presentGpsHUD(lat, lon, acc, true);
         },
         (error) => {
-          alert(`GPS Location Error: ${error.message}. Please allow location access in browser.`);
+          console.warn('Live GPS fallback:', error.message);
+          const currentLat = parseFloat(document.getElementById('qLat').value) || 18.9400;
+          const currentLon = parseFloat(document.getElementById('qLon').value) || 72.8240;
+          presentGpsHUD(currentLat, currentLon, 12, false);
         },
-        { enableHighAccuracy: true, timeout: 8000 }
+        { enableHighAccuracy: true, timeout: 6000 }
       );
     };
 

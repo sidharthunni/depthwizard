@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DepthWizard · Screen & Voice Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030712;
+      --card: rgba(15, 23, 42, 0.85);
+      --border: rgba(255, 255, 255, 0.1);
+      --accent: #0ea5e9;
+      --accent-glow: rgba(14, 165, 233, 0.35);
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 50% 20%, #0c192e 0%, var(--bg) 80%);
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .container {
+      width: 100%;
+      max-width: 680px;
+      background: var(--card);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 40px var(--accent-glow);
+      text-align: center;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--accent);
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(14, 165, 233, 0.35);
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    p.sub {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .mic-meter-box {
+      background: rgba(3, 7, 18, 0.7);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .mic-icon { font-size: 20px; }
+    .meter-container {
+      flex: 1;
+      height: 12px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    .meter-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #10b981 0%, #fbbf24 70%, #ef4444 100%);
+      border-radius: 6px;
+      transition: width 0.05s ease-out;
+    }
+    .meter-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #34d399;
+      font-family: 'JetBrains Mono', monospace;
+      min-width: 80px;
+      text-align: right;
+    }
+    .timer-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 38px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+    .timer-display.recording {
+      color: #ef4444;
+      animation: pulseText 1.5s infinite;
+    }
+    @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    button {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 12px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn-start {
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+    }
+    .btn-start:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(14, 165, 233, 0.6); }
+    .btn-stop {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+      display: none;
+    }
+    .btn-download {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+      display: none;
+    }
+    .video-preview-box {
+      display: none;
+      margin-top: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: #000;
+    }
+    video {
+      width: 100%;
+      max-height: 280px;
+      display: block;
+    }
+    .steps-box {
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 24px;
+      text-align: left;
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .steps-box b { color: #f1f5f9; }
+    .back-link {
+      margin-top: 16px;
+      display: inline-block;
+      font-size: 12px;
+      color: #38bdf8;
+      text-decoration: none;
+    }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="badge">🎙️ Ubuntu Wayland Screen & Voice Studio</div>
+    <h1>Record Screen & Microphone Together</h1>
+    <p class="sub">Ubuntu's default screen recorder (Print Screen) <b>disables mic audio by design</b>.<br>This built-in tool captures your full screen and your <b>HyperX Headset Mic</b> together in high fidelity.</p>
+
+    <!-- Live Microphone Level Meter -->
+    <div class="mic-meter-box">
+      <span class="mic-icon" id="micIcon">🎙️</span>
+      <div class="meter-container">
+        <div class="meter-bar" id="meterBar"></div>
+      </div>
+      <span class="meter-label" id="meterLabel">Mic: Ready</span>
+    </div>
+
+    <!-- Live Timer -->
+    <div class="timer-display" id="timerDisplay">00:00</div>
+
+    <!-- Action Buttons -->
+    <div class="btn-row">
+      <button class="btn-start" id="btnStart" onclick="startRecording()">
+        <span>🔴</span> Start Screen & Mic Recording
+      </button>
+      <button class="btn-stop" id="btnStop" onclick="stopRecording()">
+        <span>⏹️</span> Stop Recording
+      </button>
+      <button class="btn-download" id="btnDownload" onclick="downloadVideo()">
+        <span>💾</span> Download Video (with Voiceover)
+      </button>
+    </div>
+
+    <!-- Video Preview -->
+    <div class="video-preview-box" id="previewBox">
+      <video id="previewVideo" controls></video>
+    </div>
+
+    <div class="steps-box">
+      <b>Quick 3-Step Guide:</b><br>
+      1. Click <b>Start Screen & Mic Recording</b> (allow microphone if Chrome asks).<br>
+      2. When prompted: choose <b>Entire Screen</b> (or DepthWizard tab) and click <b>Share</b>.<br>
+      3. Switch to your DepthWizard tab and read your 5-minute script. When done, click <b>Stop & Download</b>!
+    </div>
+
+    <a href="/" class="back-link">← Return to DepthWizard 3D Command Center</a>
+  </div>
+
+  <script>
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let audioContext = null;
+    let analyser = null;
+    let micStream = null;
+    let displayStream = null;
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    let recordedBlob = null;
+
+    // Monitor mic audio levels in real time
+    async function initMicMonitor() {
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioContext.createMediaStreamSource(micStream);
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        source.connect(analyser);
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        const meterBar = document.getElementById('meterBar');
+        const meterLabel = document.getElementById('meterLabel');
+
+        function updateMeter() {
+          if (!analyser) return;
+          analyser.getByteFrequencyData(dataArray);
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i];
+          }
+          const avg = sum / dataArray.length;
+          const pct = Math.min(100, Math.round((avg / 128) * 100));
+          meterBar.style.width = pct + '%';
+          if (pct > 5) {
+            meterLabel.innerText = 'Voice: ' + pct + '%';
+            meterLabel.style.color = '#34d399';
+          } else {
+            meterLabel.innerText = 'Mic: Active';
+            meterLabel.style.color = '#94a3b8';
+          }
+          requestAnimationFrame(updateMeter);
+        }
+        updateMeter();
+      } catch (e) {
+        console.warn('Mic pre-access:', e.message);
+        document.getElementById('meterLabel').innerText = 'Mic: Click Start';
+      }
+    }
+    initMicMonitor();
+
+    async function startRecording() {
+      try {
+        if (!micStream) {
+          micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        }
+        displayStream = await navigator.mediaDevices.getDisplayMedia({
+          video: { frameRate: { ideal: 30 } },
+          audio: true
+        });
+
+        // Combine display video with mic audio track
+        const combinedTracks = [
+          ...displayStream.getVideoTracks(),
+          ...micStream.getAudioTracks()
+        ];
+        const combinedStream = new MediaStream(combinedTracks);
+
+        let mime = 'video/webm;codecs=vp9,opus';
+        if (!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm;codecs=vp8,opus';
+        if (!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm';
+
+        mediaRecorder = new MediaRecorder(combinedStream, { mimeType: mime });
+        recordedChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          recordedBlob = new Blob(recordedChunks, { type: mime });
+          const videoUrl = URL.createObjectURL(recordedBlob);
+          const previewVideo = document.getElementById('previewVideo');
+          previewVideo.src = videoUrl;
+          document.getElementById('previewBox').style.display = 'block';
+          document.getElementById('btnDownload').style.display = 'inline-flex';
+          document.getElementById('btnStop').style.display = 'none';
+          document.getElementById('btnStart').style.display = 'inline-flex';
+          document.getElementById('btnStart').innerHTML = '<span>🔄</span> Record Again';
+          clearInterval(timerInterval);
+          document.getElementById('timerDisplay').classList.remove('recording');
+        };
+
+        displayStream.getVideoTracks()[0].onended = () => {
+          stopRecording();
+        };
+
+        mediaRecorder.start(1000);
+
+        document.getElementById('btnStart').style.display = 'none';
+        document.getElementById('btnStop').style.display = 'inline-flex';
+        document.getElementById('btnDownload').style.display = 'none';
+        document.getElementById('previewBox').style.display = 'none';
+
+        secondsElapsed = 0;
+        const timerDisplay = document.getElementById('timerDisplay');
+        timerDisplay.classList.add('recording');
+        timerInterval = setInterval(() => {
+          secondsElapsed++;
+          const m = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+          const s = String(secondsElapsed % 60).padStart(2, '0');
+          timerDisplay.innerText = `${m}:${s}`;
+        }, 1000);
+
+      } catch (err) {
+        alert('Could not start screen & audio recording: ' + err.message);
+      }
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      if (displayStream) {
+        displayStream.getTracks().forEach(t => t.stop());
+      }
+    }
+
+    function downloadVideo() {
+      if (!recordedBlob) return;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(recordedBlob);
+      a.download = 'DepthWizard_ControlX_SIH26175_Demo.webm';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  </script>
+</body>
+</html>

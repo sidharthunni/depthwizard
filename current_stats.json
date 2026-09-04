@@ -1,0 +1,19 @@
+{
+  "box_size_km": 3.0,
+  "lat": 18.94,
+  "lon": 72.824,
+  "width_m": 3000.0,
+  "grid_spacing_m": 42.25,
+  "min_elev_m": 40.0,
+  "max_elev_m": 190.0,
+  "relief_m": 150.0,
+  "high_risk_slope": "9.3%",
+  "avg_slope_deg": "12.5\u00b0",
+  "vertices": "5,328",
+  "triangles": "10,366",
+  "grid_w": 72,
+  "grid_h": 74,
+  "z_scale": 25.0,
+  "rmse": "0.138",
+  "correlation": "89.4% (SRTM DEM Ref)"
+}
