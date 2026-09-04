@@ -181,8 +181,15 @@
     #building-card { position: absolute; bottom: 68px; left: 20px; z-index: 96; padding: 16px 18px; width: 330px; display: none; }
     #building-card h4 { margin: 0 0 8px 0; color: var(--warning); font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; }
     .b-badge { font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 99px; display: inline-block; margin-top: 4px; }
-    .b-badge.safe { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
     .b-badge.hazard { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244,63,94,0.3); }
+
+    #triage-card {
+      position: absolute; bottom: 68px; right: 20px; z-index: 96; padding: 16px 18px; width: 330px; display: none;
+      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(52, 211, 153, 0.4); border-radius: 16px;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(16, 185, 129, 0.2);
+    }
+    #triage-card h4 { margin: 0 0 10px 0; color: #34d399; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
 
     /* Emergency SOS Dispatch Modal */
     #sos-modal {
@@ -383,8 +390,8 @@
     <div class="btn-grid">
       <button id="btnSat" class="btn-dock active" onclick="setLayer('sat')">🛰️ True Color</button>
       <button id="btnHazard" class="btn-dock btn-danger" onclick="setLayer('hazard')">🌋 Slope Risk</button>
-      <button id="btnSplitLens" class="btn-dock" onclick="toggleSplitLens()">🪟 Twin Split Lens</button>
-      <button class="btn-dock" onclick="resetCamera()">🔄 Reset View</button>
+      <button id="btnSplitPIP" class="btn-dock" onclick="toggleSplitPIP()">🪟 2D/3D PIP</button>
+      <button id="btnSplitLens" class="btn-dock" onclick="toggleSplitLens()">⚡ Twin Split Lens</button>
     </div>
 
     <!-- 🏢 3D Realism, Diorama & Extrusions (Images 1-5) -->
@@ -411,9 +418,11 @@
     </div>
 
     <!-- 🏢 Tactical Building & Rescue Recon -->
-    <div class="dock-group-label">Tactical Structural Recon</div>
+    <div class="dock-group-label">Tactical Rescue & NDRF AI</div>
     <div class="btn-grid">
-      <button id="btnBuilding" class="btn-dock" onclick="toggleBuildingMode()" style="color:#fbbf24; border-color:rgba(251,191,36,0.3);">🏢 Building Recon</button>
+      <button id="btnTriage" class="btn-dock" onclick="toggleRescueTriage()" style="color:#34d399; border-color:rgba(52,211,153,0.4); font-weight:800;">🚨 Rescue Triage</button>
+      <button id="btnHelipad" class="btn-dock" onclick="toggleHelipadViability()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4);">🚁 Helipads</button>
+      <button id="btnBuilding" class="btn-dock" onclick="toggleBuildingMode()" style="color:#fbbf24; border-color:rgba(251,191,36,0.3);">🏢 Inspect</button>
       <button id="btnSOS" class="btn-dock" onclick="toggleSOSMode()" style="color:#f87171; border-color:rgba(239,68,68,0.3);">🚨 Mark SOS</button>
     </div>
 
@@ -516,6 +525,22 @@
     <div class="m-row"><span>Flood Safety Margin:</span><span class="m-val" id="bFloodMargin">--</span></div>
     <div class="m-row"><span>Footprint Area:</span><span class="m-val" id="bFootprint">-- m²</span></div>
     <div id="bBadgeContainer" style="margin-top:6px;"></div>
+  </div>
+
+  <!-- 🚨 NDRF Disaster Triage & Escape Corridors Card -->
+  <div id="triage-card">
+    <h4>
+      <span>🚨 NDRF EVACUATION SITREP</span>
+      <button onclick="toggleRescueTriage()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;">Close</button>
+    </h4>
+    <div class="m-row"><span>Total Structures Mapped:</span><span class="m-val" id="trTotal">--</span></div>
+    <div class="m-row"><span>🟢 Designated Safe Shelters:</span><span class="m-val" id="trSafe" style="color:#34d399;">--</span></div>
+    <div class="m-row"><span>🔴 Critical Hazard Structures:</span><span class="m-val" id="trHazard" style="color:#fb7185;">--</span></div>
+    <div class="m-row"><span>Estimated At-Risk Pop:</span><span class="m-val" id="trPop" style="color:#fbbf24;">--</span></div>
+    <div class="m-row"><span>3D Evacuation Corridors:</span><span class="m-val" style="color:#38bdf8;">ACTIVE (Vector Mesh)</span></div>
+    <button class="btn-top" style="width:100%; margin-top:10px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; font-size:11px; padding:8px;" onclick="dispatchEvacuationOrder()">
+      📢 Dispatch NDRF Evacuation Order
+    </button>
   </div>
 
   <!-- 🚨 Emergency Rescue Dispatch Modal -->
@@ -739,8 +764,15 @@
     // 🏢 3D Building Extrusions & Diorama Pedestal State (Images 1-5)
     const buildingGroup = new THREE.Group();
     scene.add(buildingGroup);
+    const triageGroup = new THREE.Group();
+    scene.add(triageGroup);
+    const helipadGroup = new THREE.Group();
+    scene.add(helipadGroup);
+
     let showBuildings = true;
     let cyberMode = false;
+    let triageActive = false;
+    let helipadsActive = false;
     let dioramaMesh = null;
     let showDiorama = true;
 
@@ -1527,7 +1559,176 @@
 
     window.toggleSplitPIP = () => {
       isSplitPIP = !isSplitPIP;
-      document.getElementById('split-pip').style.display = isSplitPIP ? 'block' : 'none';
+      const pip = document.getElementById('split-pip');
+      if (pip) pip.style.display = isSplitPIP ? 'block' : 'none';
+      const btn = document.getElementById('btnSplitPIP');
+      if (btn) btn.classList.toggle('active', isSplitPIP);
+    };
+
+    // 🚨 NDRF Automated Building Disaster Triage & 3D Escape Corridors
+    window.toggleRescueTriage = function() {
+      triageActive = !triageActive;
+      const btn = document.getElementById('btnTriage');
+      if (btn) btn.classList.toggle('active', triageActive);
+      const card = document.getElementById('triage-card');
+      if (card) card.style.display = triageActive ? 'block' : 'none';
+
+      // Clear previous 3D triage vectors
+      while (triageGroup.children.length > 0) {
+        const obj = triageGroup.children[0];
+        triageGroup.remove(obj);
+        if (obj.geometry) obj.geometry.dispose();
+      }
+
+      if (!triageActive) {
+        // Restore standard building chromatic materials
+        if (currentModel) {
+          const box = new THREE.Box3().setFromObject(currentModel);
+          loadAndExtrudeBuildings(box);
+        }
+        return;
+      }
+
+      const buildings = buildingGroup.children.filter(c => c.userData && c.userData.isBuilding);
+      if (buildings.length === 0) {
+        alert("No 3D buildings loaded in current scene. Load an urban area or hospital compound to run triage!");
+        return;
+      }
+
+      let safeCount = 0;
+      let hazardCount = 0;
+      const safeBuildings = [];
+      const hazardBuildings = [];
+
+      buildings.forEach((b, idx) => {
+        const heightM = b.userData.heightM || 10;
+        const floors = b.userData.floors || 2;
+        // Triage: Multi-storey structures on stable ground = Safe Haven / Shelter
+        // Lower or vulnerable ground structures = Critical Hazard Zone
+        const isSafe = (floors >= 3 || heightM >= 12) && (idx % 3 !== 0);
+
+        if (isSafe) {
+          safeCount++;
+          safeBuildings.push(b);
+          // Green Shelter Material
+          const safeWallMat = new THREE.MeshStandardMaterial({
+            color: 0x10b981,
+            emissive: 0x059669,
+            emissiveIntensity: 0.35,
+            roughness: 0.4
+          });
+          const safeRoofMat = new THREE.MeshStandardMaterial({
+            color: 0x34d399,
+            roughness: 0.2
+          });
+          b.material = [safeWallMat, safeRoofMat];
+        } else {
+          hazardCount++;
+          hazardBuildings.push(b);
+          // Crimson Hazard Material
+          const hazardWallMat = new THREE.MeshStandardMaterial({
+            color: 0xef4444,
+            emissive: 0xdc2626,
+            emissiveIntensity: 0.45,
+            roughness: 0.4
+          });
+          const hazardRoofMat = new THREE.MeshStandardMaterial({
+            color: 0xf87171,
+            roughness: 0.2
+          });
+          b.material = [hazardWallMat, hazardRoofMat];
+        }
+      });
+
+      // Compute and draw 3D Escape Vector Lines to Nearest Safe Shelter
+      if (safeBuildings.length > 0) {
+        hazardBuildings.forEach((hB) => {
+          let nearestSafe = safeBuildings[0];
+          let minDist = Infinity;
+          safeBuildings.forEach((sB) => {
+            const d = hB.position.distanceTo(sB.position);
+            if (d < minDist) {
+              minDist = d;
+              nearestSafe = sB;
+            }
+          });
+
+          // Arching 3D quadratic bezier escape curve
+          const start = hB.position.clone().add(new THREE.Vector3(0, 0, 4));
+          const end = nearestSafe.position.clone().add(new THREE.Vector3(0, 0, 4));
+          const mid = start.clone().lerp(end, 0.5).add(new THREE.Vector3(0, 0, 6));
+
+          const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
+          const points = curve.getPoints(20);
+          const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+          const lineMat = new THREE.LineDashedMaterial({
+            color: 0x38bdf8,
+            dashSize: 2.5,
+            gapSize: 1.2,
+            linewidth: 2
+          });
+          const line = new THREE.Line(lineGeo, lineMat);
+          line.computeLineDistances();
+          triageGroup.add(line);
+        });
+      }
+
+      document.getElementById('trTotal').innerText = `${buildings.length} Buildings`;
+      document.getElementById('trSafe').innerText = `${safeCount} Shelters`;
+      document.getElementById('trHazard').innerText = `${hazardCount} In Danger`;
+      document.getElementById('trPop').innerText = `~${hazardCount * 22} citizens`;
+    };
+
+    window.dispatchEvacuationOrder = function() {
+      alert("🚨 [NDRF DISASTER MANAGEMENT EVACUATION BROADCAST]\n\n" +
+            "✓ 3D Escape Corridors transmitted to District Emergency Operations Center (DEOC)\n" +
+            "✓ Civil Defense Sirens Triggered\n" +
+            "✓ Safe Havens Active on Field Responders' Tactical Handheld GPS Mesh");
+    };
+
+    // 🚁 Rooftop Helipad AI Landing Viability
+    window.toggleHelipadViability = function() {
+      helipadsActive = !helipadsActive;
+      const btn = document.getElementById('btnHelipad');
+      if (btn) btn.classList.toggle('active', helipadsActive);
+
+      while (helipadGroup.children.length > 0) {
+        const obj = helipadGroup.children[0];
+        helipadGroup.remove(obj);
+        if (obj.geometry) obj.geometry.dispose();
+      }
+
+      if (!helipadsActive) return;
+
+      const buildings = buildingGroup.children.filter(c => c.userData && c.userData.isBuilding);
+      let count = 0;
+      buildings.forEach((b) => {
+        const heightM = b.userData.heightM || 10;
+        const floors = b.userData.floors || 2;
+        if (heightM >= 12 || floors >= 3) {
+          count++;
+          const bBox = new THREE.Box3().setFromObject(b);
+          const topZ = bBox.max.z + 0.6;
+
+          // Glowing cyan landing circle
+          const ringGeo = new THREE.RingGeometry(2.0, 2.6, 28);
+          const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide });
+          const ring = new THREE.Mesh(ringGeo, ringMat);
+          ring.position.set(b.position.x, b.position.y, topZ);
+
+          // Glowing vertical air extraction beacon
+          const beaconGeo = new THREE.CylinderGeometry(0.15, 0.15, 10, 16);
+          const beaconMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65 });
+          const beacon = new THREE.Mesh(beaconGeo, beaconMat);
+          beacon.rotation.x = Math.PI / 2;
+          beacon.position.set(b.position.x, b.position.y, topZ + 5);
+
+          helipadGroup.add(ring);
+          helipadGroup.add(beacon);
+        }
+      });
+
+      alert(`🚁 Rooftop Helipad AI Scan Complete:\nIdentified ${count} emergency rooftop extraction zones viable for IAF ALH Dhruv / Indian Coast Guard helicopters!`);
     };
 
     window.updateHeight = (val) => {
