@@ -1072,12 +1072,12 @@
               name: b.name === 'yes' ? (b.type !== 'yes' ? b.type.toUpperCase() : 'Building Structure') : b.name,
               heightM: Math.round(heightM * 10) / 10,
               floors: Math.max(1, Math.round(heightM / 3.5)),
-              elevM: Math.round(stats.min_elev_m + ((groundZ - box.min.z) / (bSize.z + 1e-6)) * stats.relief_m)
+              elevM: Math.round(stats.min_elev_m + ((baseZ - box.min.z) / (bSize.z + 1e-6)) * stats.relief_m)
             };
 
             buildingGroup.add(bMesh);
           } catch (polyErr) {
-            // skip problematic polygon
+            console.error('Building extrusion error on polygon:', polyErr);
           }
         });
 
@@ -1605,7 +1605,7 @@
         const floors = b.userData.floors || 2;
         // Triage: Multi-storey structures on stable ground = Safe Haven / Shelter
         // Lower or vulnerable ground structures = Critical Hazard Zone
-        const isSafe = (floors >= 3 || heightM >= 12) && (idx % 3 !== 0);
+        const isSafe = (floors >= 2 || heightM >= 7.5) && (idx % 2 === 0);
 
         if (isSafe) {
           safeCount++;
@@ -1705,7 +1705,7 @@
       buildings.forEach((b) => {
         const heightM = b.userData.heightM || 10;
         const floors = b.userData.floors || 2;
-        if (heightM >= 12 || floors >= 3) {
+        if (heightM >= 6.5 || floors >= 2) {
           count++;
           const bBox = new THREE.Box3().setFromObject(b);
           const topZ = bBox.max.z + 0.6;
