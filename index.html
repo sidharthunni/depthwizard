@@ -266,6 +266,39 @@
     #split-pip img { width: 220px; height: 220px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); }
     #split-pip .pip-tag { font-size: 10px; font-weight: 700; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 
+    /* 🪟 Interactive Digital Twin Split Wipe Divider (Ref: media_1788490030733.jpg) */
+    #split-divider {
+      position: absolute; top: 0; bottom: 0; width: 3px;
+      left: 50%; z-index: 120; cursor: ew-resize; display: none;
+      background: linear-gradient(to bottom, #38bdf8, #818cf8, #fb923c);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.9);
+      user-select: none;
+    }
+    #split-handle {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 42px; height: 42px; border-radius: 50%;
+      background: rgba(11, 17, 32, 0.95); border: 2px solid #38bdf8;
+      box-shadow: 0 0 24px rgba(56, 189, 248, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; cursor: ew-resize; user-select: none;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    #split-handle:hover { transform: translate(-50%, -50%) scale(1.12); border-color: #fb923c; box-shadow: 0 0 30px rgba(251, 146, 60, 0.9); }
+    #split-label-left {
+      position: absolute; top: 88px; left: 345px; z-index: 121; display: none;
+      background: rgba(10, 15, 29, 0.88); backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 9px;
+      padding: 6px 12px; font-size: 11px; font-weight: 700; color: #38bdf8;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5); pointer-events: none;
+    }
+    #split-label-right {
+      position: absolute; top: 88px; right: 290px; z-index: 121; display: none;
+      background: rgba(10, 15, 29, 0.88); backdrop-filter: blur(20px);
+      border: 1px solid rgba(251, 146, 60, 0.4); border-radius: 9px;
+      padding: 6px 12px; font-size: 11px; font-weight: 700; color: #fb923c;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5); pointer-events: none;
+    }
+
     /* 3D Compass Jewel */
     #compass-container {
       position: absolute; bottom: 20px; right: 20px; z-index: 90;
@@ -350,7 +383,7 @@
     <div class="btn-grid">
       <button id="btnSat" class="btn-dock active" onclick="setLayer('sat')">🛰️ True Color</button>
       <button id="btnHazard" class="btn-dock btn-danger" onclick="setLayer('hazard')">🌋 Slope Risk</button>
-      <button id="btnSplit" class="btn-dock" onclick="toggleSplitPIP()">🪟 2D/3D Split</button>
+      <button id="btnSplitLens" class="btn-dock" onclick="toggleSplitLens()">🪟 Twin Split Lens</button>
       <button class="btn-dock" onclick="resetCamera()">🔄 Reset View</button>
     </div>
 
@@ -571,6 +604,8 @@
       <div class="chip building-chip" onclick="setPreset(30.5542, 79.5645, 'Hotel Mount View (Joshimath Tilt Landmark)', 0.5, 45)">🏨 Hotel Mount View</div>
       <div class="chip building-chip" onclick="setPreset(30.7352, 79.0669, 'Kedarnath Temple Sanctuary Complex', 0.5, 50)">🏛️ Kedarnath Temple</div>
       <div class="chip building-chip" onclick="setPreset(28.5672, 77.2100, 'AIIMS Emergency Trauma Hub, Delhi', 0.5, 25)">🏢 AIIMS Trauma Center</div>
+      <div class="chip building-chip" style="border-color:rgba(234,88,12,0.5); color:#fdba74;" onclick="setPreset(43.7102, 7.2620, 'Nice / Cannes Coast (Digital Twin City)', 1.0, 35)">🏙️ Nice / Cannes Riviera</div>
+      <div class="chip building-chip" style="border-color:rgba(234,88,12,0.5); color:#fdba74;" onclick="setPreset(18.9217, 72.8332, 'Mumbai Coastal Twin (Taj Mahal Palace)', 0.8, 30)">🏙️ Mumbai Coastal Twin</div>
     </div>
 
     <div id="drawer-map"></div>
@@ -588,6 +623,7 @@
         <label>Coverage Box</label>
         <select id="dBox">
           <option value="0.5">0.5 km (Micro: Single Building)</option>
+          <option value="1.0">1.0 km (Urban City LOD-2)</option>
           <option value="1.5">1.5 km (High Detail Compound)</option>
           <option value="3.0" selected>3.0 km (Standard Recon)</option>
           <option value="5.0">5.0 km (Regional Survey)</option>
@@ -607,6 +643,13 @@
       ⚡ Ingest Sentinel-2 & Reconstruct 3D
     </button>
   </div>
+
+  <!-- 🪟 Interactive Digital Twin Split Wipe Divider (Ref: media_1788490030733.jpg) -->
+  <div id="split-divider">
+    <div id="split-handle">◀ 🪟 ▶</div>
+  </div>
+  <div id="split-label-left">🛰️ REAL SATELLITE TERRAIN</div>
+  <div id="split-label-right">🏙️ 3D DIGITAL TWIN (LOD-1/2)</div>
 
   <!-- Radar Scan Overlay -->
   <div id="radar-overlay">
@@ -882,11 +925,17 @@
 
           // Compute realistic structural height (m)
           let heightM = 14.0;
-          if (b.levels) {
-            heightM = Math.max(parseFloat(b.levels) * 3.5, 7.0);
+          if (b.height) {
+            heightM = Math.max(parseFloat(b.height), 5.0);
+          } else if (b.levels) {
+            heightM = Math.max(parseFloat(b.levels) * 3.5, 6.0);
           } else {
-            heightM = 9.0 + (idx % 12) * 2.2;
+            heightM = 8.5 + (idx % 18) * 2.0;
           }
+
+          const floors = Math.max(1, Math.round(heightM / 3.2));
+          const heightUnits = Math.max((heightM / (stats.relief_m || 100)) * bSize.z * 1.8, bSize.z * 0.04);
+
           try {
             const shape = new THREE.Shape();
             shape.moveTo(shapePoints[0].x, shapePoints[0].y);
@@ -895,35 +944,50 @@
             }
             const geom = new THREE.ExtrudeGeometry(shape, { depth: heightUnits, bevelEnabled: false });
 
-            let mat;
+            // Chromatic Dual-Tone Material Palette (Ref: media_1788490030733.jpg)
+            // Towers (>=7 floors): Deep Amber Wall + Bright Gold Sunlit Roof
+            // Mid-rise (4-6 floors): Warm Coral Wall + Peach Sunlit Roof
+            // Low-rise (2-3 floors): Deep Rose Wall + Soft Pink Roof
+            // Ground/Cottage (1 floor): Magenta/Violet Wall + Lilac Roof
+            let wallColor, roofColor;
             if (cyberMode) {
-              // Glowing Cyberpunk Gold & Neon (Image 1 Style)
-              mat = new THREE.MeshStandardMaterial({
-                color: 0xf59e0b,
-                emissive: 0xd97706,
-                emissiveIntensity: 0.45,
-                roughness: 0.2,
-                metalness: 0.8
-              });
+              wallColor = 0xf59e0b;
+              roofColor = 0xfde047;
+            } else if (floors >= 7 || heightM >= 24) {
+              wallColor = 0xea580c;
+              roofColor = 0xfbbf24;
+            } else if (floors >= 4 || heightM >= 14) {
+              wallColor = 0xf97316;
+              roofColor = 0xfed7aa;
+            } else if (floors >= 2 || heightM >= 8) {
+              wallColor = 0xe11d48;
+              roofColor = 0xfbcfe8;
             } else {
-              // Crisp Architectural Clay / Sandstone (Image 2 Style)
-              const hue = 0.07 + (idx % 6) * 0.04;
-              mat = new THREE.MeshStandardMaterial({
-                color: new THREE.Color().setHSL(hue, 0.72, 0.55),
-                roughness: 0.65,
-                metalness: 0.15
-              });
+              wallColor = 0x9333ea;
+              roofColor = 0xe9d5ff;
             }
 
-            const bMesh = new THREE.Mesh(geom, mat);
+            const wallMat = new THREE.MeshStandardMaterial({
+              color: wallColor,
+              roughness: 0.55,
+              metalness: 0.15
+            });
+            const roofMat = new THREE.MeshStandardMaterial({
+              color: roofColor,
+              roughness: 0.35,
+              metalness: 0.08
+            });
+
+            // ExtrudeGeometry faces: group 0 = walls, group 1 = top/bottom caps
+            const bMesh = new THREE.Mesh(geom, [wallMat, roofMat]);
             bMesh.position.z = groundZ;
 
-            // Crisp 3D Edge Wireframe Lines
-            const edges = new THREE.EdgesGeometry(geom);
+            // Crisp Architectural Corner Outlines (25 deg threshold)
+            const edges = new THREE.EdgesGeometry(geom, 25);
             const edgeMat = new THREE.LineBasicMaterial({
               color: cyberMode ? 0x00ffff : 0xffffff,
               transparent: true,
-              opacity: cyberMode ? 0.95 : 0.45
+              opacity: cyberMode ? 0.95 : 0.28
             });
             const edgeLines = new THREE.LineSegments(edges, edgeMat);
             bMesh.add(edgeLines);
@@ -1381,10 +1445,46 @@
       document.getElementById('btnWire').classList.toggle('active', isWireframe);
     };
 
+    // 🪟 Digital Twin Split Wipe Lens (Ref: media_1788490030733.jpg)
+    let splitLensActive = false;
+    let splitRatio = 0.50; // starts at 50% split matching the reference image!
+    let isDraggingSplit = false;
+
+    window.toggleSplitLens = () => {
+      splitLensActive = !splitLensActive;
+      const btn = document.getElementById('btnSplitLens');
+      if (btn) btn.classList.toggle('active', splitLensActive);
+      const div = document.getElementById('split-divider');
+      const lLeft = document.getElementById('split-label-left');
+      const lRight = document.getElementById('split-label-right');
+      if (div) div.style.display = splitLensActive ? 'block' : 'none';
+      if (lLeft) lLeft.style.display = splitLensActive ? 'block' : 'none';
+      if (lRight) lRight.style.display = splitLensActive ? 'block' : 'none';
+      updateSplitDivider();
+    };
+
+    function updateSplitDivider() {
+      const div = document.getElementById('split-divider');
+      if (div) div.style.left = (splitRatio * 100) + '%';
+    }
+
+    const splitDividerEl = document.getElementById('split-divider');
+    if (splitDividerEl) {
+      splitDividerEl.addEventListener('mousedown', (e) => {
+        isDraggingSplit = true;
+        e.preventDefault();
+      });
+      window.addEventListener('mouseup', () => { isDraggingSplit = false; });
+      window.addEventListener('mousemove', (e) => {
+        if (!isDraggingSplit || !splitLensActive) return;
+        splitRatio = Math.max(0.06, Math.min(0.94, e.clientX / window.innerWidth));
+        updateSplitDivider();
+      });
+    }
+
     window.toggleSplitPIP = () => {
       isSplitPIP = !isSplitPIP;
       document.getElementById('split-pip').style.display = isSplitPIP ? 'block' : 'none';
-      document.getElementById('btnSplit').classList.toggle('active', isSplitPIP);
     };
 
     window.updateHeight = (val) => {
@@ -1485,7 +1585,29 @@
       if (dial) dial.style.transform = `rotate(${-angleDeg}deg)`;
 
       controls.update();
-      renderer.render(scene, camera);
+
+      if (splitLensActive) {
+        renderer.setScissorTest(true);
+        const splitPx = Math.floor(window.innerWidth * splitRatio);
+
+        // --- Left Viewport (Photorealistic Real World Terrain) ---
+        renderer.setViewport(0, 0, splitPx, window.innerHeight);
+        renderer.setScissor(0, 0, splitPx, window.innerHeight);
+        buildingGroup.visible = false;
+        renderer.render(scene, camera);
+
+        // --- Right Viewport (Digital Twin Polygonal Extrusions) ---
+        renderer.setViewport(splitPx, 0, window.innerWidth - splitPx, window.innerHeight);
+        renderer.setScissor(splitPx, 0, window.innerWidth - splitPx, window.innerHeight);
+        buildingGroup.visible = true;
+        renderer.render(scene, camera);
+
+        renderer.setScissorTest(false);
+      } else {
+        renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+        buildingGroup.visible = showBuildings;
+        renderer.render(scene, camera);
+      }
     }
     animate();
 
@@ -1493,6 +1615,7 @@
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      if (splitLensActive) updateSplitDivider();
     });
   </script>
 

@@ -85,13 +85,13 @@ def fetch_osm_buildings(lat: float, lon: float, box_size_km: float = 1.0, output
     min_lat, max_lat = lat - half_deg, lat + half_deg
     min_lon, max_lon = lon - half_deg, lon + half_deg
 
-    q = f'[out:json][timeout:8];way["building"]({min_lat},{min_lon},{max_lat},{max_lon});out geom;'
+    q = f'[out:json][timeout:12];(way["building"]({min_lat},{min_lon},{max_lat},{max_lon});relation["building"]({min_lat},{min_lon},{max_lat},{max_lon}););out geom;'
     url = "https://overpass-api.de/api/interpreter?data=" + urllib.parse.quote(q)
     req = urllib.request.Request(url, headers={"User-Agent": "DepthWizard/2.0 (SIH26175)"})
 
     buildings = []
     try:
-        with urllib.request.urlopen(req, timeout=8) as r:
+        with urllib.request.urlopen(req, timeout=12) as r:
             data = json.loads(r.read())
             for el in data.get("elements", []):
                 geom = el.get("geometry", [])
@@ -100,14 +100,20 @@ def fetch_osm_buildings(lat: float, lon: float, box_size_km: float = 1.0, output
                     tags = el.get("tags", {})
                     name = tags.get("name", tags.get("building", "Building"))
                     levels = tags.get("building:levels", None)
+                    height = tags.get("height", None)
                     b_type = tags.get("amenity", tags.get("building", "residential"))
+                    roof = tags.get("roof:shape", "flat")
                     buildings.append({
                         "id": el.get("id"),
                         "name": name,
                         "type": b_type,
                         "levels": levels,
+                        "height": height,
+                        "roof": roof,
                         "polygon": coords
                     })
+                    if len(buildings) >= 800:
+                        break
     except Exception as e:
         print("OSM building extraction error (will proceed with fallback):", e)
 

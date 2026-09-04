@@ -78,6 +78,21 @@ def build_mesh(depth_path, image_path, output_path, z_scale=50.0, downsample=4,
     vmin, vmax = np.percentile(depth_ds, 1.5), np.percentile(depth_ds, 98.5)
     d = np.clip(depth_ds.astype(np.float32), vmin, vmax)
     d_norm = (d - d.min()) / (d.max() - d.min() + 1e-8)
+
+    # For urban & close-up footprints, apply structural edge sharpening & roof plateau flattening
+    if box_size_km <= 1.5:
+        gy, gx = np.gradient(d_norm)
+        gmag = np.hypot(gx, gy)
+        plateau_mask = gmag < np.percentile(gmag, 45)
+        d_norm_smooth = d_norm.copy()
+        for r in range(1, h - 1):
+            for c in range(1, w - 1):
+                if plateau_mask[r, c]:
+                    d_norm_smooth[r, c] = np.median(d_norm[r-1:r+2, c-1:c+2])
+        wall_mask = gmag > np.percentile(gmag, 65)
+        d_norm = np.where(wall_mask, d_norm + np.sign(d_norm - np.median(d_norm)) * 0.04, d_norm_smooth)
+        d_norm = np.clip(d_norm, 0.0, 1.0)
+
     z = d_norm * z_scale
 
     # Metric terrain calibration
