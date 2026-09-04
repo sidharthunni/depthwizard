@@ -1070,6 +1070,7 @@
 
             bMesh.userData = {
               isBuilding: true,
+              center: new THREE.Vector3(avgX, avgY, baseZ + totalDepth),
               name: b.name === 'yes' ? (b.type !== 'yes' ? b.type.toUpperCase() : 'Building Structure') : b.name,
               heightM: Math.round(heightM * 10) / 10,
               floors: Math.max(1, Math.round(heightM / 3.5)),
@@ -1646,21 +1647,26 @@
         hazardBuildings.forEach((hB) => {
           let nearestSafe = safeBuildings[0];
           let minDist = Infinity;
+          const hCenter = hB.userData.center || hB.position;
+
           safeBuildings.forEach((sB) => {
-            const d = hB.position.distanceTo(sB.position);
+            const sCenter = sB.userData.center || sB.position;
+            const d = hCenter.distanceTo(sCenter);
             if (d < minDist) {
               minDist = d;
               nearestSafe = sB;
             }
           });
 
-          // Arching 3D quadratic bezier escape curve
-          const start = hB.position.clone().add(new THREE.Vector3(0, 0, 4));
-          const end = nearestSafe.position.clone().add(new THREE.Vector3(0, 0, 4));
-          const mid = start.clone().lerp(end, 0.5).add(new THREE.Vector3(0, 0, 6));
+          const sCenter = nearestSafe.userData.center || nearestSafe.position;
+
+          // Arching 3D quadratic bezier escape curve between actual building rooftops
+          const start = hCenter.clone().add(new THREE.Vector3(0, 0, 1.5));
+          const end = sCenter.clone().add(new THREE.Vector3(0, 0, 1.5));
+          const mid = start.clone().lerp(end, 0.5).add(new THREE.Vector3(0, 0, 7.0));
 
           const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
-          const points = curve.getPoints(20);
+          const points = curve.getPoints(24);
           const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
           const lineMat = new THREE.LineDashedMaterial({
             color: 0x38bdf8,
@@ -1708,23 +1714,43 @@
         const floors = b.userData.floors || 2;
         if (heightM >= 6.5 || floors >= 2) {
           count++;
+          const bCenter = b.userData.center || new THREE.Vector3();
+          const topZ = bCenter.z + 0.15;
           const bBox = new THREE.Box3().setFromObject(b);
-          const topZ = bBox.max.z + 0.6;
+          const bSize = bBox.getSize(new THREE.Vector3());
+          const padRadius = Math.max(1.8, Math.min(Math.min(bSize.x, bSize.y) * 0.35, 5.0));
 
-          // Glowing cyan landing circle
-          const ringGeo = new THREE.RingGeometry(2.0, 2.6, 28);
-          const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide });
+          // 1. Golden Circular Landing Ring flat on rooftop
+          const ringGeo = new THREE.RingGeometry(padRadius * 0.78, padRadius, 32);
+          const ringMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24, side: THREE.DoubleSide });
           const ring = new THREE.Mesh(ringGeo, ringMat);
-          ring.position.set(b.position.x, b.position.y, topZ);
+          ring.position.set(bCenter.x, bCenter.y, topZ);
 
-          // Glowing vertical air extraction beacon
-          const beaconGeo = new THREE.CylinderGeometry(0.15, 0.15, 10, 16);
-          const beaconMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65 });
+          // 2. Crisp White 'H' Decal
+          const hMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+          const barW = padRadius * 0.16;
+          const barL = padRadius * 0.90;
+          const lBar = new THREE.Mesh(new THREE.PlaneGeometry(barW, barL), hMat);
+          lBar.position.set(bCenter.x - padRadius * 0.32, bCenter.y, topZ + 0.05);
+
+          const rBar = new THREE.Mesh(new THREE.PlaneGeometry(barW, barL), hMat);
+          rBar.position.set(bCenter.x + padRadius * 0.32, bCenter.y, topZ + 0.05);
+
+          const cBar = new THREE.Mesh(new THREE.PlaneGeometry(padRadius * 0.65, barW), hMat);
+          cBar.position.set(bCenter.x, bCenter.y, topZ + 0.05);
+
+          // 3. Vertical Searchlight Extraction Beacon shooting straight UP into the sky
+          const beaconH = size * 0.22;
+          const beaconGeo = new THREE.CylinderGeometry(0.1, 0.45, beaconH, 16);
+          const beaconMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.5 });
           const beacon = new THREE.Mesh(beaconGeo, beaconMat);
           beacon.rotation.x = Math.PI / 2;
-          beacon.position.set(b.position.x, b.position.y, topZ + 5);
+          beacon.position.set(bCenter.x, bCenter.y, topZ + beaconH / 2);
 
           helipadGroup.add(ring);
+          helipadGroup.add(lBar);
+          helipadGroup.add(rBar);
+          helipadGroup.add(cBar);
           helipadGroup.add(beacon);
         }
       });
