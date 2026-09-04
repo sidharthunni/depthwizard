@@ -1642,43 +1642,88 @@
         }
       });
 
-      // Compute and draw 3D Escape Vector Lines to Nearest Safe Shelter
-      if (safeBuildings.length > 0) {
-        hazardBuildings.forEach((hB) => {
-          let nearestSafe = safeBuildings[0];
-          let minDist = Infinity;
-          const hCenter = hB.userData.center || hB.position;
+      // 1. Identify Primary Safe Haven Relief Shelter (tallest multi-storey structure on safe ground)
+      safeBuildings.sort((a, b) => (b.userData.floors || 0) - (a.userData.floors || 0));
+      const primaryShelter = safeBuildings[0];
+      const sCenter = primaryShelter.userData.center || primaryShelter.position;
 
-          safeBuildings.forEach((sB) => {
-            const sCenter = sB.userData.center || sB.position;
-            const d = hCenter.distanceTo(sCenter);
-            if (d < minDist) {
-              minDist = d;
-              nearestSafe = sB;
-            }
-          });
+      // Add a tall Glowing Emerald Relief Camp Beacon above Primary Shelter
+      const shelterBeaconGeo = new THREE.CylinderGeometry(0.35, 0.35, size * 0.38, 16);
+      const shelterBeaconMat = new THREE.MeshBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.85 });
+      const shelterBeacon = new THREE.Mesh(shelterBeaconGeo, shelterBeaconMat);
+      shelterBeacon.rotation.x = Math.PI / 2;
+      shelterBeacon.position.set(sCenter.x, sCenter.y, sCenter.z + size * 0.19);
+      triageGroup.add(shelterBeacon);
 
-          const sCenter = nearestSafe.userData.center || nearestSafe.position;
+      // 2. Partition hazard buildings into 4 key directional sectors
+      const sectorMap = { Q1: [], Q2: [], Q3: [], Q4: [] };
+      hazardBuildings.forEach(hB => {
+        const hc = hB.userData.center || hB.position;
+        const angle = Math.atan2(hc.y - sCenter.y, hc.x - sCenter.x);
+        if (angle >= 0 && angle < Math.PI / 2) sectorMap.Q1.push(hB);
+        else if (angle >= Math.PI / 2 && angle <= Math.PI) sectorMap.Q2.push(hB);
+        else if (angle < 0 && angle >= -Math.PI / 2) sectorMap.Q3.push(hB);
+        else sectorMap.Q4.push(hB);
+      });
 
-          // Arching 3D quadratic bezier escape curve between actual building rooftops
-          const start = hCenter.clone().add(new THREE.Vector3(0, 0, 1.5));
-          const end = sCenter.clone().add(new THREE.Vector3(0, 0, 1.5));
-          const mid = start.clone().lerp(end, 0.5).add(new THREE.Vector3(0, 0, 7.0));
+      // 3. For each sector, trace a Ground-Draped Evacuation Navigation Corridor along terrain surface
+      const box = new THREE.Box3().setFromObject(currentModel);
+      ['Q1', 'Q2', 'Q3', 'Q4'].forEach((sec) => {
+        const list = sectorMap[sec];
+        if (list.length === 0) return;
 
-          const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
-          const points = curve.getPoints(24);
-          const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
-          const lineMat = new THREE.LineDashedMaterial({
-            color: 0x38bdf8,
-            dashSize: 2.5,
-            gapSize: 1.2,
-            linewidth: 2
-          });
-          const line = new THREE.Line(lineGeo, lineMat);
-          line.computeLineDistances();
-          triageGroup.add(line);
+        // Pick furthest building in this sector as the assembly point
+        list.sort((a, b) => {
+          const ca = a.userData.center || a.position;
+          const cb = b.userData.center || b.position;
+          return cb.distanceTo(sCenter) - ca.distanceTo(sCenter);
         });
-      }
+        const assemblyBuilding = list[0];
+        const aCenter = assemblyBuilding.userData.center || assemblyBuilding.position;
+
+        // Sample 20 points along the ground terrain between assembly point and shelter
+        const waypoints = [];
+        const numSteps = 20;
+        for (let step = 0; step <= numSteps; step++) {
+          const t = step / numSteps;
+          const currX = aCenter.x + (sCenter.x - aCenter.x) * t;
+          const currY = aCenter.y + (sCenter.y - aCenter.y) * t;
+
+          let groundZ = (aCenter.z * (1 - t)) + (sCenter.z * t);
+          if (terrainMesh) {
+            const ray = new THREE.Raycaster(
+              new THREE.Vector3(currX, currY, box.max.z + 100),
+              new THREE.Vector3(0, 0, -1)
+            );
+            const hits = ray.intersectObject(terrainMesh);
+            if (hits.length > 0) groundZ = hits[0].point.z;
+          }
+          waypoints.push(new THREE.Vector3(currX, currY, groundZ + 0.45)); // Draped 45cm above ground/street
+        }
+
+        const spline = new THREE.CatmullRomCurve3(waypoints);
+        const routePoints = spline.getPoints(40);
+
+        // Glowing Emerald Ground Evacuation Corridor
+        const lineGeo = new THREE.BufferGeometry().setFromPoints(routePoints);
+        const lineMat = new THREE.LineDashedMaterial({
+          color: 0x34d399,
+          dashSize: 3.0,
+          gapSize: 1.2,
+          linewidth: 3
+        });
+        const routeLine = new THREE.Line(lineGeo, lineMat);
+        routeLine.computeLineDistances();
+        triageGroup.add(routeLine);
+
+        // Assembly Point Marker
+        const pinGeo = new THREE.CylinderGeometry(0.35, 0.05, 3.2, 12);
+        const pinMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
+        const pin = new THREE.Mesh(pinGeo, pinMat);
+        pin.rotation.x = Math.PI / 2;
+        pin.position.set(aCenter.x, aCenter.y, aCenter.z + 1.6);
+        triageGroup.add(pin);
+      });
 
       document.getElementById('trTotal').innerText = `${buildings.length} Buildings`;
       document.getElementById('trSafe').innerText = `${safeCount} Shelters`;
@@ -1688,7 +1733,7 @@
 
     window.dispatchEvacuationOrder = function() {
       alert("🚨 [NDRF DISASTER MANAGEMENT EVACUATION BROADCAST]\n\n" +
-            "✓ 3D Escape Corridors transmitted to District Emergency Operations Center (DEOC)\n" +
+            "✓ Ground Evacuation Corridors transmitted to District Emergency Operations Center (DEOC)\n" +
             "✓ Civil Defense Sirens Triggered\n" +
             "✓ Safe Havens Active on Field Responders' Tactical Handheld GPS Mesh");
     };
@@ -1708,54 +1753,55 @@
       if (!helipadsActive) return;
 
       const buildings = buildingGroup.children.filter(c => c.userData && c.userData.isBuilding);
-      let count = 0;
-      buildings.forEach((b) => {
-        const heightM = b.userData.heightM || 10;
-        const floors = b.userData.floors || 2;
-        if (heightM >= 6.5 || floors >= 2) {
-          count++;
-          const bCenter = b.userData.center || new THREE.Vector3();
-          const topZ = bCenter.z + 0.15;
-          const bBox = new THREE.Box3().setFromObject(b);
-          const bSize = bBox.getSize(new THREE.Vector3());
-          const padRadius = Math.max(1.8, Math.min(Math.min(bSize.x, bSize.y) * 0.35, 5.0));
+      if (buildings.length === 0) return;
 
-          // 1. Golden Circular Landing Ring flat on rooftop
-          const ringGeo = new THREE.RingGeometry(padRadius * 0.78, padRadius, 32);
-          const ringMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24, side: THREE.DoubleSide });
-          const ring = new THREE.Mesh(ringGeo, ringMat);
-          ring.position.set(bCenter.x, bCenter.y, topZ);
+      // Filter for the Top 6 Primary Strategic Rooftop Extraction Hubs (tallest & widest)
+      const pool = [...buildings];
+      pool.sort((a, b) => (b.userData.heightM || 0) - (a.userData.heightM || 0));
+      const topHelipads = pool.slice(0, 6);
 
-          // 2. Crisp White 'H' Decal
-          const hMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
-          const barW = padRadius * 0.16;
-          const barL = padRadius * 0.90;
-          const lBar = new THREE.Mesh(new THREE.PlaneGeometry(barW, barL), hMat);
-          lBar.position.set(bCenter.x - padRadius * 0.32, bCenter.y, topZ + 0.05);
+      topHelipads.forEach((b) => {
+        const bCenter = b.userData.center || new THREE.Vector3();
+        const topZ = bCenter.z + 0.15;
+        const bBox = new THREE.Box3().setFromObject(b);
+        const bSize = bBox.getSize(new THREE.Vector3());
+        const padRadius = Math.max(2.2, Math.min(Math.min(bSize.x, bSize.y) * 0.38, 6.0));
 
-          const rBar = new THREE.Mesh(new THREE.PlaneGeometry(barW, barL), hMat);
-          rBar.position.set(bCenter.x + padRadius * 0.32, bCenter.y, topZ + 0.05);
+        // 1. Golden Circular Landing Ring flat on rooftop
+        const ringGeo = new THREE.RingGeometry(padRadius * 0.78, padRadius, 32);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24, side: THREE.DoubleSide });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.position.set(bCenter.x, bCenter.y, topZ);
 
-          const cBar = new THREE.Mesh(new THREE.PlaneGeometry(padRadius * 0.65, barW), hMat);
-          cBar.position.set(bCenter.x, bCenter.y, topZ + 0.05);
+        // 2. Crisp White 'H' Decal
+        const hMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+        const barW = padRadius * 0.16;
+        const barL = padRadius * 0.90;
+        const lBar = new THREE.Mesh(new THREE.PlaneGeometry(barW, barL), hMat);
+        lBar.position.set(bCenter.x - padRadius * 0.32, bCenter.y, topZ + 0.05);
 
-          // 3. Vertical Searchlight Extraction Beacon shooting straight UP into the sky
-          const beaconH = size * 0.22;
-          const beaconGeo = new THREE.CylinderGeometry(0.1, 0.45, beaconH, 16);
-          const beaconMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.5 });
-          const beacon = new THREE.Mesh(beaconGeo, beaconMat);
-          beacon.rotation.x = Math.PI / 2;
-          beacon.position.set(bCenter.x, bCenter.y, topZ + beaconH / 2);
+        const rBar = new THREE.Mesh(new THREE.PlaneGeometry(barW, barL), hMat);
+        rBar.position.set(bCenter.x + padRadius * 0.32, bCenter.y, topZ + 0.05);
 
-          helipadGroup.add(ring);
-          helipadGroup.add(lBar);
-          helipadGroup.add(rBar);
-          helipadGroup.add(cBar);
-          helipadGroup.add(beacon);
-        }
+        const cBar = new THREE.Mesh(new THREE.PlaneGeometry(padRadius * 0.65, barW), hMat);
+        cBar.position.set(bCenter.x, bCenter.y, topZ + 0.05);
+
+        // 3. Vertical Searchlight Extraction Beacon shooting straight UP into the sky
+        const beaconH = size * 0.28;
+        const beaconGeo = new THREE.CylinderGeometry(0.12, 0.55, beaconH, 16);
+        const beaconMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.6 });
+        const beacon = new THREE.Mesh(beaconGeo, beaconMat);
+        beacon.rotation.x = Math.PI / 2;
+        beacon.position.set(bCenter.x, bCenter.y, topZ + beaconH / 2);
+
+        helipadGroup.add(ring);
+        helipadGroup.add(lBar);
+        helipadGroup.add(rBar);
+        helipadGroup.add(cBar);
+        helipadGroup.add(beacon);
       });
 
-      alert(`🚁 Rooftop Helipad AI Scan Complete:\nIdentified ${count} emergency rooftop extraction zones viable for IAF ALH Dhruv / Indian Coast Guard helicopters!`);
+      alert(`🚁 Rooftop Helipad AI Scan Complete:\nDesignated Top ${topHelipads.length} Primary Strategic Extraction Hubs viable for IAF ALH Dhruv / Indian Coast Guard helicopters!`);
     };
 
     window.updateHeight = (val) => {
