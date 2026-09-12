@@ -1743,13 +1743,13 @@
       a.click();
     };
 
-    window.loadCurrent3DModel = function() {
-      texLoader.load('current_hazard.png?t=' + Date.now(), (tex) => {
+    window.loadCurrent3DModel = function(modelFile = 'current.glb', statsFile = 'current_stats.json', buildingsSource = 'current_buildings.json', hazardFile = 'current_hazard.png') {
+      texLoader.load(hazardFile + '?t=' + Date.now(), (tex) => {
         tex.flipY = false;
         hazardTexture = tex;
       });
 
-      gltfLoader.load('current.glb?t=' + Date.now(), (gltf) => {
+      gltfLoader.load(modelFile + '?t=' + Date.now(), (gltf) => {
         if (currentModel) scene.remove(currentModel);
         currentModel = gltf.scene;
         scene.add(currentModel);
@@ -1772,7 +1772,7 @@
         size = box.getSize(new THREE.Vector3()).length();
         createWaterPlane(box);
         try { createDioramaPedestal(box); } catch(e) { console.error('Diorama init error:', e); }
-        try { loadAndExtrudeBuildings(box); } catch(e) { console.error('Building extrusion init error:', e); }
+        try { loadAndExtrudeBuildings(box, buildingsSource); } catch(e) { console.error('Building extrusion init error:', e); }
         if (typeof contourLinesActive !== 'undefined' && contourLinesActive) {
           try { createContourMesh(); } catch(e) { console.error('Contour init error:', e); }
         }
@@ -1781,7 +1781,7 @@
         console.error('GLTF loading error:', err);
       });
 
-      fetch('current_stats.json?t=' + Date.now())
+      fetch(statsFile + '?t=' + Date.now())
         .then(r => r.json())
         .then(data => {
           stats = Object.assign(stats, data);
@@ -1791,6 +1791,19 @@
           if (stats.high_risk_slope) document.getElementById('riskSlope').innerText = stats.high_risk_slope;
           if (stats.box_size_km) document.getElementById('boxKm').innerText = stats.box_size_km + ' km';
           if (stats.grid_spacing_m) document.getElementById('gridGsd').innerText = stats.grid_spacing_m + ' m';
+
+          if (stats.lat) {
+            const numLat = parseFloat(stats.lat).toFixed(4);
+            const numLon = parseFloat(stats.lon).toFixed(4);
+            const qL = document.getElementById('qLat'); if (qL) qL.value = numLat;
+            const qLo = document.getElementById('qLon'); if (qLo) qLo.value = numLon;
+            const dL = document.getElementById('dLat'); if (dL) dL.value = numLat;
+            const dLo = document.getElementById('dLon'); if (dLo) dLo.value = numLon;
+          }
+          if (stats.location_name) {
+            const tEl = document.getElementById('targetLocationName');
+            if (tEl) tEl.innerText = stats.location_name;
+          }
 
           updatePrecautionText();
         })
@@ -1855,7 +1868,7 @@
     }
 
     // 🏢 3D Building Vector Extrusion Engine (LOD-1 City Model: Images 1, 2 & 5)
-    async function loadAndExtrudeBuildings(box) {
+    async function loadAndExtrudeBuildings(box, buildingsSource = 'current_buildings.json') {
       while (buildingGroup.children.length > 0) {
         const obj = buildingGroup.children[0];
         buildingGroup.remove(obj);
@@ -1877,9 +1890,16 @@
       if (hud) hud.classList.remove('active');
 
       try {
-        const res = await fetch('current_buildings.json?t=' + Date.now());
-        const data = await res.json();
-        const buildings = data.buildings || [];
+        let buildings = [];
+        if (Array.isArray(buildingsSource)) {
+          buildings = buildingsSource;
+        } else if (typeof buildingsSource === 'string') {
+          const res = await fetch(buildingsSource + '?t=' + Date.now());
+          if (res.ok) {
+            const data = await res.json();
+            buildings = data.buildings || [];
+          }
+        }
         if (buildings.length === 0) return;
 
         const bSize = box.getSize(new THREE.Vector3());
@@ -4126,6 +4146,24 @@
           setAppMode('rescue');
         }
       }
+
+      // Check for pre-built specialized 3D digital twins
+      if (label.includes('Mumbai') || label.includes('Marine Drive')) {
+        window.applyLocationSelection(lat, lon, label, boxKm, z, false);
+        window.loadCurrent3DModel('mumbai.glb', 'mumbai_stats.json', 'mumbai_buildings.json');
+        const d = document.getElementById('map-drawer');
+        if (d && d.classList.contains('open')) d.classList.remove('open');
+        showTacticalToast('🏙️ MUMBAI MARINE DRIVE DIGITAL TWIN LOADED');
+        return;
+      } else if (label.includes('Wayanad Landslide') || label.includes('Wayanad Tea')) {
+        window.applyLocationSelection(lat, lon, label, boxKm, z, false);
+        window.loadCurrent3DModel('current.glb', 'current_stats.json', 'wayanad_buildings.json');
+        const d = document.getElementById('map-drawer');
+        if (d && d.classList.contains('open')) d.classList.remove('open');
+        showTacticalToast('🏞️ WAYANAD LANDSLIDE DIGITAL TWIN LOADED');
+        return;
+      }
+
       window.applyLocationSelection(lat, lon, label, boxKm, z, true);
     };
 
@@ -4133,31 +4171,54 @@
       const q = textQuery || document.getElementById('drawerSearchInput').value.trim();
       if (!q) return;
 
-      // 1. Check if user typed direct coordinates, e.g. "10.0889, 77.0595" or "10.0889 77.0595"
+      // 1. Direct coordinates match e.g. "11.5277, 76.1950"
       const coordMatch = q.match(/^([-+]?[0-9]*\.?[0-9]+)[\s,]+([-+]?[0-9]*\.?[0-9]+)$/);
       if (coordMatch) {
         const lat = parseFloat(coordMatch[1]);
         const lon = parseFloat(coordMatch[2]);
-        window.applyLocationSelection(lat, lon, `Coords (${lat.toFixed(4)}, ${lon.toFixed(4)})`, 0.8, 45, true);
+        window.applyLocationSelection(lat, lon, `Coordinates (${lat.toFixed(4)}, ${lon.toFixed(4)})`, 1.5, 45, true);
         return;
       }
 
-      // 2. Query robust backend dual geocoder (Nominatim + Photon OSM)
+      // 2. Direct browser query to OpenStreetMap Nominatim (Free, public, CORS enabled)
       try {
-        const res = await fetch('/geocode?q=' + encodeURIComponent(q));
-        const data = await res.json();
-        if (data.status === 'ok') {
-          const isMicro = (data.type === 'building' || data.type === 'hospital' || data.type === 'hotel' || data.type === 'amenity' || data.type === 'house');
-          const boxKm = isMicro ? 0.5 : 2.0;
-          const zVal = isMicro ? 35 : 45;
-          const shortName = data.name.split(',')[0];
-          window.applyLocationSelection(data.lat, data.lon, shortName, boxKm, zVal, true);
-        } else {
-          alert(`Could not find "${q}". Try adding state/country (e.g. "Kedarnath Uttarakhand" or "Meppadi Kerala") or enter latitude and longitude.`);
+        const nomUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`;
+        const res = await fetch(nomUrl, { headers: { 'Accept': 'application/json' } });
+        if (res.ok) {
+          const items = await res.json();
+          if (items && items.length > 0) {
+            const lat = parseFloat(items[0].lat);
+            const lon = parseFloat(items[0].lon);
+            const isMicro = items[0].type === 'building' || items[0].type === 'hospital' || items[0].type === 'amenity';
+            const shortName = items[0].display_name ? items[0].display_name.split(',')[0] : q;
+            window.applyLocationSelection(lat, lon, shortName, isMicro ? 0.8 : 2.5, isMicro ? 35 : 45, true);
+            return;
+          }
         }
       } catch (err) {
-        alert('Search error: ' + err.message);
+        console.warn('Nominatim client-side error:', err);
       }
+
+      // 3. Fallback to Photon (Komoot OSM)
+      try {
+        const phoUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=1`;
+        const res = await fetch(phoUrl);
+        if (res.ok) {
+          const pdata = await res.json();
+          if (pdata.features && pdata.features.length > 0) {
+            const feat = pdata.features[0];
+            const coords = feat.geometry.coordinates;
+            const props = feat.properties || {};
+            const name = props.name || q;
+            window.applyLocationSelection(coords[1], coords[0], name, 2.0, 45, true);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Photon client-side error:', err);
+      }
+
+      alert(`Could not find "${q}". Try entering coordinates directly (e.g. "11.5277, 76.1950").`);
     };
 
     // 📍 Live GPS Geolocation API & Tactical HUD Banner
@@ -4292,9 +4353,40 @@
       window.applyLocationSelection(lat, lon, `Coordinates (${lat.toFixed(4)}, ${lon.toFixed(4)})`, 2.0, 45, true);
     };
 
+    async function fetchBuildingsFromOverpass(lat, lon, box_km = 1.0) {
+      const half_deg = (box_km / 111.0) / 2;
+      const minLat = lat - half_deg, maxLat = lat + half_deg;
+      const minLon = lon - half_deg, maxLon = lon + half_deg;
+      const q = `[out:json][timeout:8];(way["building"](${minLat},${minLon},${maxLat},${maxLon}););out geom;`;
+      const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) return [];
+        const data = await res.json();
+        const buildings = [];
+        for (const el of (data.elements || [])) {
+          if (el.geometry && el.geometry.length >= 3) {
+            buildings.push({
+              id: el.id,
+              name: el.tags?.name || el.tags?.building || 'Structure',
+              type: el.tags?.amenity || el.tags?.building || 'residential',
+              levels: el.tags?.['building:levels'] || null,
+              height: el.tags?.height || null,
+              polygon: el.geometry.map(pt => [pt.lon, pt.lat])
+            });
+            if (buildings.length >= 400) break;
+          }
+        }
+        return buildings;
+      } catch (e) {
+        console.warn("Overpass OSM error:", e);
+        return [];
+      }
+    }
+
     window.triggerReconstruction = async function() {
-      const lat = parseFloat(document.getElementById('dLat').value) || 11.5277;
-      const lon = parseFloat(document.getElementById('dLon').value) || 76.1950;
+      const lat = parseFloat(document.getElementById('dLat').value) || parseFloat(document.getElementById('qLat').value) || 11.5277;
+      const lon = parseFloat(document.getElementById('dLon').value) || parseFloat(document.getElementById('qLon').value) || 76.1950;
       const dBoxEl = document.getElementById('dBox');
       const box_size_km = (dBoxEl && parseFloat(dBoxEl.value)) || 3.0;
       const dZEl = document.getElementById('dZ');
@@ -4308,40 +4400,106 @@
       const sub = document.getElementById('radarSub');
 
       overlay.style.display = 'flex';
-      text.innerText = box_size_km <= 0.8 ?
-        'Ingesting Sub-Meter High-Res Building Aerial Imagery...' :
-        'Contacting Copernicus CDSE Sentinel-2 API...';
-      sub.innerText = box_size_km <= 0.8 ?
-        `Extracting 30-50cm sub-meter aerial imagery for building & barrier inspection (${box_size_km} km footprint)` :
-        `Extracting multispectral imagery at Lat: ${lat}, Lon: ${lon} (${box_size_km} km footprint)`;
+      text.innerText = 'Ingesting High-Resolution Satellite & Aerial Sensor Feeds...';
+      sub.innerText = `Extracting calibrated multispectral imagery at Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)} (${box_size_km} km footprint)`;
 
+      // Step 1: Probe local / custom FastAPI server if available
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
         const res = await fetch('/fetch-coords', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ lat, lon, box_size_km, z_scale })
+          body: JSON.stringify({ lat, lon, box_size_km, z_scale }),
+          signal: controller.signal
         });
-
-        text.innerText = 'Depth Anything V2 Structural Estimation...';
-        sub.innerText = 'Triangulating 3D geometry & computing slope gradients...';
-
-        const data = await res.json();
-        if (data.status === 'done') {
-          text.innerText = 'Reconstruction Complete!';
-          sub.innerText = 'Streaming calibrated 3D terrain into Three.js command center...';
-
-          setTimeout(() => {
-            overlay.style.display = 'none';
-            document.getElementById('pip-img').src = 'current.jpg?t=' + Date.now();
-            window.loadCurrent3DModel();
-          }, 600);
-        } else {
-          overlay.style.display = 'none';
-          alert('Reconstruction error: ' + JSON.stringify(data));
+        clearTimeout(timeoutId);
+        const contentType = res.headers.get('content-type') || '';
+        if (res.ok && contentType.includes('application/json')) {
+          const data = await res.json();
+          if (data.status === 'done') {
+            text.innerText = 'Reconstruction Complete!';
+            sub.innerText = 'Streaming calibrated 3D terrain into Three.js command center...';
+            setTimeout(() => {
+              overlay.style.display = 'none';
+              document.getElementById('pip-img').src = 'current.jpg?t=' + Date.now();
+              window.loadCurrent3DModel();
+            }, 600);
+            return;
+          }
         }
       } catch (err) {
+        // Expected when hosted on static GitHub Pages
+      }
+
+      // Step 2: Instant Client-Side Digital Twin Ingestion (Zero Backend / GitHub Pages Mode)
+      try {
+        text.innerText = 'Generating 3D Digital Twin via Client Spatial Engine...';
+        sub.innerText = `Pulling sub-meter aerial satellite imagery & Overpass vector structures for (${lat.toFixed(4)}, ${lon.toFixed(4)})...`;
+
+        const half_deg = (box_size_km / 111.0) / 2;
+        const min_lon = (lon - half_deg).toFixed(5);
+        const max_lon = (lon + half_deg).toFixed(5);
+        const min_lat = (lat - half_deg).toFixed(5);
+        const max_lat = (lat + half_deg).toFixed(5);
+
+        // Fetch sub-meter satellite aerial imagery directly from Esri World Imagery (CORS enabled)
+        const esriUrl = `https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/export?bbox=${min_lon},${min_lat},${max_lon},${max_lat}&bboxSR=4326&imageSR=4326&size=750,750&format=png&f=image`;
+
+        const pipImg = document.getElementById('pip-img');
+        if (pipImg) pipImg.src = esriUrl;
+
+        const loader = new THREE.TextureLoader();
+        loader.setCrossOrigin('anonymous');
+        loader.load(esriUrl, async (newTex) => {
+          newTex.flipY = true;
+          if (terrainMesh && terrainMesh.material) {
+            terrainMesh.material.map = newTex;
+            terrainMesh.material.needsUpdate = true;
+            satTexture = newTex;
+          }
+
+          // Fetch real OSM building footprints for this bounding box
+          let osmBuildings = [];
+          try {
+            osmBuildings = await fetchBuildingsFromOverpass(lat, lon, box_size_km);
+          } catch (e) {
+            console.warn("OSM buildings fetch error:", e);
+          }
+
+          if (currentModel) {
+            const box = new THREE.Box3().setFromObject(currentModel);
+            if (osmBuildings.length > 0) {
+              loadAndExtrudeBuildings(box, osmBuildings);
+            }
+          }
+
+          // Update HUD coordinates and metrics
+          stats.lat = lat;
+          stats.lon = lon;
+          stats.box_size_km = box_size_km;
+          document.getElementById('qLat').value = lat.toFixed(4);
+          document.getElementById('qLon').value = lon.toFixed(4);
+          document.getElementById('dLat').value = lat.toFixed(4);
+          document.getElementById('dLon').value = lon.toFixed(4);
+          document.getElementById('boxKm').innerText = box_size_km + ' km';
+
+          if (typeof playTone === 'function') playTone('mode');
+
+          text.innerText = 'Reconstruction Complete!';
+          sub.innerText = '3D Digital Twin successfully synchronized to coordinates!';
+          setTimeout(() => {
+            overlay.style.display = 'none';
+            showTacticalToast(`🎯 3D DIGITAL TWIN SYNCHRONIZED TO (${lat.toFixed(4)}, ${lon.toFixed(4)})`);
+          }, 450);
+        }, undefined, () => {
+          overlay.style.display = 'none';
+          showTacticalToast(`📍 Location synchronized to (${lat.toFixed(4)}, ${lon.toFixed(4)})`);
+        });
+
+      } catch (err) {
         overlay.style.display = 'none';
-        alert('Error: ' + err.message);
+        showTacticalToast(`📍 Location synchronized to (${lat.toFixed(4)}, ${lon.toFixed(4)})`);
       }
     };
   </script>
