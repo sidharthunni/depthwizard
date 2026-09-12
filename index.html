@@ -172,7 +172,7 @@
     .tele-v { color: var(--accent); font-weight: 700; }
 
     /* Floating Cards */
-    #measure-card, #building-card, #precaution-modal {
+    #measure-card, #building-card, #water-card, #landmark-card, #precaution-modal {
       background: rgba(9, 14, 28, 0.95); backdrop-filter: blur(28px) saturate(180%);
       border: 1px solid var(--panel-border); border-radius: 16px;
       box-shadow: 0 24px 50px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -197,6 +197,25 @@
       box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
     #building-card h4 { margin: 0 0 8px 0; color: var(--warning); font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; align-items: center; }
+
+    #water-card {
+      position: absolute; bottom: 24px; left: 345px; z-index: 120;
+      padding: 16px 18px; width: 350px; display: none;
+      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(56, 189, 248, 0.45); border-radius: 16px;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    #water-card h4 { margin: 0 0 8px 0; color: #38bdf8; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; align-items: center; }
+
+    #landmark-card {
+      position: absolute; bottom: 24px; left: 345px; z-index: 120;
+      padding: 16px 18px; width: 350px; display: none;
+      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(245, 158, 11, 0.45); border-radius: 16px;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(245, 158, 11, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    #landmark-card h4 { margin: 0 0 8px 0; color: #fbbf24; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; align-items: center; }
+
     .b-badge { font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 99px; display: inline-block; margin-top: 4px; }
     .b-badge.hazard { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244,63,94,0.3); }
 
@@ -853,6 +872,8 @@
     <div class="dock-group-label" id="lblRealismGroup">3D Realism & Extrusions</div>
     <div class="btn-grid">
       <button id="btnExtrude" class="btn-dock active" onclick="toggleExtrudedBuildings()">🏢 3D Buildings</button>
+      <button id="btnWaterways" class="btn-dock active" onclick="toggleWaterways()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4);">🌊 3D Rivers</button>
+      <button id="btnPeaks" class="btn-dock active" onclick="togglePeaksAndLandmarks()" style="color:#f59e0b; border-color:rgba(245,158,11,0.4);">🏔️ Peaks & Pins</button>
       <button id="btnDiorama" class="btn-dock active" onclick="toggleDioramaBase()">📦 Diorama Base</button>
       <button id="btnCyber" class="btn-dock" onclick="toggleCyberCityMode()">🌆 Cyber City</button>
       <button id="btnWire" class="btn-dock" onclick="toggleWireframe()">🕸️ Wireframe</button>
@@ -1166,6 +1187,35 @@
       <div class="m-row"><span>Evacuation Action:</span><span class="m-val" id="evacPathStatus" style="color:#fbbf24;">ILLUMINATED 3D VECTOR ACTIVE</span></div>
       <button onclick="focusEvacShelter()" style="margin-top:8px; width:100%; background:linear-gradient(135deg, #059669, #10b981); color:#fff; border:none; padding:7px; border-radius:8px; font-size:11px; cursor:pointer; font-weight:800; box-shadow:0 0 16px rgba(16,185,129,0.35); transition:0.2s;">🎯 Focus View on Safe Shelter</button>
     </div>
+  </div>
+
+  <!-- 🌊 3D River Channel & Hydrology Telemetry Card -->
+  <div id="water-card">
+    <h4>
+      <span id="wTitle">🌊 River Channel Telemetry</span>
+      <button onclick="clearWaterwayInspection()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;">✕</button>
+    </h4>
+    <div class="m-row"><span>Waterway Name:</span><span class="m-val" id="wName" style="color:#38bdf8; font-weight:700;">--</span></div>
+    <div class="m-row"><span>Channel Classification:</span><span class="m-val" id="wType">Perennial Stream</span></div>
+    <div class="m-row"><span>Est. River Discharge:</span><span class="m-val" id="wFlow" style="color:#60a5fa;">-- m³/s</span></div>
+    <div class="m-row"><span>Current Flow Velocity:</span><span class="m-val" id="wVelocity">-- m/s</span></div>
+    <div class="m-row"><span>Channel Water Depth:</span><span class="m-val" id="wDepth">-- m</span></div>
+    <div class="m-row"><span>Overbank Safety Freeboard:</span><span class="m-val" id="wMargin" style="color:#34d399;">--</span></div>
+    <div id="wBadgeContainer" style="margin-top:6px;"></div>
+  </div>
+
+  <!-- 🏔️ 3D Mountain Peak & Regional Landmark Card -->
+  <div id="landmark-card">
+    <h4>
+      <span id="lmTitle">🏔️ Mountain Peak / Landmark</span>
+      <button onclick="clearLandmarkInspection()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;">✕</button>
+    </h4>
+    <div class="m-row"><span>Feature Name:</span><span class="m-val" id="lmName" style="color:#fbbf24; font-weight:700;">--</span></div>
+    <div class="m-row"><span>Geomorphic Category:</span><span class="m-val" id="lmType">Mountain Summit</span></div>
+    <div class="m-row"><span>Summit Altitude (AMSL):</span><span class="m-val" id="lmElev" style="color:#34d399;">-- m</span></div>
+    <div class="m-row"><span>Topographic Prominence:</span><span class="m-val" id="lmProminence" style="color:#38bdf8;">-- m</span></div>
+    <div class="m-row"><span>Disaster & Slope Status:</span><span class="m-val" id="lmStatus" style="color:#fb7185;">--</span></div>
+    <div id="lmBadgeContainer" style="margin-top:6px;"></div>
   </div>
 
   <!-- 🚨 NDRF Disaster Triage & Escape Corridors Card -->
@@ -1588,15 +1638,24 @@
     let isWireframe = false;
     let isSplitPIP = false;
 
-    // 🏢 3D Building Extrusions & Diorama Pedestal State (Images 1-5)
+    // 🏢 3D Building Extrusions, Waterways & Mountain Landmarks State
     const buildingGroup = new THREE.Group();
     scene.add(buildingGroup);
     const triageGroup = new THREE.Group();
     scene.add(triageGroup);
     const helipadGroup = new THREE.Group();
     scene.add(helipadGroup);
+    const waterwayGroup = new THREE.Group();
+    scene.add(waterwayGroup);
+    const landmarkGroup = new THREE.Group();
+    scene.add(landmarkGroup);
 
     let showBuildings = true;
+    let showWaterways = true;
+    let showPeaks = true;
+    let animatedWaterMaterials = [];
+    let waterwayMarkers = [];
+    let landmarkMarkers = [];
     let cyberMode = false;
     let triageActive = false;
     let triageSafeBuildings = [];
@@ -2116,6 +2175,8 @@
         createWaterPlane(box);
         try { createDioramaPedestal(box); } catch(e) { console.error('Diorama init error:', e); }
         try { loadAndExtrudeBuildings(box, buildingsSource); } catch(e) { console.error('Building extrusion init error:', e); }
+        try { createGeospatialWaterways(box, modelFile); } catch(e) { console.error('Waterways init error:', e); }
+        try { createGeospatialLandmarks(box, modelFile); } catch(e) { console.error('Landmarks init error:', e); }
         if (typeof contourLinesActive !== 'undefined' && contourLinesActive) {
           try { createContourMesh(); } catch(e) { console.error('Contour init error:', e); }
         }
@@ -2223,6 +2284,1053 @@
 
       dioramaMesh.visible = showDiorama;
       scene.add(dioramaMesh);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // 🌊 3D Geospatial Waterways, Mountain Peaks & Regional Landmarks System
+    // ══════════════════════════════════════════════════════════════════════════
+    const REGIONAL_GEOSPATIAL_FEATURES = {
+      nashik: {
+        waterways: [
+          {
+            name: "Godavari River (Trimbak-Gangapur Reach)",
+            type: "Perennial River / Primary Basin Mainstem",
+            flow: "420",
+            velocity: "1.8",
+            depth: "4.5",
+            margin: "+3.8 m Safe Freeboard",
+            alertLevel: "safe",
+            badgeText: "NORMAL DISCHARGE FLOW",
+            widthFactor: 0.038,
+            channel: [
+              [-0.48, -0.15], [-0.36, -0.09], [-0.22, -0.03], [-0.08, 0.04],
+              [0.08, 0.02], [0.22, -0.05], [0.35, -0.03], [0.48, 0.08]
+            ]
+          }
+        ],
+        landmarks: [
+          {
+            name: "Brahmagiri Mountain Summit",
+            category: "peak",
+            type: "High-Relief Western Ghats Ridge",
+            elev: 1298,
+            prominence: 733,
+            status: "Source of Godavari / Slope Regolith Monitored",
+            badgeText: "🏔️ MAJOR SUMMIT PEAK",
+            icon: "🏔️",
+            pos: [0.34, 0.30]
+          },
+          {
+            name: "Gangapur Dam Reservoir & Spillway",
+            category: "dam",
+            type: "Earthen Dam & Irrigation Reservoir (5,630 Mcft)",
+            elev: 610,
+            prominence: 45,
+            status: "Automated Sluice Gate Control Active",
+            badgeText: "🌊 FLOOD MITIGATION DAM",
+            icon: "🌊",
+            pos: [-0.30, 0.22]
+          },
+          {
+            name: "Panchavati Historical River Ghats",
+            category: "heritage",
+            type: "Heritage Riverbank & High-Water Benchmark",
+            elev: 565,
+            prominence: 12,
+            status: "Historical Flood Level Gauge Station",
+            badgeText: "🏛️ HISTORICAL GHAT",
+            icon: "🏛️",
+            pos: [0.06, 0.02]
+          },
+          {
+            name: "Sula Agro-Vineyard Terraces",
+            category: "agro",
+            type: "Drip-Irrigated Horticulture Agro-Cluster",
+            elev: 582,
+            prominence: 18,
+            status: "Smart Soil Moisture & Micro-Climate Hub",
+            badgeText: "🍇 AGRO HORTICULTURE",
+            icon: "🍇",
+            pos: [-0.18, -0.28]
+          }
+        ]
+      },
+      assam: {
+        waterways: [
+          {
+            name: "Brahmaputra River (Guwahati Braided Reach)",
+            type: "Transboundary Braided Fluvial Mega-System",
+            flow: "19,800",
+            velocity: "3.4",
+            depth: "12.2",
+            margin: "+0.9 m High Overbank Risk",
+            alertLevel: "critical",
+            badgeText: "SURGE OVERBANK FLOOD ALERT",
+            widthFactor: 0.068,
+            channel: [
+              [-0.48, 0.28], [-0.32, 0.33], [-0.15, 0.26], [0.04, 0.29],
+              [0.22, 0.35], [0.36, 0.30], [0.48, 0.34]
+            ]
+          },
+          {
+            name: "Bharalu Urban Basin Tributary",
+            type: "Perennial Urban Drainage Channel",
+            flow: "85",
+            velocity: "1.2",
+            depth: "3.1",
+            margin: "+0.5 m Silt Choking Alert",
+            alertLevel: "warning",
+            badgeText: "DRAINAGE CONGESTION WATCH",
+            widthFactor: 0.022,
+            channel: [
+              [-0.10, -0.30], [-0.06, -0.12], [0.01, 0.08], [0.04, 0.29]
+            ]
+          }
+        ],
+        landmarks: [
+          {
+            name: "Kamakhya Nilachal Hill Summit",
+            category: "peak",
+            type: "Granite Gneiss Horst Hill / Sacred Sanctuary",
+            elev: 302,
+            prominence: 248,
+            status: "Bedrock Structural Anchor / Low Landslide Hazard",
+            badgeText: "🏔️ NILACHAL PROMINENCE",
+            icon: "🏔️",
+            pos: [-0.20, 0.06]
+          },
+          {
+            name: "Umananda River Peacock Island",
+            category: "heritage",
+            type: "Fluvial Granite Outcrop in Brahmaputra",
+            elev: 122,
+            prominence: 68,
+            status: "Braided Mid-Stream Hydro-Erosion Sensor",
+            badgeText: "🏝️ FLUVIAL BENCHMARK",
+            icon: "🏝️",
+            pos: [0.08, 0.31]
+          },
+          {
+            name: "Guwahati Inland River Port & Ferry Ghat",
+            category: "dam",
+            type: "Inland Waterways Authority Cargo & Evac Terminal",
+            elev: 54,
+            prominence: 6,
+            status: "High Seasonal Flood Inundation Exposure",
+            badgeText: "🚢 INLAND WATERWAYS HUB",
+            icon: "🚢",
+            pos: [-0.02, 0.22]
+          },
+          {
+            name: "Beltola Agro Wholesale Mandi & Silos",
+            category: "agro",
+            type: "Regional Vegetable & Grain Commodity Depot",
+            elev: 58,
+            prominence: 10,
+            status: "High-Ground Food Reserve (Elevated Plinth)",
+            badgeText: "🌾 STRATEGIC AGRO DEPOT",
+            icon: "🌾",
+            pos: [0.24, -0.22]
+          }
+        ]
+      },
+      punjab: {
+        waterways: [
+          {
+            name: "Sirhind Canal Irrigation Mainstem",
+            type: "Engineered High-Volume Agricultural Aqueduct",
+            flow: "185",
+            velocity: "1.4",
+            depth: "3.8",
+            margin: "+2.6 m Regulated Freeboard",
+            alertLevel: "safe",
+            badgeText: "REGULATED KHARIF CANAL DISCHARGE",
+            widthFactor: 0.032,
+            channel: [
+              [-0.48, 0.18], [-0.26, 0.12], [-0.05, 0.07], [0.16, 0.01],
+              [0.32, -0.06], [0.48, -0.14]
+            ]
+          },
+          {
+            name: "Budha Nullah Agro-Drainage Channel",
+            type: "Distributary Drainage & Runoff Collector",
+            flow: "45",
+            velocity: "0.9",
+            depth: "2.4",
+            margin: "+1.9 m Normal",
+            alertLevel: "safe",
+            badgeText: "FIELD SURFACE DRAINAGE RUN",
+            widthFactor: 0.020,
+            channel: [
+              [-0.05, 0.07], [-0.02, -0.14], [0.06, -0.32], [0.14, -0.48]
+            ]
+          }
+        ],
+        landmarks: [
+          {
+            name: "PAU Agro-Meteorological Observational Mast",
+            category: "agro",
+            type: "Punjab Agricultural University Climate Station",
+            elev: 255,
+            prominence: 18,
+            status: "Real-time Doppler Radar & Evapotranspiration Tower",
+            badgeText: "📡 PAU AGRO-CLIMATE TOWER",
+            icon: "📡",
+            pos: [-0.15, -0.12]
+          },
+          {
+            name: "Ludhiana FCI Strategic Grain Silos (45,000 MT)",
+            category: "agro",
+            type: "Steel Silo Complex / National Food Security Reserve",
+            elev: 248,
+            prominence: 32,
+            status: "Hermetic Temperature-Controlled Wheat Silo",
+            badgeText: "🌾 CENTRAL GRAIN RESERVE",
+            icon: "🌾",
+            pos: [0.22, 0.18]
+          },
+          {
+            name: "Sutlej River Reinforced Flood Embankment",
+            category: "dam",
+            type: "Geo-Textile Reinforced River Dyke",
+            elev: 246,
+            prominence: 8,
+            status: "Spur Dykes & Seepage Wells Functional",
+            badgeText: "🛡️ FLOOD PROTECTION DYKE",
+            icon: "🛡️",
+            pos: [-0.28, 0.25]
+          },
+          {
+            name: "Ladhowal Seed Farm & Solar Pump Compound",
+            category: "agro",
+            type: "ICAR Certified Foundation Seed Nursery",
+            elev: 242,
+            prominence: 6,
+            status: "Zero-Salinity Groundwater Aquifer Recharge",
+            badgeText: "🌱 ICAR SEED SANCTUARY",
+            icon: "🌱",
+            pos: [0.12, -0.28]
+          }
+        ]
+      },
+      cauvery: {
+        waterways: [
+          {
+            name: "Cauvery River Delta Mainstem",
+            type: "Deltaic Agricultural Lifeline Channel",
+            flow: "650",
+            velocity: "1.6",
+            depth: "3.6",
+            margin: "+1.8 m Freeboard",
+            alertLevel: "safe",
+            badgeText: "OPTIMAL DELTAIC IRRIGATION FLOW",
+            widthFactor: 0.038,
+            channel: [
+              [-0.48, -0.04], [-0.28, 0.02], [-0.08, 0.06], [0.10, 0.04],
+              [0.28, 0.08], [0.48, 0.12]
+            ]
+          },
+          {
+            name: "Vennar Distributary Channel",
+            type: "Grand Anicut Sluice Distributary",
+            flow: "280",
+            velocity: "1.3",
+            depth: "2.8",
+            margin: "+1.5 m Regulated",
+            alertLevel: "safe",
+            badgeText: "PADDY DELTA WATER SUPPLY",
+            widthFactor: 0.026,
+            channel: [
+              [-0.08, 0.06], [0.06, -0.10], [0.22, -0.22], [0.45, -0.32]
+            ]
+          }
+        ],
+        landmarks: [
+          {
+            name: "Grand Anicut (Kallanai) Historic Barrage",
+            category: "dam",
+            type: "Ancient Hydraulic Wonder (Built 2nd Century AD)",
+            elev: 65,
+            prominence: 14,
+            status: "Fully Functional Deltaic Regulator Sluices",
+            badgeText: "🏛️ HISTORIC 2ND-C. DAM",
+            icon: "🏛️",
+            pos: [-0.32, 0.03]
+          },
+          {
+            name: "Thanjavur Brihadisvara Vimana Summit",
+            category: "heritage",
+            type: "Granite Monolithic Temple Tower (66m Stupa)",
+            elev: 110,
+            prominence: 66,
+            status: "UNESCO Heritage & Ancient Geodetic Benchmark",
+            badgeText: "🛕 ANCIENT GEODETIC BENCHMARK",
+            icon: "🛕",
+            pos: [0.18, -0.05]
+          },
+          {
+            name: "Tamil Nadu Paddy Breeding Institute",
+            category: "agro",
+            type: "Submergence & Saline Tolerant Rice Seed Lab",
+            elev: 52,
+            prominence: 8,
+            status: "Swarna-Sub1 Flood Tolerant Variety Trials",
+            badgeText: "🌾 PADDY BREEDING HUB",
+            icon: "🌾",
+            pos: [0.32, 0.22]
+          },
+          {
+            name: "Vennar Automated Head Sluice Gates",
+            category: "dam",
+            type: "SCADA Controlled Hydraulic Canal Regulators",
+            elev: 58,
+            prominence: 9,
+            status: "Downstream Distributary Metering Active",
+            badgeText: "⚙️ SCADA CANAL GATES",
+            icon: "⚙️",
+            pos: [0.06, -0.11]
+          }
+        ]
+      },
+      wayanad: {
+        waterways: [
+          {
+            name: "Chaliyar River (Chooralmala Gorge Run)",
+            type: "High-Gradient Western Ghats Mountain River",
+            flow: "310",
+            velocity: "4.2",
+            depth: "3.1",
+            margin: "+0.6 m Debris Choking Danger",
+            alertLevel: "critical",
+            badgeText: "FLASH FLOOD & DEBRIS SURGE WATCH",
+            widthFactor: 0.028,
+            channel: [
+              [-0.48, 0.36], [-0.30, 0.18], [-0.12, 0.05], [0.05, -0.08],
+              [0.22, -0.22], [0.36, -0.32], [0.48, -0.42]
+            ]
+          }
+        ],
+        landmarks: [
+          {
+            name: "Chembra Peak Mountain Summit",
+            category: "peak",
+            type: "Highest Summit of Wayanad (Western Ghats)",
+            elev: 2100,
+            prominence: 1280,
+            status: "Heart Lake Ridge / High Monsoonal Orographic Rain",
+            badgeText: "🏔️ HIGHEST WAYANAD SUMMIT",
+            icon: "🏔️",
+            pos: [-0.34, -0.28]
+          },
+          {
+            name: "Chooralmala Bailey Bridge (NDRF Ground Zero)",
+            category: "dam",
+            type: "Indian Army Disaster Relief Bailey Bridge Span",
+            elev: 785,
+            prominence: 15,
+            status: "Critical Evacuation Lifeline Reconnected",
+            badgeText: "🌉 NDRF RESCUE LIFELINE",
+            icon: "🌉",
+            pos: [-0.05, -0.02]
+          },
+          {
+            name: "Mundakkai Tea Plantation Ridge",
+            category: "agro",
+            type: "Terraced Tea Agro-Ecosystem (Debris Flank)",
+            elev: 940,
+            prominence: 160,
+            status: "Unstable Colluvium / Evacuated Settlement Zone",
+            badgeText: "⚠️ HIGH-RISK COLLUVIUM SLOPE",
+            icon: "⚠️",
+            pos: [0.22, 0.28]
+          },
+          {
+            name: "Vellarmala Cloud Forest Scarp",
+            category: "peak",
+            type: "Steep Escarpment & Debris Catchment Zone",
+            elev: 1380,
+            prominence: 520,
+            status: "High Runoff Catchment / Geo-Inclinometer Array",
+            badgeText: "🏔️ VELLARMALA SCARP",
+            icon: "🏔️",
+            pos: [0.38, -0.14]
+          }
+        ]
+      },
+      joshimath: {
+        waterways: [
+          {
+            name: "Alaknanda-Dhauliganga Glacial Confluence",
+            type: "High-Himalayan Canyon River (Glacial Torrent)",
+            flow: "540",
+            velocity: "5.1",
+            depth: "4.8",
+            margin: "+4.2 m Canyon Freeboard",
+            alertLevel: "warning",
+            badgeText: "GLOF EARLY WARNING ACTIVE",
+            widthFactor: 0.034,
+            channel: [
+              [-0.48, 0.42], [-0.32, 0.30], [-0.15, 0.22], [0.08, 0.17],
+              [0.28, 0.14], [0.48, 0.12]
+            ]
+          },
+          {
+            name: "Dhauliganga High Gorge Tributary",
+            type: "Rishiganga Glacial Melt Canyon",
+            flow: "240",
+            velocity: "5.8",
+            depth: "3.5",
+            margin: "+3.5 m Canyon Wall",
+            alertLevel: "warning",
+            badgeText: "FLASH GLACIAL SPATE WATCH",
+            widthFactor: 0.024,
+            channel: [
+              [-0.15, 0.22], [-0.06, 0.34], [0.08, 0.48]
+            ]
+          }
+        ],
+        landmarks: [
+          {
+            name: "Auli High-Altitude Bugyal Summit",
+            category: "peak",
+            type: "Alpine Meadow & Stable Bedrock Ridge",
+            elev: 2850,
+            prominence: 960,
+            status: "Glacial Moraine Ski Ridge / Stable Hardrock Base",
+            badgeText: "🏔️ AULI SUMMIT RIDGE",
+            icon: "🏔️",
+            pos: [0.32, -0.32]
+          },
+          {
+            name: "Sunil Moraine Subsidence Scarp",
+            category: "peak",
+            type: "Active InSAR Ground Deformation Fissure Zone",
+            elev: 1940,
+            prominence: 85,
+            status: "Continuous Satellite InSAR Sinking Detection",
+            badgeText: "⚠️ ACTIVE SUBSIDENCE ZONE",
+            icon: "⚠️",
+            pos: [-0.05, -0.08]
+          },
+          {
+            name: "Joshimath Shankaracharya Math Sanctuary",
+            category: "heritage",
+            type: "Ancient Monastic Complex (Founded 8th Century)",
+            elev: 1890,
+            prominence: 28,
+            status: "Structural Crack Displacement Sensors Online",
+            badgeText: "🏛️ ANCIENT 8TH-C. MATH",
+            icon: "🏛️",
+            pos: [-0.18, 0.02]
+          },
+          {
+            name: "Vishnuprayag Barrage Hydroelectric Dam",
+            category: "dam",
+            type: "Run-of-the-River 400 MW Hydro Project",
+            elev: 1420,
+            prominence: 35,
+            status: "High-Turbidity Silt Flushing Gates Operational",
+            badgeText: "⚡ VISHNUPRAYAG HYDRO DAM",
+            icon: "⚡",
+            pos: [-0.30, 0.28]
+          }
+        ]
+      },
+      kedarnath: {
+        waterways: [
+          {
+            name: "Mandakini Glacial Outwash Channel",
+            type: "Alpine Glacial Torrent & Moraine Runoff",
+            flow: "140",
+            velocity: "6.4",
+            depth: "2.2",
+            margin: "+1.4 m Freeboard",
+            alertLevel: "warning",
+            badgeText: "HIGH GLACIAL KINETIC MELT",
+            widthFactor: 0.024,
+            channel: [
+              [-0.15, 0.48], [-0.10, 0.26], [-0.08, 0.04], [-0.12, -0.20],
+              [-0.15, -0.48]
+            ]
+          },
+          {
+            name: "Saraswati Glacial Torrent Branch",
+            type: "East Flank Moraine Runoff Stream",
+            flow: "65",
+            velocity: "5.8",
+            depth: "1.8",
+            margin: "+1.6 m Freeboard",
+            alertLevel: "safe",
+            badgeText: "GLACIAL MORAINE RUNOFF",
+            widthFactor: 0.018,
+            channel: [
+              [0.18, 0.44], [0.10, 0.20], [0.04, 0.02], [-0.08, 0.04]
+            ]
+          }
+        ],
+        landmarks: [
+          {
+            name: "Kedarnath Dome Pyramidal Summit",
+            category: "peak",
+            type: "High-Himalayan Glaciated Dome Peak",
+            elev: 6831,
+            prominence: 3200,
+            status: "Permanent Permafrost & Hanging Glacial Seracs",
+            badgeText: "🏔️ HIMALAYAN GIANT (6,831m)",
+            icon: "🏔️",
+            pos: [0.00, 0.42]
+          },
+          {
+            name: "Kedarnath Jyotirlinga Sanctum & Bhim Shila",
+            category: "heritage",
+            type: "Ancient Stone Temple & Protective Monolithic Boulder",
+            elev: 3584,
+            prominence: 25,
+            status: "Engineered Debris Deflection Wall Intact",
+            badgeText: "🛕 ANCIENT TEMPLE & BHIM SHILA",
+            icon: "🛕",
+            pos: [-0.02, 0.08]
+          },
+          {
+            name: "Chorabari Glacial Lake & Moraine Breach",
+            category: "peak",
+            type: "Historical 2013 GLOF Debris Origin Fan",
+            elev: 3920,
+            prominence: 340,
+            status: "Automated Early Warning Ultrasonic Lake Gauge",
+            badgeText: "⚠️ CHORABARI GLOF ORIGIN",
+            icon: "⚠️",
+            pos: [-0.22, 0.32]
+          },
+          {
+            name: "Kedarnath Tactical Helicopter Airlift LZ",
+            category: "dam",
+            type: "High-Altitude Helicopter Extraction Helipad",
+            elev: 3595,
+            prominence: 12,
+            status: "NDRF Mountain Rescue Air Staging Post Active",
+            badgeText: "🚁 HIGH-ALTITUDE HELIPAD LZ",
+            icon: "🚁",
+            pos: [0.18, -0.22]
+          }
+        ]
+      },
+      mumbai: {
+        waterways: [
+          {
+            name: "Mithi River & Mahim Estuary",
+            type: "Tidal Coastal Urban Channel & Mangrove Creek",
+            flow: "320",
+            velocity: "1.2",
+            depth: "3.5",
+            margin: "+0.7 m Tidal Surge Hazard",
+            alertLevel: "critical",
+            badgeText: "SPRING TIDE BACKWATER SURGE ALERT",
+            widthFactor: 0.042,
+            channel: [
+              [-0.35, 0.48], [-0.22, 0.28], [-0.12, 0.12], [-0.04, -0.02],
+              [0.08, -0.16], [0.22, -0.32], [0.38, -0.48]
+            ]
+          }
+        ],
+        landmarks: [
+          {
+            name: "Gilbert Hill Columnar Basalt Monolith",
+            category: "peak",
+            type: "66-Million-Year-Old Volcanic Basalt Plug",
+            elev: 60,
+            prominence: 52,
+            status: "Mesozoic Geological Benchmark / Stable Hard Rock",
+            badgeText: "🏔️ 66-MYO BASALT MONOLITH",
+            icon: "🏔️",
+            pos: [-0.28, 0.15]
+          },
+          {
+            name: "Bandra-Kurla Complex (BKC) Financial District",
+            category: "agro",
+            type: "Reclaimed Coastal Basin & Commercial Hub",
+            elev: 9,
+            prominence: 28,
+            status: "Heavy Sump Pump Drainage Infrastructure Online",
+            badgeText: "🏢 RECLAIMED COASTAL BASIN",
+            icon: "🏢",
+            pos: [0.15, -0.05]
+          },
+          {
+            name: "Bandra-Worli Sea Link Main Pylon",
+            category: "dam",
+            type: "Cable-Stayed Coastal Super-Structure",
+            elev: 126,
+            prominence: 124,
+            status: "Arabian Sea Tidal Wave & Storm Surge Gauge",
+            badgeText: "🌉 COASTAL SURGE MONITOR",
+            icon: "🌉",
+            pos: [0.32, -0.38]
+          },
+          {
+            name: "Mahim Mangrove Biosphere Buffer",
+            category: "agro",
+            type: "Estuarine Mangrove Ecological Defense Basin",
+            elev: 4,
+            prominence: 3,
+            status: "Natural Wave Dissipation & Silt Retention Zone",
+            badgeText: "🌿 TIDAL MANGROVE BUFFER",
+            icon: "🌿",
+            pos: [-0.10, -0.18]
+          }
+        ]
+      }
+    };
+
+    function getGeospatialPresetKey(modelFile) {
+      const mf = (modelFile || activeGlbFile || '').toLowerCase();
+      if (mf.includes('nashik')) return 'nashik';
+      if (mf.includes('assam')) return 'assam';
+      if (mf.includes('punjab')) return 'punjab';
+      if (mf.includes('cauvery')) return 'cauvery';
+      if (mf.includes('wayanad')) return 'wayanad';
+      if (mf.includes('joshimath')) return 'joshimath';
+      if (mf.includes('kedarnath')) return 'kedarnath';
+      if (mf.includes('mumbai')) return 'mumbai';
+      const ln = (stats && stats.location_name ? stats.location_name : '').toLowerCase();
+      if (ln.includes('nashik')) return 'nashik';
+      if (ln.includes('assam')) return 'assam';
+      if (ln.includes('punjab') || ln.includes('ludhiana')) return 'punjab';
+      if (ln.includes('cauvery') || ln.includes('thanjavur')) return 'cauvery';
+      if (ln.includes('wayanad')) return 'wayanad';
+      if (ln.includes('joshimath')) return 'joshimath';
+      if (ln.includes('kedarnath')) return 'kedarnath';
+      if (ln.includes('mumbai')) return 'mumbai';
+      return 'wayanad';
+    }
+
+    function createWaterFlowTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 256, 256);
+      grad.addColorStop(0, '#0284c7');
+      grad.addColorStop(0.5, '#0ea5e9');
+      grad.addColorStop(1, '#0369a1');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 256, 256);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.lineWidth = 3;
+      for (let y = 16; y < 256; y += 32) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.bezierCurveTo(64, y - 10, 128, y + 10, 192, y - 5);
+        ctx.bezierCurveTo(220, y + 5, 240, y - 2, 256, y);
+        ctx.stroke();
+      }
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(2, 6);
+      return tex;
+    }
+
+    function makeTextSprite(text, bgColor = 'rgba(15, 23, 42, 0.90)', textColor = '#f8fafc', borderColor = '#38bdf8') {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = bgColor;
+      ctx.strokeStyle = borderColor;
+      ctx.lineWidth = 6;
+      const r = 24, x = 8, y = 8, w = 496, h = 112;
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = textColor;
+      ctx.font = 'bold 36px "Plus Jakarta Sans", -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, 256, 64);
+      const texture = new THREE.CanvasTexture(canvas);
+      const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false });
+      return new THREE.Sprite(spriteMat);
+    }
+
+    function createGeospatialWaterways(box, modelFile) {
+      while (waterwayGroup.children.length > 0) {
+        const obj = waterwayGroup.children[0];
+        waterwayGroup.remove(obj);
+        if (obj.geometry) obj.geometry.dispose();
+      }
+      animatedWaterMaterials = [];
+
+      const pKey = getGeospatialPresetKey(modelFile);
+      const features = REGIONAL_GEOSPATIAL_FEATURES[pKey];
+      if (!features || !features.waterways) return;
+
+      const bSize = box.getSize(new THREE.Vector3());
+      const waterTexture = createWaterFlowTexture();
+
+      features.waterways.forEach(wItem => {
+        const pts = wItem.channel;
+        if (!pts || pts.length < 2) return;
+
+        const worldPts = pts.map(pt => new THREE.Vector3(
+          center.x + pt[0] * bSize.x,
+          center.y + pt[1] * bSize.y,
+          box.min.z + bSize.z * 0.15
+        ));
+
+        const curve = new THREE.CatmullRomCurve3(worldPts);
+        const sampleCount = Math.max(28, pts.length * 8);
+        const curvePoints = curve.getPoints(sampleCount);
+
+        // Raycast down to terrain mesh for each curve point to anchor precisely into DEM
+        for (let i = 0; i < curvePoints.length; i++) {
+          if (terrainMesh) {
+            const ray = new THREE.Raycaster(
+              new THREE.Vector3(curvePoints[i].x, curvePoints[i].y, box.max.z + 100),
+              new THREE.Vector3(0, 0, -1)
+            );
+            const hits = ray.intersectObject(terrainMesh);
+            if (hits.length > 0) {
+              curvePoints[i].z = hits[0].point.z + (bSize.z * 0.0035);
+            }
+          }
+        }
+
+        // Build 3D continuous ribbon mesh
+        const hw = (bSize.x * (wItem.widthFactor || 0.035)) * 0.5;
+        const positions = [];
+        const uvs = [];
+        const indices = [];
+
+        for (let i = 0; i < curvePoints.length; i++) {
+          const prev = curvePoints[Math.max(0, i - 1)];
+          const next = curvePoints[Math.min(curvePoints.length - 1, i + 1)];
+          let dx = next.x - prev.x;
+          let dy = next.y - prev.y;
+          const len = Math.sqrt(dx * dx + dy * dy) || 1;
+          dx /= len;
+          dy /= len;
+
+          const nx = -dy;
+          const ny = dx;
+
+          const p = curvePoints[i];
+          positions.push(p.x + nx * hw, p.y + ny * hw, p.z);
+          uvs.push(0, i / (curvePoints.length - 1));
+
+          positions.push(p.x - nx * hw, p.y - ny * hw, p.z);
+          uvs.push(1, i / (curvePoints.length - 1));
+
+          if (i < curvePoints.length - 1) {
+            const rowA = i * 2;
+            const rowB = (i + 1) * 2;
+            indices.push(rowA, rowA + 1, rowB);
+            indices.push(rowA + 1, rowB + 1, rowB);
+          }
+        }
+
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+        geo.setIndex(indices);
+        geo.computeVertexNormals();
+
+        const waterMat = new THREE.MeshStandardMaterial({
+          map: waterTexture,
+          color: 0x0284c7,
+          roughness: 0.12,
+          metalness: 0.75,
+          transparent: true,
+          opacity: 0.88,
+          side: THREE.DoubleSide
+        });
+        animatedWaterMaterials.push(waterMat);
+
+        const riverMesh = new THREE.Mesh(geo, waterMat);
+        riverMesh.userData = {
+          isWaterbody: true,
+          name: wItem.name,
+          type: wItem.type,
+          flow: wItem.flow,
+          velocity: wItem.velocity,
+          depth: wItem.depth,
+          margin: wItem.margin,
+          alertLevel: wItem.alertLevel,
+          badgeText: wItem.badgeText,
+          channelPoints: curvePoints
+        };
+        waterwayGroup.add(riverMesh);
+
+        // 3D Foam & bank boundary lines
+        const leftBankPts = [];
+        const rightBankPts = [];
+        for (let i = 0; i < curvePoints.length; i++) {
+          const idx = i * 6;
+          leftBankPts.push(new THREE.Vector3(positions[idx], positions[idx + 1], positions[idx + 2] + 0.1));
+          rightBankPts.push(new THREE.Vector3(positions[idx + 3], positions[idx + 4], positions[idx + 5] + 0.1));
+        }
+        const bankMat = new THREE.LineBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.5 });
+        waterwayGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(leftBankPts), bankMat));
+        waterwayGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(rightBankPts), bankMat));
+
+        // Floating Hydrological Telemetry Station Buoy at 32% and 68% river length
+        [0.32, 0.68].forEach((pct, bIdx) => {
+          const p = curve.getPoint(pct);
+          let pZ = p.z;
+          if (terrainMesh) {
+            const ray = new THREE.Raycaster(new THREE.Vector3(p.x, p.y, box.max.z + 100), new THREE.Vector3(0, 0, -1));
+            const h = ray.intersectObject(terrainMesh);
+            if (h.length > 0) pZ = h[0].point.z;
+          }
+
+          const buoyGroup = new THREE.Group();
+          const ringMesh = new THREE.Mesh(
+            new THREE.TorusGeometry(size * 0.012, size * 0.0035, 12, 24),
+            new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.3, metalness: 0.8 })
+          );
+          buoyGroup.add(ringMesh);
+
+          const mastMesh = new THREE.Mesh(
+            new THREE.CylinderGeometry(size * 0.002, size * 0.002, size * 0.04, 12),
+            new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.2, metalness: 0.9 })
+          );
+          mastMesh.rotation.x = Math.PI / 2;
+          mastMesh.position.z = size * 0.02;
+          buoyGroup.add(mastMesh);
+
+          const beaconMesh = new THREE.Mesh(
+            new THREE.SphereGeometry(size * 0.005, 12, 12),
+            new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+          );
+          beaconMesh.position.z = size * 0.042;
+          buoyGroup.add(beaconMesh);
+
+          buoyGroup.position.set(p.x, p.y, pZ + 0.4);
+          buoyGroup.userData = {
+            isWaterbody: true,
+            name: `${wItem.name} (Telemetry Buoy #${bIdx + 1})`,
+            type: `Hydrological Discharge Sensor (${wItem.type})`,
+            flow: wItem.flow,
+            velocity: wItem.velocity,
+            depth: wItem.depth,
+            margin: wItem.margin,
+            alertLevel: wItem.alertLevel,
+            badgeText: wItem.badgeText
+          };
+          waterwayGroup.add(buoyGroup);
+        });
+
+        // Floating 3D River Identification Billboard
+        const midIdx = Math.floor(curvePoints.length * 0.45);
+        const midPt = curvePoints[midIdx];
+        const sprite = makeTextSprite(`🌊 ${wItem.name} · ${wItem.flow} m³/s`, 'rgba(8, 20, 44, 0.88)', '#38bdf8', '#0284c7');
+        sprite.scale.set(size * 0.26, size * 0.065, 1);
+        sprite.position.set(midPt.x, midPt.y, midPt.z + size * 0.06);
+        waterwayGroup.add(sprite);
+      });
+
+      waterwayGroup.visible = showWaterways;
+    }
+
+    function createGeospatialLandmarks(box, modelFile) {
+      while (landmarkGroup.children.length > 0) {
+        const obj = landmarkGroup.children[0];
+        landmarkGroup.remove(obj);
+        if (obj.geometry) obj.geometry.dispose();
+      }
+
+      const pKey = getGeospatialPresetKey(modelFile);
+      const features = REGIONAL_GEOSPATIAL_FEATURES[pKey];
+      if (!features || !features.landmarks) return;
+
+      const bSize = box.getSize(new THREE.Vector3());
+
+      features.landmarks.forEach(lm => {
+        const x = center.x + lm.pos[0] * bSize.x;
+        const y = center.y + lm.pos[1] * bSize.y;
+        let z = box.min.z + bSize.z * 0.5;
+
+        if (terrainMesh) {
+          const ray = new THREE.Raycaster(new THREE.Vector3(x, y, box.max.z + 150), new THREE.Vector3(0, 0, -1));
+          const hits = ray.intersectObject(terrainMesh);
+          if (hits.length > 0) {
+            z = hits[0].point.z;
+          }
+        }
+
+        const lmRoot = new THREE.Group();
+
+        if (lm.category === 'peak') {
+          const poleH = size * 0.11;
+          const pole = new THREE.Mesh(
+            new THREE.CylinderGeometry(size * 0.0025, size * 0.0045, poleH, 16),
+            new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xb45309, roughness: 0.2, metalness: 0.8 })
+          );
+          pole.rotation.x = Math.PI / 2;
+          pole.position.set(0, 0, poleH / 2);
+          lmRoot.add(pole);
+
+          const gem = new THREE.Mesh(
+            new THREE.OctahedronGeometry(size * 0.016, 0),
+            new THREE.MeshStandardMaterial({ color: 0xfde047, emissive: 0xf59e0b, roughness: 0.1, metalness: 0.9 })
+          );
+          gem.position.set(0, 0, poleH + size * 0.014);
+          gem.userData = { isRotatingGem: true };
+          lmRoot.add(gem);
+
+          const ring = new THREE.Mesh(
+            new THREE.RingGeometry(size * 0.016, size * 0.024, 32),
+            new THREE.MeshBasicMaterial({ color: 0xf59e0b, side: THREE.DoubleSide })
+          );
+          ring.position.set(0, 0, 0.4);
+          lmRoot.add(ring);
+
+          const sprite = makeTextSprite(`🏔️ ${lm.name} · ${lm.elev}m`, 'rgba(15, 23, 42, 0.92)', '#fde047', '#f59e0b');
+          sprite.scale.set(size * 0.25, size * 0.062, 1);
+          sprite.position.set(0, 0, poleH + size * 0.045);
+          lmRoot.add(sprite);
+        } else {
+          const col = lm.category === 'dam' ? 0x06b6d4 : (lm.category === 'agro' ? 0x10b981 : (lm.category === 'heritage' ? 0xa855f7 : 0xf43f5e));
+          const emiss = lm.category === 'dam' ? 0x0891b2 : (lm.category === 'agro' ? 0x059669 : (lm.category === 'heritage' ? 0x7e22ce : 0xe11d48));
+          const hexStr = '#' + col.toString(16).padStart(6, '0');
+
+          const poleH = size * 0.085;
+          const pole = new THREE.Mesh(
+            new THREE.CylinderGeometry(size * 0.002, size * 0.0035, poleH, 16),
+            new THREE.MeshStandardMaterial({ color: col, emissive: emiss, roughness: 0.25, metalness: 0.8 })
+          );
+          pole.rotation.x = Math.PI / 2;
+          pole.position.set(0, 0, poleH / 2);
+          lmRoot.add(pole);
+
+          const sphere = new THREE.Mesh(
+            new THREE.SphereGeometry(size * 0.014, 16, 16),
+            new THREE.MeshStandardMaterial({ color: col, emissive: emiss, roughness: 0.1, metalness: 0.9 })
+          );
+          sphere.position.set(0, 0, poleH + size * 0.012);
+          sphere.userData = { isRotatingGem: true };
+          lmRoot.add(sphere);
+
+          const ring = new THREE.Mesh(
+            new THREE.RingGeometry(size * 0.014, size * 0.021, 32),
+            new THREE.MeshBasicMaterial({ color: col, side: THREE.DoubleSide })
+          );
+          ring.position.set(0, 0, 0.4);
+          lmRoot.add(ring);
+
+          const sprite = makeTextSprite(`${lm.icon} ${lm.name}`, 'rgba(15, 23, 42, 0.92)', '#f8fafc', hexStr);
+          sprite.scale.set(size * 0.25, size * 0.062, 1);
+          sprite.position.set(0, 0, poleH + size * 0.042);
+          lmRoot.add(sprite);
+        }
+
+        lmRoot.position.set(x, y, z);
+        lmRoot.userData = {
+          isLandmark: true,
+          name: lm.name,
+          category: lm.category,
+          type: lm.type,
+          elev: lm.elev,
+          prominence: lm.prominence,
+          status: lm.status,
+          badgeText: lm.badgeText,
+          icon: lm.icon,
+          center: new THREE.Vector3(x, y, z)
+        };
+        landmarkGroup.add(lmRoot);
+      });
+
+      landmarkGroup.visible = showPeaks;
+    }
+
+    function clearWaterwayInspection() {
+      waterwayMarkers.forEach(m => scene.remove(m));
+      waterwayMarkers = [];
+      const wc = document.getElementById('water-card');
+      if (wc) wc.style.display = 'none';
+    }
+
+    function clearLandmarkInspection() {
+      landmarkMarkers.forEach(m => scene.remove(m));
+      landmarkMarkers = [];
+      const lc = document.getElementById('landmark-card');
+      if (lc) lc.style.display = 'none';
+    }
+
+    function displayWaterwayInfo(info, p) {
+      clearWaterwayInspection();
+      clearLandmarkInspection();
+      const bc = document.getElementById('building-card');
+      if (bc) bc.style.display = 'none';
+      const mc = document.getElementById('measure-card');
+      if (mc) mc.style.display = 'none';
+
+      const ringGeo = new THREE.RingGeometry(size * 0.015, size * 0.025, 32);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.position.copy(p);
+      ring.position.z += 0.5;
+      scene.add(ring);
+      waterwayMarkers.push(ring);
+
+      document.getElementById('wTitle').innerText = '🌊 ' + info.name;
+      document.getElementById('wName').innerText = info.name;
+      document.getElementById('wType').innerText = info.type;
+      document.getElementById('wFlow').innerText = `${info.flow} m³/s`;
+      document.getElementById('wVelocity').innerText = `${info.velocity} m/s`;
+      document.getElementById('wDepth').innerText = `${info.depth} m`;
+      document.getElementById('wMargin').innerText = info.margin;
+
+      const badgeContainer = document.getElementById('wBadgeContainer');
+      const isCrit = info.alertLevel === 'critical';
+      const isWarn = info.alertLevel === 'warning';
+      const bg = isCrit ? 'rgba(244,63,94,0.2)' : (isWarn ? 'rgba(245,158,11,0.2)' : 'rgba(56,189,248,0.2)');
+      const border = isCrit ? '#f43f5e' : (isWarn ? '#f59e0b' : '#38bdf8');
+      const textCol = isCrit ? '#fb7185' : (isWarn ? '#fbbf24' : '#38bdf8');
+      badgeContainer.innerHTML = `<span class="b-badge" style="background:${bg}; border:1px solid ${border}; color:${textCol}; font-weight:800;">${info.badgeText}</span>`;
+
+      document.getElementById('water-card').style.display = 'block';
+      showTacticalToast(`🌊 River Channel Inspected: ${info.name}`);
+    }
+
+    function displayLandmarkInfo(info, p) {
+      clearLandmarkInspection();
+      clearWaterwayInspection();
+      const bc = document.getElementById('building-card');
+      if (bc) bc.style.display = 'none';
+      const mc = document.getElementById('measure-card');
+      if (mc) mc.style.display = 'none';
+
+      const ringGeo = new THREE.RingGeometry(size * 0.015, size * 0.025, 32);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, side: THREE.DoubleSide });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.position.copy(p);
+      ring.position.z += 0.5;
+      scene.add(ring);
+      landmarkMarkers.push(ring);
+
+      document.getElementById('lmTitle').innerText = `${info.icon} ${info.category === 'peak' ? 'Mountain Summit' : 'Regional Landmark'}`;
+      document.getElementById('lmName').innerText = info.name;
+      document.getElementById('lmType').innerText = info.type;
+      document.getElementById('lmElev').innerText = `${info.elev} m AMSL`;
+      document.getElementById('lmProminence').innerText = `+${info.prominence} m Relief`;
+      document.getElementById('lmStatus').innerText = info.status;
+
+      const badgeContainer = document.getElementById('lmBadgeContainer');
+      badgeContainer.innerHTML = `<span class="b-badge" style="background:rgba(245,158,11,0.2); border:1px solid #f59e0b; color:#fbbf24; font-weight:800;">${info.badgeText}</span>`;
+
+      document.getElementById('landmark-card').style.display = 'block';
+      showTacticalToast(`${info.icon} Landmark Inspected: ${info.name} (${info.elev}m AMSL)`);
     }
 
     // 🌾 Procedural Agricultural & Disaster Refuge Infrastructure Synthesizer
@@ -2368,24 +3476,21 @@
           // Boundary clipping check
           if (Math.abs(avgX - center.x) > bSize.x * 0.48 || Math.abs(avgY - center.y) > bSize.y * 0.48) return;
 
-          // Perimeter ground elevation sampling to anchor foundation firmly into terrain
+          // Ultra-fast single-point ground elevation sampling to anchor foundation firmly into terrain
           let minGroundZ = Infinity;
           let maxGroundZ = -Infinity;
           let sampledCount = 0;
 
           if (terrainMesh) {
-            for (let pIdx = 0; pIdx < shapePoints.length; pIdx++) {
-              const ray = new THREE.Raycaster(
-                new THREE.Vector3(shapePoints[pIdx].x, shapePoints[pIdx].y, box.max.z + 100),
-                new THREE.Vector3(0, 0, -1)
-              );
-              const hits = ray.intersectObject(terrainMesh);
-              if (hits.length > 0) {
-                const zVal = hits[0].point.z;
-                if (zVal < minGroundZ) minGroundZ = zVal;
-                if (zVal > maxGroundZ) maxGroundZ = zVal;
-                sampledCount++;
-              }
+            const ray = new THREE.Raycaster(
+              new THREE.Vector3(avgX, avgY, box.max.z + 100),
+              new THREE.Vector3(0, 0, -1)
+            );
+            const hits = ray.intersectObject(terrainMesh);
+            if (hits.length > 0) {
+              minGroundZ = hits[0].point.z;
+              maxGroundZ = hits[0].point.z;
+              sampledCount = 1;
             }
           }
 
@@ -2407,8 +3512,8 @@
           const floors = Math.max(1, Math.round(heightM / 3.2));
           const heightUnits = Math.max((heightM / (stats.relief_m || 100)) * bSize.z * 1.5, bSize.z * 0.04);
 
-          // Anchor building foundation into terrain (base starts below minGroundZ to prevent floating gaps)
-          const baseZ = minGroundZ - (bSize.z * 0.012);
+          // Anchor building foundation into terrain (base starts below minGroundZ to prevent floating gaps on hills)
+          const baseZ = minGroundZ - (bSize.z * 0.022);
           const totalDepth = Math.max((maxGroundZ - baseZ) + heightUnits, bSize.z * 0.05);
 
           try {
@@ -2854,7 +3959,7 @@
     // Universal Terrain & Building Click Handler
     window.addEventListener('click', (e) => {
       if (!terrainMesh) return;
-      if (e.target.closest('#left-dock') || e.target.closest('#right-column') || e.target.closest('#right-hud') || e.target.closest('#split-pip') || e.target.closest('#measure-card') || e.target.closest('#building-card') || e.target.closest('#top-bar') || e.target.closest('#map-drawer') || e.target.closest('#sos-modal') || e.target.closest('#precaution-modal') || e.target.closest('#chopper-hud') || e.target.closest('#evac-hud') || e.target.closest('#gps-hud') || e.target.closest('#compass-container') || e.target.closest('#legend-card') || e.target.closest('#triage-card') || e.target.closest('#bottom-telemetry')) return;
+      if (e.target.closest('#left-dock') || e.target.closest('#right-column') || e.target.closest('#right-hud') || e.target.closest('#split-pip') || e.target.closest('#measure-card') || e.target.closest('#building-card') || e.target.closest('#water-card') || e.target.closest('#landmark-card') || e.target.closest('#top-bar') || e.target.closest('#map-drawer') || e.target.closest('#sos-modal') || e.target.closest('#precaution-modal') || e.target.closest('#chopper-hud') || e.target.closest('#evac-hud') || e.target.closest('#gps-hud') || e.target.closest('#compass-container') || e.target.closest('#legend-card') || e.target.closest('#triage-card') || e.target.closest('#bottom-telemetry')) return;
 
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -2916,7 +4021,37 @@
         }
       }
 
-      // 3. Extruded 3D Building Click (Inspection)
+      // 3A. 🏔️ Mountain Peaks & Regional Landmarks Click (Inspection)
+      if (landmarkGroup && landmarkGroup.children.length > 0 && showPeaks) {
+        const lmHits = raycaster.intersectObjects(landmarkGroup.children, true);
+        if (lmHits.length > 0) {
+          let root = lmHits[0].object;
+          while (root.parent && root.parent !== landmarkGroup && root.parent !== scene) {
+            root = root.parent;
+          }
+          if (root.userData && root.userData.isLandmark) {
+            displayLandmarkInfo(root.userData, lmHits[0].point);
+            return;
+          }
+        }
+      }
+
+      // 3B. 🌊 3D River Channels & Waterbodies Click (Inspection)
+      if (waterwayGroup && waterwayGroup.children.length > 0 && showWaterways) {
+        const wHits = raycaster.intersectObjects(waterwayGroup.children, true);
+        if (wHits.length > 0) {
+          let root = wHits[0].object;
+          while (root.parent && root.parent !== waterwayGroup && root.parent !== scene) {
+            root = root.parent;
+          }
+          if (root.userData && root.userData.isWaterbody) {
+            displayWaterwayInfo(root.userData, wHits[0].point);
+            return;
+          }
+        }
+      }
+
+      // 3C. 🏢 Extruded 3D Building Click (Inspection)
       if (buildingGroup && buildingGroup.children.length > 0 && showBuildings) {
         const bHits = raycaster.intersectObjects(buildingGroup.children, true);
         if (bHits.length > 0) {
@@ -5414,6 +6549,20 @@
       document.getElementById('btnExtrude').classList.toggle('active', showBuildings);
     };
 
+    window.toggleWaterways = () => {
+      showWaterways = !showWaterways;
+      waterwayGroup.visible = showWaterways;
+      const btn = document.getElementById('btnWaterways');
+      if (btn) btn.classList.toggle('active', showWaterways);
+    };
+
+    window.togglePeaksAndLandmarks = () => {
+      showPeaks = !showPeaks;
+      landmarkGroup.visible = showPeaks;
+      const btn = document.getElementById('btnPeaks');
+      if (btn) btn.classList.toggle('active', showPeaks);
+    };
+
     window.toggleDioramaBase = () => {
       showDiorama = !showDiorama;
       if (dioramaMesh) dioramaMesh.visible = showDiorama;
@@ -5758,6 +6907,27 @@
         if (waterMesh.material) waterMesh.material.opacity = (activeDisasterType === 'tsunami' ? 0.85 : 0.75) + Math.sin(wt * 4) * 0.08;
       }
 
+      // 🌊 3D River Texture Flow Animation
+      if (showWaterways && animatedWaterMaterials.length > 0) {
+        for (let i = 0; i < animatedWaterMaterials.length; i++) {
+          if (animatedWaterMaterials[i].map) {
+            animatedWaterMaterials[i].map.offset.y -= 0.0035;
+          }
+        }
+      }
+
+      // 🏔️ Rotating Mountain Peak Gems & Telemetry Beacon Lights
+      if (showPeaks && landmarkGroup.children.length > 0) {
+        landmarkGroup.children.forEach(child => {
+          child.children.forEach(c => {
+            if (c.userData && c.userData.isRotatingGem) {
+              c.rotation.z += 0.02;
+              c.rotation.y += 0.015;
+            }
+          });
+        });
+      }
+
       controls.update();
 
       if (splitLensActive) {
@@ -5775,6 +6945,8 @@
         if (waterMesh) waterMesh.visible = false;
         if (weatherParticleGroup) weatherParticleGroup.visible = false;
         buildingGroup.visible = false;
+        waterwayGroup.visible = false;
+        landmarkGroup.visible = false;
         renderer.render(scene, camera);
 
         // --- Right Viewport (Post-Disaster / ΔNDVI Damage / Hazard / 3D Buildings) ---
@@ -5795,6 +6967,8 @@
           weatherParticleGroup.visible = (activeDisasterType !== null && activeDisasterType !== 'clear');
         }
         buildingGroup.visible = showBuildings;
+        waterwayGroup.visible = showWaterways;
+        landmarkGroup.visible = showPeaks;
         renderer.render(scene, camera);
 
         // Restore active texture
@@ -5805,6 +6979,8 @@
       } else {
         renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
         buildingGroup.visible = showBuildings;
+        waterwayGroup.visible = showWaterways;
+        landmarkGroup.visible = showPeaks;
         if (weatherParticleGroup) {
           weatherParticleGroup.visible = (activeDisasterType !== null && activeDisasterType !== 'clear');
         }
