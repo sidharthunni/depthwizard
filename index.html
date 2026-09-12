@@ -1553,6 +1553,13 @@
     let terrainMesh = null;
     let satTexture = null;
     let hazardTexture = null;
+    let ndviTexture = null;
+    let deltaNdviTexture = null;
+    let currentPipLayer = 'rgb';
+    let currentPipZoom = 1.0;
+    let isSideBySide = false;
+    let currentSatJpg = 'current.jpg';
+    let currentHazardPng = 'current_hazard.png';
     let center = new THREE.Vector3();
     let size = 100;
     let stats = {
@@ -3303,7 +3310,6 @@
       waterMesh.position.z = currentWaterZ;
     };
 
-    let ndviTexture = null;
     function generateNDVITexture() {
       if (!satTexture || !satTexture.image) return null;
       try {
@@ -3339,7 +3345,6 @@
       }
     }
 
-    let deltaNdviTexture = null;
     function generateDeltaNDVITexture() {
       if (!satTexture || !satTexture.image) return null;
       try {
@@ -3870,12 +3875,6 @@
         updateSplitDivider();
       });
     }
-
-    let currentPipLayer = 'rgb';
-    let currentPipZoom = 1.0;
-    let isSideBySide = false;
-    let currentSatJpg = 'current.jpg';
-    let currentHazardPng = 'current_hazard.png';
 
     window.toggleSplitPIP = function() {
       isSplitPIP = !isSplitPIP;
