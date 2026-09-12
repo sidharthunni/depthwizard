@@ -1,0 +1,20 @@
+{
+  "box_size_km": 4.0,
+  "lat": 30.7352,
+  "lon": 79.0669,
+  "location_name": "Kedarnath Valley Flash Flood",
+  "width_m": 4000.0,
+  "grid_spacing_m": 33.61,
+  "min_elev_m": 3580.0,
+  "max_elev_m": 4980.0,
+  "relief_m": 1400.0,
+  "high_risk_slope": "35.8%",
+  "avg_slope_deg": "22.8\u00b0",
+  "vertices": "14,400",
+  "triangles": "28,322",
+  "grid_w": 120,
+  "grid_h": 120,
+  "z_scale": 65.0,
+  "rmse": "0.124",
+  "correlation": "91.2% (SRTM DEM Ref)"
+}

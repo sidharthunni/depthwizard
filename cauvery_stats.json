@@ -1,0 +1,20 @@
+{
+  "box_size_km": 3.0,
+  "lat": 10.787,
+  "lon": 79.1378,
+  "location_name": "Cauvery Delta Paddy Basin (TN)",
+  "width_m": 3000.0,
+  "grid_spacing_m": 25.21,
+  "min_elev_m": 55.0,
+  "max_elev_m": 90.0,
+  "relief_m": 35.0,
+  "high_risk_slope": "20.9%",
+  "avg_slope_deg": "7.8\u00b0",
+  "vertices": "14,400",
+  "triangles": "28,322",
+  "grid_w": 120,
+  "grid_h": 120,
+  "z_scale": 18.0,
+  "rmse": "0.124",
+  "correlation": "91.2% (SRTM DEM Ref)"
+}

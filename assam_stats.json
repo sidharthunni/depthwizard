@@ -1,0 +1,20 @@
+{
+  "box_size_km": 4.0,
+  "lat": 26.185,
+  "lon": 91.75,
+  "location_name": "Assam Brahmaputra River Floodplain",
+  "width_m": 4000.0,
+  "grid_spacing_m": 33.61,
+  "min_elev_m": 55.0,
+  "max_elev_m": 140.0,
+  "relief_m": 85.0,
+  "high_risk_slope": "9.7%",
+  "avg_slope_deg": "3.0\u00b0",
+  "vertices": "14,400",
+  "triangles": "28,322",
+  "grid_w": 120,
+  "grid_h": 120,
+  "z_scale": 28.0,
+  "rmse": "0.124",
+  "correlation": "91.2% (SRTM DEM Ref)"
+}
