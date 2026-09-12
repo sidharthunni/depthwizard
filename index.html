@@ -209,19 +209,23 @@
     .tele-k { color: #64748b; font-size: 10px; font-weight: 600; }
     .tele-v { color: var(--accent); font-weight: 700; }
 
-    /* Floating Cards */
-    #measure-card, #building-card, #water-card, #landmark-card, #mountain-card, #precaution-modal {
-      background: rgba(9, 14, 28, 0.95); backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid var(--panel-border); border-radius: 16px;
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    /* Floating Cards - Executive Glassmorphic Polish */
+    #measure-card, #building-card, #water-card, #landmark-card, #mountain-card, #waterlogging-card, #subsurface-card, #tractor-card, #precaution-modal {
+      background: rgba(8, 14, 28, 0.94); backdrop-filter: blur(32px) saturate(190%);
+      -webkit-backdrop-filter: blur(32px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.10); border-radius: 18px;
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.88), 0 0 1px rgba(255, 255, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      animation: cardSpringIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes cardSpringIn {
+      from { opacity: 0; transform: translateY(14px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     #measure-card {
       position: absolute; bottom: 24px; left: 345px; z-index: 120;
       padding: 16px 18px; width: 350px; display: none;
-      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 16px;
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.45);
     }
     #measure-card h4 { margin: 0 0 8px 0; color: var(--accent); font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
     .m-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
@@ -230,36 +234,31 @@
     #building-card {
       position: absolute; bottom: 24px; left: 345px; z-index: 120;
       padding: 16px 18px; width: 360px; display: none;
-      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid var(--panel-border); border-radius: 16px;
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.45);
     }
     #building-card h4 { margin: 0 0 8px 0; color: var(--warning); font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; align-items: center; }
 
     #water-card {
       position: absolute; bottom: 24px; left: 345px; z-index: 120;
       padding: 16px 18px; width: 350px; display: none;
-      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid rgba(56, 189, 248, 0.45); border-radius: 16px;
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.88), 0 0 30px rgba(56, 189, 248, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     }
     #water-card h4 { margin: 0 0 8px 0; color: #38bdf8; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; align-items: center; }
 
     #landmark-card {
       position: absolute; bottom: 24px; left: 345px; z-index: 120;
       padding: 16px 18px; width: 360px; display: none;
-      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid rgba(245, 158, 11, 0.45); border-radius: 16px;
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(245, 158, 11, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.88), 0 0 30px rgba(245, 158, 11, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     }
     #landmark-card h4 { margin: 0 0 8px 0; color: #fbbf24; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; align-items: center; }
 
     #mountain-card {
       position: absolute; bottom: 24px; left: 345px; z-index: 120;
       padding: 16px 18px; width: 370px; display: none;
-      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid rgba(245, 158, 11, 0.5); border-radius: 16px;
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 0 0 32px rgba(245, 158, 11, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.88), 0 0 32px rgba(245, 158, 11, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     }
     #mountain-card h4 { margin: 0 0 8px 0; color: #f59e0b; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; align-items: center; }
 
@@ -268,8 +267,8 @@
 
     #triage-card {
       position: absolute; bottom: 68px; right: 20px; z-index: 96; padding: 16px 18px; width: 330px; display: none;
-      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid rgba(52, 211, 153, 0.4); border-radius: 16px;
+      background: rgba(8, 14, 28, 0.94); backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(52, 211, 153, 0.4); border-radius: 18px;
       box-shadow: 0 24px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(16, 185, 129, 0.2);
     }
     #triage-card h4 { margin: 0 0 10px 0; color: #34d399; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
@@ -278,29 +277,26 @@
     #waterlogging-card {
       position: absolute; bottom: 24px; left: 345px; z-index: 120;
       padding: 16px 18px; width: 375px; display: none;
-      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid rgba(16, 185, 129, 0.55); border-radius: 16px;
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 0 0 32px rgba(16, 185, 129, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.55);
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.88), 0 0 32px rgba(16, 185, 129, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     }
     #waterlogging-card h4 { margin: 0 0 8px 0; color: #10b981; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; align-items: center; }
 
-    /* ️ 3D Subsurface Geotech & Strata Slicer HUD */
+    /* 3D Subsurface Geotech & Strata Slicer HUD */
     #subsurface-card {
       position: absolute; bottom: 24px; left: 345px; z-index: 120;
       padding: 16px 18px; width: 375px; display: none;
-      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid rgba(56, 189, 248, 0.55); border-radius: 16px;
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 0 0 32px rgba(56, 189, 248, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.88), 0 0 32px rgba(56, 189, 248, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     }
     #subsurface-card h4 { margin: 0 0 8px 0; color: #38bdf8; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; align-items: center; }
 
     /* Agri-Machinery & Tractor Slope Safety HUD */
     #tractor-card {
       position: absolute; bottom: 24px; left: 345px; z-index: 120;
-      padding: 16px 18px; width: 360px; display: none;
-      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid rgba(249, 115, 22, 0.55); border-radius: 16px;
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 0 0 32px rgba(249, 115, 22, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      padding: 16px 18px; width: 365px; display: none;
+      border: 1px solid rgba(249, 115, 22, 0.55);
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.88), 0 0 32px rgba(249, 115, 22, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     }
     #tractor-card h4 { margin: 0 0 8px 0; color: #f97316; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; align-items: center; }
 
@@ -1339,6 +1335,22 @@
       <div id="tempAdvisoryCard" style="margin-top:8px; font-size:10px; color:#fed7aa; background:rgba(120,53,15,0.35); border:1px solid rgba(251,146,60,0.3); padding:7px 9px; border-radius:8px; line-height:1.4;">
         <b>ACTUARIAL CLAIM ASSESSMENT:</b> Crop destruction thresholds exceeded. Automated loss appraisal certified for PMFBY underwriter settlement.
       </div>
+      <!-- Decision Support & Actuarial Purpose Matrix -->
+      <div style="margin-top:8px; background:rgba(15,23,42,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:8px 10px; font-size:10px; line-height:1.45;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; font-weight:800; color:#38bdf8; letter-spacing:0.3px;">
+          <span>OPERATIONAL PURPOSE &amp; ACTUARIAL UTILITY</span>
+          <span style="color:#64748b; font-size:9px; font-family:'JetBrains Mono',monospace;">PMFBY / NDRF</span>
+        </div>
+        <div style="color:#94a3b8; margin-bottom:3px;">
+          <b style="color:#e2e8f0;">1. Instant PMFBY Claim Settlement:</b> Correlates Copernicus Sentinel-2 multispectral ΔNDVI directly with MSP crop yield losses, eliminating manual 3-week survey delays.
+        </div>
+        <div style="color:#94a3b8; margin-bottom:3px;">
+          <b style="color:#e2e8f0;">2. Hydraulic Inundation &amp; Clearance:</b> Identifies submerged road/canal networks and computes evacuation clearance duration before flood crests breach high-plinth refuges.
+        </div>
+        <div style="color:#94a3b8;">
+          <b style="color:#e2e8f0;">3. Topsoil Loss (USLE Model):</b> Quantifies geomorphic regolith erosion (tons/ha) and kinetic hail/wind lodging to guide emergency contour bunding and drainage ditches.
+        </div>
+      </div>
       <div style="margin-top:8px; display:flex; gap:6px;">
         <button onclick="exportPMFBYClaim()" style="flex:1; background:rgba(251,146,60,0.18); color:#fb923c; border:1px solid rgba(251,146,60,0.4); padding:6px 10px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; transition:0.2s;" onmouseover="this.style.background='rgba(251,146,60,0.3)'" onmouseout="this.style.background='rgba(251,146,60,0.18)'">
           <svg class="dw-ico" viewBox="0 0 24 24" style="color:#fb923c;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1586,6 +1598,20 @@
       <span>Machinery Traversability (ISO-4254)</span>
       <button onclick="toggleTractorSafetyOverlay()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;">✕</button>
     </h4>
+    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:8px 10px; margin:6px 0 8px 0; display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; flex-direction:column; gap:2px;">
+        <span style="font-size:9.5px; color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;">Inclinometer Attitude</span>
+        <span id="trRollDegrees" style="font-size:13px; font-family:'JetBrains Mono',monospace; font-weight:800; color:#38bdf8;">+0.0° ROLL</span>
+      </div>
+      <svg id="tractorInclinometer" width="70" height="34" viewBox="-35 -18 70 34" style="overflow:visible;">
+        <path d="M -28 0 A 28 28 0 0 1 28 0" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="3" stroke-linecap="round"/>
+        <path d="M -27.1 -6.8 A 28 28 0 0 1 27.1 -6.8" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="14 100"/>
+        <line x1="-25.5" y1="-11.4" x2="-20.5" y2="-9.1" stroke="#ef4444" stroke-width="2"/>
+        <line x1="25.5" y1="-11.4" x2="20.5" y2="-9.1" stroke="#ef4444" stroke-width="2"/>
+        <line id="trInclineNeedle" x1="0" y1="0" x2="0" y2="-24" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" style="transform-origin:0 0; transform:rotate(0deg); transition:transform 0.15s ease-out;"/>
+        <circle cx="0" cy="0" r="3" fill="#f59e0b"/>
+      </svg>
+    </div>
     <div class="m-row"><span>Active Machine Profile:</span><span class="m-val" style="color:#fbbf24;">50HP 2WD Agricultural Tractor</span></div>
     <div class="m-row"><span>Terrain Slope Class:</span><span class="m-val" id="trSlopeClass" style="color:#34d399; font-weight:800;">8.5° Gentle Undulation</span></div>
     <div class="m-row"><span>Traversability Rating:</span><span class="m-val" id="trRating" style="color:#34d399; font-weight:800;">PASS (Grade &lt; 14°)</span></div>
@@ -2686,7 +2712,7 @@
 
     window.broadcastKisanSMS = function() {
       playTone('alert');
-      alert('✓ KISAN PORTAL BROADCAST SENT: Emergency SMS alert transmitted to registered farmers in target agro-basin under PMFBY early warning protocol.');
+      alert('KISAN PORTAL BROADCAST SENT: Emergency SMS alert transmitted to registered farmers in target agro-basin under PMFBY early warning protocol.');
     };
 
     window.downloadKisanManifest = function() {
@@ -5359,25 +5385,37 @@
       // Compute & draw direct rescue path to nearest Safe Haven
       drawRescuePathway(cPos, info.mesh || null);
 
-      const mCard = document.getElementById('measure-card');
-      if (mCard) mCard.style.display = 'none';
-      const mntc = document.getElementById('mountain-card');
-      if (mntc) mntc.style.display = 'none';
-      const lmc = document.getElementById('landmark-card');
-      if (lmc) lmc.style.display = 'none';
-      const wtc = document.getElementById('water-card');
-      if (wtc) wtc.style.display = 'none';
-
+      closeAllInspectionCards('building-card');
       document.getElementById('building-card').style.display = 'block';
       showTacticalToast(`INSPECT // ${bName} (${lM}m × ${wM}m · H: ${info.heightM}m)`);
     }
+
+    // Strict Mutual Exclusivity for All Floating HUD Inspection Cards
+    window.closeAllInspectionCards = function(exceptId = null) {
+      const cardIds = [
+        'measure-card',
+        'building-card',
+        'water-card',
+        'landmark-card',
+        'mountain-card',
+        'waterlogging-card',
+        'subsurface-card',
+        'tractor-card'
+      ];
+      cardIds.forEach(id => {
+        if (id !== exceptId) {
+          const el = document.getElementById(id);
+          if (el) el.style.display = 'none';
+        }
+      });
+    };
 
     function showTacticalToast(msg) {
       let el = document.getElementById('tactical-toast');
       if (!el) {
         el = document.createElement('div');
         el.id = 'tactical-toast';
-        el.style.cssText = 'position:fixed; top:75px; left:50%; transform:translateX(-50%); z-index:9999; background:rgba(9,14,28,0.96); backdrop-filter:blur(18px); color:#e2e8f0; border:1px solid rgba(56,189,248,0.4); padding:9px 20px; border-radius:8px; font-size:11px; font-weight:700; font-family:"JetBrains Mono",monospace; letter-spacing:0.4px; box-shadow:0 12px 36px rgba(0,0,0,0.85),0 0 20px rgba(56,189,248,0.18); display:none; pointer-events:none; transition:opacity 0.25s;';
+        el.style.cssText = 'position:fixed; bottom:32px; left:50%; transform:translateX(-50%); z-index:99999; background:rgba(8,14,28,0.94); backdrop-filter:blur(28px) saturate(180%); -webkit-backdrop-filter:blur(28px) saturate(180%); color:#f1f5f9; border:1px solid rgba(56,189,248,0.4); padding:10px 24px; border-radius:999px; font-size:11px; font-weight:700; font-family:"JetBrains Mono",monospace; letter-spacing:0.4px; box-shadow:0 16px 40px rgba(0,0,0,0.85),0 0 24px rgba(56,189,248,0.2); display:none; pointer-events:none; transition:opacity 0.25s, transform 0.25s;';
         document.body.appendChild(el);
       }
       let cleanMsg = (typeof msg === 'string') ?
@@ -5517,13 +5555,13 @@
             document.getElementById('mDist').innerText = `Select Point B...`;
           } else if (measurePoints.length === 2) {
             calculateMeasurement();
-            if (statusEl) statusEl.innerHTML = `✅ <b>Profile section complete!</b> Click anywhere to measure a new section.`;
+            if (statusEl) statusEl.innerHTML = `<b>Profile section complete.</b> Click anywhere to measure a new section.`;
           }
           return;
         }
       }
 
-      // 3A. ️ Mountain Peaks & Regional Landmarks Click (Inspection)
+      // 3A. Mountain Peaks & Regional Landmarks Click (Inspection)
       if (landmarkGroup && landmarkGroup.children.length > 0 && showPeaks) {
         const lmHits = raycaster.intersectObjects(landmarkGroup.children, true);
         if (lmHits.length > 0) {
@@ -6055,9 +6093,9 @@
           if (primary.waterMesh) primary.waterMesh.visible = false;
           document.getElementById('wlDepth').innerText = '0 cm (FULLY DRAINED)';
           document.getElementById('wlVolume').innerText = '0 Liters';
-          document.getElementById('wlHypoxia').innerHTML = '<span style="color:#34d399; font-weight:800;">✅ ROOT HYPOXIA AVERTED · 100% CROP SAVED</span>';
+          document.getElementById('wlHypoxia').innerHTML = '<span style="color:#34d399; font-weight:800;">ROOT HYPOXIA AVERTED · 100% CROP SAVED</span>';
           playTone('chime');
-          showTacticalToast('✅ 142,000 Liters Discharged! Micro-Depression Fully Emptied & Paddy Aerated.');
+          showTacticalToast('142,000 Liters Discharged: Micro-Depression Fully Emptied & Paddy Aerated.');
         } else {
           const s = 1.0 - t;
           if (primary.waterMesh) {
@@ -6303,6 +6341,7 @@
       const badgeC = document.getElementById('ssBadgeContainer');
       badgeC.innerHTML = `<span class="b-badge" style="background:rgba(56,189,248,0.2); border:1px solid #38bdf8; color:#38bdf8; font-weight:800;">3D MULTI-HORIZON SUBTERRANEAN X-RAY ACTIVE</span>`;
 
+      closeAllInspectionCards('subsurface-card');
       document.getElementById('subsurface-card').style.display = 'block';
       showTacticalToast('3D Subsurface Geotech Peeler Active: Soil Strata & Water Table Exposed');
     };
@@ -6319,64 +6358,142 @@
       const bottomZ = box.min.z - bSize.z * 0.35;
       const totalDepthZ = topZ - bottomZ;
 
+      // 1. Topsoil A-Horizon (0 - 32cm humus / active root zone)
       const topH = totalDepthZ * 0.12;
       const topGeo = new THREE.PlaneGeometry(widthX, topH);
       topGeo.rotateX(Math.PI / 2);
       const topMat = new THREE.MeshStandardMaterial({
         color: 0x451a03,
-        roughness: 0.9,
+        roughness: 0.88,
+        metalness: 0.1,
         side: THREE.DoubleSide
       });
       const topMesh = new THREE.Mesh(topGeo, topMat);
       topMesh.position.set(center.x, planeY, topZ - topH / 2);
       subsurfaceGroup.add(topMesh);
 
+      // 2. Vadose Subsoil B-Horizon (Regolith / Saprolite)
       const subH = totalDepthZ * 0.38;
       const subGeo = new THREE.PlaneGeometry(widthX, subH);
       subGeo.rotateX(Math.PI / 2);
       const subMat = new THREE.MeshStandardMaterial({
         color: 0x78350f,
         roughness: 0.85,
+        metalness: 0.15,
         side: THREE.DoubleSide
       });
       const subMesh = new THREE.Mesh(subGeo, subMat);
       subMesh.position.set(center.x, planeY, topZ - topH - subH / 2);
       subsurfaceGroup.add(subMesh);
 
+      // 3. Shimmering Phreatic Saturated Aquifer Plane
       const waterTableZ = topZ - topH - subH * 0.7;
       const wtGeo = new THREE.PlaneGeometry(widthX, bSize.y * 0.45);
       const wtMat = new THREE.MeshStandardMaterial({
         color: 0x06b6d4,
         transparent: true,
-        opacity: 0.65,
-        roughness: 0.1,
-        metalness: 0.7,
+        opacity: 0.70,
+        roughness: 0.08,
+        metalness: 0.75,
         emissive: 0x0891b2,
-        emissiveIntensity: 0.3,
+        emissiveIntensity: 0.4,
         side: THREE.DoubleSide
       });
       const wtMesh = new THREE.Mesh(wtGeo, wtMat);
       wtMesh.position.set(center.x, planeY + bSize.y * 0.22, waterTableZ);
       subsurfaceGroup.add(wtMesh);
 
+      // 4. Basement Bedrock C-Horizon (Basaltic / Charnockite Hardpan)
       const bedH = totalDepthZ * 0.50;
       const bedGeo = new THREE.PlaneGeometry(widthX, bedH);
       bedGeo.rotateX(Math.PI / 2);
       const bedMat = new THREE.MeshStandardMaterial({
         color: 0x1e293b,
         roughness: 0.7,
-        metalness: 0.3,
+        metalness: 0.35,
         side: THREE.DoubleSide
       });
       const bedMesh = new THREE.Mesh(bedGeo, bedMat);
       bedMesh.position.set(center.x, planeY, bottomZ + bedH / 2);
       subsurfaceGroup.add(bedMesh);
 
-      const strataLabel = "Strata Cross-Section: Topsoil (0-32cm) · Vadose Regolith · Phreatic Aquifer (3.8m) · Bedrock";
+      // 5. Holographic Strata Demarcation Boundary Lines
+      const lineY = planeY + 0.15;
+      const boundaryZList = [
+        { z: topZ, color: 0x22c55e, lbl: '0.0m Ground Surface' },
+        { z: topZ - topH, color: 0xf59e0b, lbl: '-0.32m Vadose Zone' },
+        { z: waterTableZ, color: 0x38bdf8, lbl: '-3.8m Phreatic Aquifer' },
+        { z: bottomZ + bedH, color: 0x94a3b8, lbl: '-8.5m Basement Bedrock' }
+      ];
+      boundaryZList.forEach(b => {
+        const lineGeo = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(center.x - widthX * 0.5, lineY, b.z),
+          new THREE.Vector3(center.x + widthX * 0.5, lineY, b.z)
+        ]);
+        const lineMat = new THREE.LineDashedMaterial({
+          color: b.color,
+          dashSize: 3.0,
+          gapSize: 1.5,
+          transparent: true,
+          opacity: 0.85
+        });
+        const boundaryLine = new THREE.Line(lineGeo, lineMat);
+        boundaryLine.computeLineDistances();
+        subsurfaceGroup.add(boundaryLine);
+
+        // Flank Caliper Depth Badge
+        const caliperSprite = makeTextSprite(b.lbl, 'rgba(15, 23, 42, 0.92)', '#38bdf8', '#0284c7');
+        caliperSprite.scale.set(size * 0.085, size * 0.016, 1);
+        caliperSprite.position.set(center.x - widthX * 0.48, lineY, b.z + size * 0.01);
+        subsurfaceGroup.add(caliperSprite);
+      });
+
+      // 6. Holographic Sweeping Laser Scan Line
+      const scanLineGeo = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(center.x - widthX * 0.5, lineY + 0.2, 0),
+        new THREE.Vector3(center.x + widthX * 0.5, lineY + 0.2, 0)
+      ]);
+      const scanLineMat = new THREE.LineBasicMaterial({
+        color: 0x38bdf8,
+        linewidth: 3,
+        transparent: true,
+        opacity: 0.95
+      });
+      const scanLaserLine = new THREE.Line(scanLineGeo, scanLineMat);
+      scanLaserLine.position.z = topZ;
+      subsurfaceGroup.add(scanLaserLine);
+
+      // 7. Flowing Phreatic Groundwater Particles
+      const aquiferParticles = [];
+      const pGeo = new THREE.SphereGeometry(0.35, 6, 6);
+      const pMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.85 });
+      for (let i = 0; i < 28; i++) {
+        const pMesh = new THREE.Mesh(pGeo, pMat);
+        pMesh.position.set(
+          center.x + (Math.random() - 0.5) * widthX * 0.9,
+          planeY + Math.random() * (bSize.y * 0.4),
+          waterTableZ + (Math.random() - 0.5) * 1.8
+        );
+        pMesh.userData = { vx: 0.3 + Math.random() * 0.5, minX: center.x - widthX * 0.45, maxX: center.x + widthX * 0.45 };
+        subsurfaceGroup.add(pMesh);
+        aquiferParticles.push(pMesh);
+      }
+
+      // 8. Overhead Strata Dimension Title Sprite
+      const strataLabel = "Geotechnical Strata Cut: Topsoil (0-32cm) · Vadose Regolith · Phreatic Aquifer (-3.8m) · Basaltic Bedrock";
       const sSprite = makeTextSprite(strataLabel, 'rgba(15, 23, 42, 0.95)', '#38bdf8', '#0284c7');
       sSprite.scale.set(size * 0.16, size * 0.024, 1);
       sSprite.position.set(center.x, planeY, topZ + size * 0.025);
       subsurfaceGroup.add(sSprite);
+
+      subsurfaceGroup.userData = {
+        scanLaserLine,
+        aquiferParticles,
+        topZ,
+        bottomZ,
+        totalDepthZ,
+        planeY
+      };
     }
 
     window.updateSubsurfaceSlice = function(val) {
@@ -6421,6 +6538,10 @@
       const box = new THREE.Box3().setFromObject(currentModel);
       const bSize = box.getSize(new THREE.Vector3());
 
+      let maxSlopePt = null;
+      let maxSlopeNormal = null;
+      let peakSlopeAngle = 0;
+
       const gridSteps = 7;
       for (let gx = -gridSteps / 2; gx <= gridSteps / 2; gx++) {
         for (let gy = -gridSteps / 2; gy <= gridSteps / 2; gy++) {
@@ -6432,6 +6553,12 @@
           if (hits.length > 0 && hits[0].face && hits[0].face.normal) {
             const pt = hits[0].point;
             const slopeAngle = Math.round((1.0 - Math.abs(hits[0].face.normal.z)) * 55);
+
+            if (slopeAngle > peakSlopeAngle) {
+              peakSlopeAngle = slopeAngle;
+              maxSlopePt = pt.clone();
+              maxSlopeNormal = hits[0].face.normal.clone();
+            }
 
             let markerCol = 0x10b981;
             let markerSize = size * 0.012;
@@ -6469,32 +6596,86 @@
         }
       }
 
-      const meanSlope = Math.round(stats.avg_slope_deg || 12);
+      // Robust NaN-Safe Slope Extraction
+      const rawSlope = (stats && stats.avg_slope_deg !== undefined) ? stats.avg_slope_deg : 12;
+      const numSlope = parseFloat(String(rawSlope).replace(/[^\d.-]/g, '')) || 12;
+      const meanSlope = Math.max(1, Math.round(numSlope));
+
+      // Construct Dynamic 3D Vehicle Rollover Tripod at Steepest Critical Sector
+      let tripodGroup = null;
+      if (maxSlopePt) {
+        tripodGroup = new THREE.Group();
+        tripodGroup.position.copy(maxSlopePt);
+        tripodGroup.position.z += size * 0.018;
+
+        // Vehicle Center of Gravity (CG) Sphere
+        const cgSphere = new THREE.Mesh(
+          new THREE.SphereGeometry(size * 0.012, 16, 16),
+          new THREE.MeshStandardMaterial({ color: 0xf97316, emissive: 0xf97316, emissiveIntensity: 0.4 })
+        );
+        tripodGroup.add(cgSphere);
+
+        // Downward Gravity Vector Axis
+        const gLineGeo = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(0, 0, 0),
+          new THREE.Vector3(0, 0, -size * 0.035)
+        ]);
+        const gLine = new THREE.Line(gLineGeo, new THREE.LineBasicMaterial({ color: 0xef4444, linewidth: 2 }));
+        tripodGroup.add(gLine);
+
+        // Dynamic 3D Stability Arc Ring
+        const arcGeo = new THREE.RingGeometry(size * 0.018, size * 0.024, 24, 1, 0, Math.PI * 0.65);
+        arcGeo.rotateX(Math.PI / 2);
+        const arcMesh = new THREE.Mesh(arcGeo, new THREE.MeshBasicMaterial({ color: 0xfbbf24, side: THREE.DoubleSide }));
+        tripodGroup.add(arcMesh);
+
+        // Stability Telemetry Badge
+        const cgBadge = makeTextSprite(`CG Roll Vector: ${peakSlopeAngle}° Incline · Limit: 24°`, 'rgba(15,23,42,0.92)', '#f97316', '#ef4444');
+        cgBadge.scale.set(size * 0.12, size * 0.02, 1);
+        cgBadge.position.set(0, 0, size * 0.035);
+        tripodGroup.add(cgBadge);
+
+        tractorSafetyGroup.add(tripodGroup);
+      }
+
+      tractorSafetyGroup.userData = {
+        tripodGroup,
+        meanSlope,
+        peakSlopeAngle
+      };
+
       let slopeClass = `${meanSlope}° Gentle Undulation`;
       let rating = "OPTIMAL TRACTION (ALL AGRI MACHINERY)";
-      let rollAngle = `${(meanSlope * 0.7).toFixed(1)}° (Safety Margin: ${(24 - meanSlope * 0.7).toFixed(1)}°)`;
       let harvester = "Viable (Low Ground Silt)";
 
       if (meanSlope > 20) {
         slopeClass = `${meanSlope}° Steep Terrace Risers`;
         rating = "TRACTOR ROLLOVER DANGER (DRONE SPRAY ONLY)";
-        rollAngle = `${(meanSlope * 0.75).toFixed(1)}° (Critical Margin: ${(24 - meanSlope * 0.75).toFixed(1)}°)`;
         harvester = "Prohibited (>18° Incline Limit)";
       } else if (meanSlope >= 14) {
         slopeClass = `${meanSlope}° Moderate Slopes`;
         rating = "CAUTION (4WD LOW-GEAR ONLY)";
-        rollAngle = `${(meanSlope * 0.72).toFixed(1)}° (Margin: ${(24 - meanSlope * 0.72).toFixed(1)}°)`;
         harvester = "Conditional (Contour Harvesting Only)";
       }
+
+      const estRoll = Math.min(23.8, (meanSlope * 0.68));
+      const safetyMargin = Math.max(0.5, (24.0 - estRoll)).toFixed(1);
+      const rollAngle = `${estRoll.toFixed(1)}° (Safety Margin: ${safetyMargin}°)`;
 
       document.getElementById('trSlopeClass').innerText = slopeClass;
       document.getElementById('trRating').innerText = rating;
       document.getElementById('trRollAngle').innerText = rollAngle;
       document.getElementById('trHarvester').innerText = harvester;
 
+      const needle = document.getElementById('trInclineNeedle');
+      const degLabel = document.getElementById('trRollDegrees');
+      if (needle) needle.style.transform = `rotate(${estRoll.toFixed(1)}deg)`;
+      if (degLabel) degLabel.innerText = `+${estRoll.toFixed(1)}° ROLL`;
+
       const badgeC = document.getElementById('trBadgeContainer');
       badgeC.innerHTML = `<span class="b-badge" style="background:rgba(249,115,22,0.2); border:1px solid #f97316; color:#fb923c; font-weight:800;">ISO-4254 AGRI-MACHINERY STABILITY GRID ACTIVE</span>`;
 
+      closeAllInspectionCards('tractor-card');
       document.getElementById('tractor-card').style.display = 'block';
       showTacticalToast('Agri-Machinery & Tractor Slope Stability Heatmap Activated');
     };
@@ -7146,9 +7327,28 @@
       document.getElementById('btnWire').classList.toggle('active', isWireframe);
     };
 
-    // ️ Multi-Hazard Agro Weather & Atmospheric Particle Simulation Engine
+    // Multi-Hazard Agro Weather & Atmospheric Particle Simulation Engine
     const weatherParticleGroup = new THREE.Group();
     scene.add(weatherParticleGroup);
+
+    // High-Fidelity Soft Circular Particle Texture Generator
+    function createParticleTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 64;
+      canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+      const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      g.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      g.addColorStop(0.25, 'rgba(255, 255, 255, 0.85)');
+      g.addColorStop(0.55, 'rgba(255, 255, 255, 0.35)');
+      g.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 64, 64);
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.needsUpdate = true;
+      return tex;
+    }
+    const softParticleTexture = createParticleTexture();
 
     const PARTICLE_COUNT = 3500;
     const particleGeo = new THREE.BufferGeometry();
@@ -7162,9 +7362,11 @@
 
     const particleMat = new THREE.PointsMaterial({
       color: 0x93c5fd,
-      size: 2.2,
+      size: 3.5,
+      map: softParticleTexture,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.85,
+      alphaTest: 0.005,
       blending: THREE.AdditiveBlending,
       depthWrite: false
     });
@@ -7172,7 +7374,7 @@
     weatherParticleGroup.add(particlePoints);
     weatherParticleGroup.visible = false;
 
-    // ️ Dedicated Slanted Rain Streak Line Droplets
+    // Dedicated Slanted Rain Streak Line Droplets
     const RAIN_DROPLET_COUNT = 1600;
     const rainGeo = new THREE.BufferGeometry();
     const rainPos = new Float32Array(RAIN_DROPLET_COUNT * 6);
@@ -7208,12 +7410,15 @@
       group: new THREE.Group(),
       landslideRocks: [],
       scarpLine: null,
+      talusFan: null,
+      dustTrails: [],
       saltCrusts: [],
+      surgeWaveFront: null,
+      riverFlowLines: [],
       hailPatches: [],
       hailStones: [],
       splashRings: [],
-      dustDevil: null,
-      surgeWaveFront: null,
+      dustDevils: [],
       originMarker: null,
 
       init() {
@@ -7281,84 +7486,141 @@
         }
         this.landslideRocks = [];
         this.scarpLine = null;
+        this.talusFan = null;
+        this.dustTrails = [];
         this.saltCrusts = [];
+        this.surgeWaveFront = null;
+        this.riverFlowLines = [];
         this.hailPatches = [];
         this.hailStones = [];
         this.splashRings = [];
-        this.dustDevil = null;
-        this.surgeWaveFront = null;
+        this.dustDevils = [];
         this.originMarker = null;
       },
 
-      // 1. Horizontal Mountain Flank Landslide with 3D Tumbling Boulders
+      // 1. Geomorphic Slope Landslide with Tumbling Rocks, Volumetric Dust & Talus Fan
       setupLandslide(box) {
         this.clearAll();
         if (!box) return;
         const bSize = box.getSize(new THREE.Vector3());
-        const rockGeos = [
-          new THREE.DodecahedronGeometry(3.0, 0),
-          new THREE.DodecahedronGeometry(4.2, 0),
-          new THREE.IcosahedronGeometry(2.6, 0),
-          new THREE.DodecahedronGeometry(5.4, 0),
-          new THREE.IcosahedronGeometry(3.8, 0)
-        ];
-        const rockColors = [0x57534e, 0x78350f, 0x451a03, 0x292524, 0x854d0e];
 
-        const originX = center.x - bSize.x * 0.42;
+        const originX = center.x - bSize.x * 0.38;
         const originY = center.y + bSize.y * 0.36;
-        const originZ = box.max.z - bSize.z * 0.05;
+        const originZ = box.max.z - bSize.z * 0.04;
 
         this.createOriginMarker(
           originX, originY, originZ + size * 0.02,
-          'Landslide Crown Scarp Origin: Saturated Regolith Escarpment | Slope: 42° · Alt: 1,380m AMSL | Mass: 320k m³',
+          'Landslide Crown Scarp Detachment: Saturated Regolith Escarpment | Slope: 42° · Alt: 1,380m AMSL | Debris: 320,000 m³',
           '#ef4444', 0xef4444
         );
 
+        // Ground-Draped Tension Scarp Detachment Fissure Line
         const scarpGeo = new THREE.BufferGeometry();
         const scarpPts = [];
-        for (let s = -40; s <= 40; s += 5) {
-          scarpPts.push(
-            originX + s * 0.85,
-            originY + Math.sin(s * 0.35) * 10,
-            originZ + Math.cos(s * 0.28) * 5
-          );
+        for (let s = -45; s <= 45; s += 5) {
+          const px = originX + s * 0.85;
+          const py = originY + Math.sin(s * 0.35) * 12;
+          let pz = originZ;
+          if (terrainMesh) {
+            const ray = new THREE.Raycaster(new THREE.Vector3(px, py, box.max.z + 50), new THREE.Vector3(0, 0, -1));
+            const hits = ray.intersectObject(terrainMesh);
+            if (hits.length > 0) pz = hits[0].point.z + 0.3;
+          }
+          scarpPts.push(px, py, pz);
         }
         scarpGeo.setAttribute('position', new THREE.Float32BufferAttribute(scarpPts, 3));
         const scarpMat = new THREE.LineBasicMaterial({ color: 0xef4444, linewidth: 3 });
         this.scarpLine = new THREE.Line(scarpGeo, scarpMat);
         this.group.add(this.scarpLine);
 
-        for (let i = 0; i < 45; i++) {
+        // Geomorphic Deposition Talus Cone / Debris Fan at Lower Flank
+        const depX = center.x + bSize.x * 0.18;
+        const depY = center.y - bSize.y * 0.22;
+        const depZ = box.min.z + bSize.z * 0.15;
+        const fanGeo = new THREE.ConeGeometry(bSize.x * 0.14, bSize.z * 0.12, 24, 2, true);
+        fanGeo.rotateX(Math.PI / 2);
+        const fanMat = new THREE.MeshStandardMaterial({
+          color: 0x573418,
+          roughness: 0.95,
+          metalness: 0.1,
+          flatShading: true,
+          transparent: true,
+          opacity: 0.85
+        });
+        this.talusFan = new THREE.Mesh(fanGeo, fanMat);
+        this.talusFan.position.set(depX, depY, depZ);
+        this.group.add(this.talusFan);
+
+        const fanBadge = makeTextSprite('Colluvial Talus Fan Deposition Zone: Runout ~850m', 'rgba(15,23,42,0.92)', '#f59e0b', '#78350f');
+        fanBadge.scale.set(size * 0.13, size * 0.02, 1);
+        fanBadge.position.set(depX, depY, depZ + size * 0.035);
+        this.group.add(fanBadge);
+
+        // Diverse 3D Natural Rock Geometry Clusters
+        const rockGeos = [
+          new THREE.DodecahedronGeometry(1.4, 0),
+          new THREE.IcosahedronGeometry(1.2, 0),
+          new THREE.DodecahedronGeometry(1.9, 0),
+          new THREE.TetrahedronGeometry(1.3, 0),
+          new THREE.DodecahedronGeometry(2.3, 0)
+        ];
+        const rockColors = [0x57534e, 0x78350f, 0x451a03, 0x292524, 0x854d0e, 0x3f3f46];
+
+        for (let i = 0; i < 50; i++) {
           const geo = rockGeos[i % rockGeos.length];
           const mat = new THREE.MeshStandardMaterial({
             color: rockColors[i % rockColors.length],
-            roughness: 0.9,
-            metalness: 0.15,
+            roughness: 0.92,
+            metalness: 0.18,
             flatShading: true
           });
           const mesh = new THREE.Mesh(geo, mat);
-          const t = Math.random();
-          mesh.position.set(
-            originX + t * (bSize.x * 0.85) + (Math.random() - 0.5) * 35,
-            originY - t * (bSize.y * 0.75) + (Math.random() - 0.5) * 35,
-            originZ - t * (bSize.z * 0.85) + (Math.random() - 0.5) * 15
-          );
+          const startX = originX + (Math.random() - 0.5) * 45;
+          const startY = originY + (Math.random() - 0.5) * 40;
+          let startZ = originZ - (Math.random() * 15);
+          if (terrainMesh) {
+            const ray = new THREE.Raycaster(new THREE.Vector3(startX, startY, box.max.z + 50), new THREE.Vector3(0, 0, -1));
+            const hits = ray.intersectObject(terrainMesh);
+            if (hits.length > 0) startZ = hits[0].point.z + 1.2;
+          }
+          mesh.position.set(startX, startY, startZ);
           mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
           mesh.userData = {
-            vx: 3.8 + Math.random() * 2.8,
-            vy: -3.2 - Math.random() * 2.5,
-            vz: -2.0 - Math.random() * 1.5,
-            rotX: (Math.random() - 0.5) * 0.45,
-            rotY: (Math.random() - 0.5) * 0.45,
-            rotZ: (Math.random() - 0.5) * 0.45,
-            originX, originY, originZ
+            vx: 3.2 + Math.random() * 2.2,
+            vy: -2.8 - Math.random() * 2.0,
+            vz: -1.2,
+            bounce: 0.8 + Math.random() * 1.4,
+            tOffset: Math.random() * 10,
+            originX: startX,
+            originY: startY,
+            originZ: startZ
           };
           this.landslideRocks.push(mesh);
           this.group.add(mesh);
         }
+
+        // Volumetric Regolith Dust Cloud Trail Meshes
+        const dustMat = new THREE.MeshBasicMaterial({
+          color: 0x78350f,
+          transparent: true,
+          opacity: 0.35,
+          depthWrite: false
+        });
+        for (let i = 0; i < 30; i++) {
+          const dSphere = new THREE.Mesh(new THREE.SphereGeometry(2.5 + Math.random() * 4.0, 8, 8), dustMat);
+          dSphere.position.set(originX, originY, originZ);
+          dSphere.userData = {
+            vx: 2.2 + Math.random() * 2.0,
+            vy: -2.0 - Math.random() * 1.8,
+            life: Math.random(),
+            scaleRate: 0.02 + Math.random() * 0.03
+          };
+          this.dustTrails.push(dSphere);
+          this.group.add(dSphere);
+        }
       },
 
-      // ❄️ 2. Severe Hailstorm Ground Frost & 3D Bouncing Ice Chunks
+      // 2. Severe Hailstorm Ground Frost & 3D Bouncing Ice Chunks
       setupHail(box) {
         this.clearAll();
         if (!box) return;
@@ -7369,18 +7631,18 @@
         const origZ = box.max.z + bSize.z * 0.45;
         this.createOriginMarker(
           origX, origY, origZ,
-          '❄️ Hailstorm Origin: Supercell Mesocyclone Core | Alt: 4,800m AMSL | Hailstone Diam: 3.5cm · Kinetic Energy: 42 J',
+          'Hailstorm Origin: Supercell Mesocyclone Core | Alt: 4,800m AMSL | Hailstone Diam: 3.5cm · Kinetic Energy: 42 J (Exceeds PMFBY Lodging Limit)',
           '#60a5fa', 0x93c5fd
         );
 
-        const hailGeo = new THREE.DodecahedronGeometry(1.8, 0);
+        const hailGeo = new THREE.DodecahedronGeometry(1.6, 0);
         const hailMat = new THREE.MeshStandardMaterial({
           color: 0xffffff,
-          roughness: 0.12,
-          metalness: 0.35,
+          roughness: 0.08,
+          metalness: 0.85,
           flatShading: true,
           emissive: 0xe0f2fe,
-          emissiveIntensity: 0.25
+          emissiveIntensity: 0.35
         });
 
         for (let i = 0; i < 65; i++) {
@@ -7394,7 +7656,8 @@
             vx: (Math.random() - 0.5) * 2.0,
             vy: (Math.random() - 0.5) * 2.0,
             vz: -26.0 - Math.random() * 8.0,
-            origZ
+            origZ,
+            bounces: 0
           };
           this.hailStones.push(mesh);
           this.group.add(mesh);
@@ -7408,7 +7671,7 @@
           opacity: 0.88
         });
         for (let i = 0; i < 35; i++) {
-          const rad = 6.0 + Math.random() * 12.0;
+          const rad = 5.0 + Math.random() * 10.0;
           const geo = new THREE.CircleGeometry(rad, 16);
           const mesh = new THREE.Mesh(geo, frostMat);
           const x = center.x + (Math.random() - 0.5) * bSize.x * 0.85;
@@ -7427,7 +7690,7 @@
         }
       },
 
-      // 3. Saline Surge: Coastal Wave Front & Toxic Salt Efflorescence Crust
+      // 3. Saline Surge: Planar Coastal Tidal Inflow & 3D Sparkling Crystalline Salt Efflorescence
       setupSaline(box) {
         this.clearAll();
         if (!box) return;
@@ -7435,53 +7698,73 @@
 
         const origX = center.x - bSize.x * 0.48;
         const origY = center.y;
-        const origZ = box.min.z + bSize.z * 0.15;
+        const origZ = box.min.z + bSize.z * 0.18;
         this.createOriginMarker(
           origX, origY, origZ,
           'Coastal Saline Surge Origin: High-Tide Estuarine Storm Inflow | Salinity EC: 12.4 dS/m | Seawater Ingress: +3.6m',
           '#34d399', 0x34d399
         );
 
-        const saltMat = new THREE.MeshStandardMaterial({
+        // 3D Crystalline Salt Clusters (Halite efflorescence depositing on soil)
+        const crystalGeo = new THREE.DodecahedronGeometry(0.8, 0);
+        const crystalMat = new THREE.MeshStandardMaterial({
           color: 0xffffff,
-          roughness: 0.95,
-          metalness: 0.05,
+          roughness: 0.15,
+          metalness: 0.85,
+          flatShading: true,
+          emissive: 0xa7f3d0,
+          emissiveIntensity: 0.35,
           transparent: true,
-          opacity: 0.90
+          opacity: 0.95
         });
-        for (let i = 0; i < 35; i++) {
-          const rad = 6.0 + Math.random() * 12.0;
-          const geo = new THREE.CircleGeometry(rad, 16);
-          const mesh = new THREE.Mesh(geo, saltMat);
-          const x = center.x + (Math.random() - 0.5) * bSize.x * 0.85;
-          const y = center.y + (Math.random() - 0.5) * bSize.y * 0.85;
-          let z = box.min.z + bSize.z * 0.18;
+
+        for (let i = 0; i < 40; i++) {
+          const clusterGroup = new THREE.Group();
+          const cx = center.x + (Math.random() - 0.5) * bSize.x * 0.82;
+          const cy = center.y + (Math.random() - 0.5) * bSize.y * 0.82;
+          let cz = box.min.z + bSize.z * 0.22;
           if (terrainMesh) {
-            const ray = new THREE.Raycaster(new THREE.Vector3(x, y, box.max.z + 50), new THREE.Vector3(0, 0, -1));
+            const ray = new THREE.Raycaster(new THREE.Vector3(cx, cy, box.max.z + 50), new THREE.Vector3(0, 0, -1));
             const hits = ray.intersectObject(terrainMesh);
-            if (hits.length > 0) z = hits[0].point.z + 0.25;
+            if (hits.length > 0) cz = hits[0].point.z + 0.3;
           }
-          mesh.position.set(x, y, z);
-          mesh.scale.set(0.01, 0.01, 0.01);
-          mesh.userData = { targetScale: 1.0, currentScale: 0.01 };
-          this.saltCrusts.push(mesh);
-          this.group.add(mesh);
+          clusterGroup.position.set(cx, cy, cz);
+
+          // 3-5 faceted micro-crystals per cluster
+          const count = 3 + Math.floor(Math.random() * 3);
+          for (let k = 0; k < count; k++) {
+            const crystal = new THREE.Mesh(crystalGeo, crystalMat);
+            const scale = 0.5 + Math.random() * 0.8;
+            crystal.scale.set(scale, scale, scale * 1.4);
+            crystal.position.set((Math.random() - 0.5) * 4.0, (Math.random() - 0.5) * 4.0, 0);
+            crystal.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+            clusterGroup.add(crystal);
+          }
+          clusterGroup.scale.set(0.01, 0.01, 0.01);
+          clusterGroup.userData = { targetScale: 1.0, currentScale: 0.01 };
+          this.saltCrusts.push(clusterGroup);
+          this.group.add(clusterGroup);
         }
 
-        const waveGeo = new THREE.CylinderGeometry(bSize.y * 0.65, bSize.y * 0.65, 3.5, 32, 1, true);
-        const waveMat = new THREE.MeshBasicMaterial({
-          color: 0xa7f3d0,
+        // Ground-Level Coastal Surge Wave Front (NO SKY CYLINDER!)
+        const wavePlaneGeo = new THREE.PlaneGeometry(bSize.y * 0.85, 8.0, 32, 2);
+        wavePlaneGeo.rotateY(Math.PI / 2);
+        const wavePlaneMat = new THREE.MeshStandardMaterial({
+          color: 0x059669,
+          roughness: 0.1,
+          metalness: 0.6,
+          emissive: 0xa7f3d0,
+          emissiveIntensity: 0.4,
           transparent: true,
-          opacity: 0.65,
-          wireframe: true
+          opacity: 0.82,
+          side: THREE.DoubleSide
         });
-        this.surgeWaveFront = new THREE.Mesh(waveGeo, waveMat);
-        this.surgeWaveFront.rotation.z = Math.PI / 2;
-        this.surgeWaveFront.position.set(origX, origY, box.min.z + bSize.z * 0.35);
+        this.surgeWaveFront = new THREE.Mesh(wavePlaneGeo, wavePlaneMat);
+        this.surgeWaveFront.position.set(origX, origY, origZ + 1.2);
         this.group.add(this.surgeWaveFront);
       },
 
-      // ️ 4. Aeolian Haboob Sweeping Sand Sheets & Corkscrewing Dust Devil
+      // 4. Aeolian Haboob Sweeping Sand Sheets & Swirling Dust Devils
       setupSandstorm(box) {
         this.clearAll();
         if (!box) return;
@@ -7492,25 +7775,34 @@
         const origZ = box.min.z + bSize.z * 0.15;
         this.createOriginMarker(
           origX, origY, origZ,
-          'Aeolian Haboob Origin: Western Barometric Desert Front · Wind Vector: 68 km/h WNW | PM10: 950 µg/m³',
+          'Aeolian Haboob Origin: Western Barometric Desert Front · Wind Vector: 68 km/h WNW | PM10: 950 µg/m³ | Topsoil Stripping: 18.4 t/ha',
           '#fbbf24', 0xf59e0b
         );
 
-        const coneGeo = new THREE.ConeGeometry(bSize.x * 0.09, bSize.z * 0.85, 16, 8, true);
-        const coneMat = new THREE.MeshBasicMaterial({
-          color: 0xd97706,
-          transparent: true,
-          opacity: 0.45,
-          wireframe: true
-        });
-        this.dustDevil = new THREE.Mesh(coneGeo, coneMat);
-        this.dustDevil.rotation.x = Math.PI;
-        this.dustDevil.position.set(center.x, center.y, box.min.z + bSize.z * 0.35);
-        this.dustDevil.userData = { angle: 0, radius: bSize.x * 0.28 };
-        this.group.add(this.dustDevil);
+        // Multiple Swirling Ground Dust Devils
+        const devilCount = 3;
+        for (let d = 0; d < devilCount; d++) {
+          const coneGeo = new THREE.ConeGeometry(bSize.x * 0.06, bSize.z * 0.75, 16, 6, true);
+          const coneMat = new THREE.MeshBasicMaterial({
+            color: 0xd97706,
+            transparent: true,
+            opacity: 0.42,
+            wireframe: true
+          });
+          const devil = new THREE.Mesh(coneGeo, coneMat);
+          devil.rotation.x = Math.PI;
+          devil.position.set(center.x + (d - 1) * bSize.x * 0.25, center.y + (d - 1) * bSize.y * 0.2, box.min.z + bSize.z * 0.35);
+          devil.userData = {
+            angle: d * (Math.PI * 2 / devilCount),
+            radius: bSize.x * (0.22 + d * 0.08),
+            speed: 0.014 + d * 0.005
+          };
+          this.dustDevils.push(devil);
+          this.group.add(devil);
+        }
       },
 
-      // 5. Turbid Riverine Flash Flood Surge & Inflow Origin
+      // 5. Turbid Riverine Flash Flood Channel Flow & Directional Streamlines
       setupFlood(box) {
         this.clearAll();
         if (!box) return;
@@ -7521,25 +7813,62 @@
         const origZ = box.min.z + bSize.z * 0.20;
         this.createOriginMarker(
           origX, origY, origZ,
-          'Flood Inflow Origin: Upper Catchment Barrage Breach · Peak Inflow: 4,200 m³/s | Surge Crest: +4.8m',
+          'Flood Inflow Origin: Upper Catchment Barrage Breach · Peak Inflow: 4,200 m³/s | Surge Crest: +4.8m | Drainage Window: 72 hrs',
           '#38bdf8', 0x0284c7
         );
 
-        const waveGeo = new THREE.CylinderGeometry(bSize.y * 0.55, bSize.y * 0.55, 4.0, 32, 1, true);
-        const waveMat = new THREE.MeshStandardMaterial({
+        // Realistic Ground-Level Channel Streamlines (NO SKY CYLINDER!)
+        this.riverFlowLines = [];
+        const flowMat = new THREE.LineDashedMaterial({
           color: 0x38bdf8,
+          dashSize: 4.5,
+          gapSize: 2.0,
+          linewidth: 2.5,
           transparent: true,
-          opacity: 0.75,
-          roughness: 0.2,
-          wireframe: false
+          opacity: 0.88
         });
-        this.surgeWaveFront = new THREE.Mesh(waveGeo, waveMat);
-        this.surgeWaveFront.rotation.z = Math.PI / 2;
-        this.surgeWaveFront.position.set(origX, origY, box.min.z + bSize.z * 0.38);
+
+        for (let lineIdx = 0; lineIdx < 18; lineIdx++) {
+          const pts = [];
+          const startOffset = (lineIdx - 9) * 8.0;
+          for (let step = 0; step < 16; step++) {
+            const t = step / 15.0;
+            const fx = origX + t * (bSize.x * 0.85) + startOffset;
+            const fy = origY - t * (bSize.y * 0.80) + Math.sin(t * 5.0 + lineIdx) * 14.0;
+            let fz = box.min.z + bSize.z * 0.35;
+            if (terrainMesh) {
+              const ray = new THREE.Raycaster(new THREE.Vector3(fx, fy, box.max.z + 50), new THREE.Vector3(0, 0, -1));
+              const hits = ray.intersectObject(terrainMesh);
+              if (hits.length > 0) fz = hits[0].point.z + 0.5;
+            }
+            pts.push(new THREE.Vector3(fx, fy, fz));
+          }
+          const fGeo = new THREE.BufferGeometry().setFromPoints(pts);
+          const fLine = new THREE.Line(fGeo, flowMat.clone());
+          fLine.computeLineDistances();
+          this.riverFlowLines.push(fLine);
+          this.group.add(fLine);
+        }
+
+        // Advancing Channel Wave Lip (strictly at water level, hugging river valley)
+        const waveLipGeo = new THREE.PlaneGeometry(bSize.y * 0.5, 4.0, 16, 1);
+        waveLipGeo.rotateY(Math.PI / 2);
+        const waveLipMat = new THREE.MeshStandardMaterial({
+          color: 0x92400e,
+          roughness: 0.3,
+          metalness: 0.4,
+          emissive: 0x38bdf8,
+          emissiveIntensity: 0.3,
+          transparent: true,
+          opacity: 0.85,
+          side: THREE.DoubleSide
+        });
+        this.surgeWaveFront = new THREE.Mesh(waveLipGeo, waveLipMat);
+        this.surgeWaveFront.position.set(origX, origY, origZ + 2.0);
         this.group.add(this.surgeWaveFront);
       },
 
-      // ️ 6. Torrential Rain Droplet Streaks & Expanding Ground Splash Rings
+      // 6. Torrential Rain Droplet Streaks & Expanding Ground Splash Rings
       setupRain(box) {
         this.clearAll();
         if (!box) return;
@@ -7884,7 +8213,7 @@
         sunLight.intensity = 0.65;
         rimLight.intensity = 0.35;
         if (rainLineSegments) rainLineSegments.visible = true;
-        if (particlePoints) particlePoints.visible = false;
+        if (particlePoints) particlePoints.visible = true;
         if (waterMesh) {
           waterMesh.visible = true;
           if (waterMesh.material) {
@@ -7914,7 +8243,7 @@
         sunLight.intensity = 0.8;
         rimLight.intensity = 0.6;
         if (rainLineSegments) rainLineSegments.visible = false;
-        if (particlePoints) particlePoints.visible = false;
+        if (particlePoints) particlePoints.visible = true;
         if (waterMesh) waterMesh.visible = floodMode;
         if (currentModel) {
           const box = new THREE.Box3().setFromObject(currentModel);
@@ -7928,7 +8257,7 @@
           '-0.57',
           '₹74.2 L',
           'Catastrophic canopy shredding & lodging across paddy and maize parcels.',
-          '❄️ Origin: Supercell Mesocyclone Freezing Level (Alt: 4,800m AMSL) | Kinetic impact: 42 J/stone'
+          'Origin: Supercell Mesocyclone Freezing Level (Alt: 4,800m AMSL) | Kinetic impact: 42 J/stone'
         );
         showTacticalToast('SIMULATION // SEVERE HAILSTORM & HYDRAULIC IMPACT DYNAMICS ACTIVE');
       } else if (type === 'sandstorm') {
@@ -8016,7 +8345,7 @@
         scene.fog = new THREE.FogExp2(0x451a03, 0.0022);
         sunLight.intensity = 0.6;
         if (rainLineSegments) rainLineSegments.visible = false;
-        if (particlePoints) particlePoints.visible = false;
+        if (particlePoints) particlePoints.visible = true;
         if (waterMesh) waterMesh.visible = floodMode;
         if (currentModel) {
           const box = new THREE.Box3().setFromObject(currentModel);
@@ -8121,7 +8450,7 @@
       const btnSplit = document.getElementById('btnPipSplit');
       if (btnSplit) {
         btnSplit.classList.toggle('active', isSideBySide);
-        btnSplit.innerText = isSideBySide ? '✕ Dock' : '⬌ 50/50';
+        btnSplit.innerText = isSideBySide ? '✕ Dock' : 'Split 50/50';
       }
       const pip = document.getElementById('split-pip');
       if (pip && !isSplitPIP) {
@@ -9432,14 +9761,45 @@
         });
       }
 
-      // ️ Dynamic Subsurface Phreatic Aquifer Water Table Shimmer
-      if (showSubsurfaceXRay && subsurfaceGroup && subsurfaceGroup.children.length > 0) {
+      // 3D Holographic Subsurface Strata Scanner Dynamics
+      if (showSubsurfaceXRay && subsurfaceGroup && subsurfaceGroup.userData) {
         const time = Date.now() * 0.0025;
+        const u = subsurfaceGroup.userData;
+        if (u.scanLaserLine && u.topZ !== undefined && u.bottomZ !== undefined) {
+          const scanT = (Math.sin(time * 2.2) + 1.0) * 0.5;
+          u.scanLaserLine.position.z = u.bottomZ + scanT * u.totalDepthZ;
+          if (u.scanLaserLine.material) {
+            u.scanLaserLine.material.opacity = 0.7 + Math.cos(time * 4.4) * 0.28;
+          }
+        }
+        if (u.aquiferParticles && u.aquiferParticles.length > 0) {
+          u.aquiferParticles.forEach(p => {
+            p.position.x += p.userData.vx;
+            if (p.position.x > p.userData.maxX) {
+              p.position.x = p.userData.minX;
+            }
+          });
+        }
         subsurfaceGroup.children.forEach(c => {
           if (c.isMesh && c.material && c.material.color && c.material.color.getHex() === 0x06b6d4) {
-            c.material.opacity = 0.62 + Math.sin(time * 3) * 0.12;
+            c.material.opacity = 0.65 + Math.sin(time * 3) * 0.15;
           }
         });
+      }
+
+      // 3D Tractor Dynamic Rollover Tripod & Attitude Needle Animation
+      if (showTractorSafety && tractorSafetyGroup && tractorSafetyGroup.userData) {
+        const time = Date.now() * 0.003;
+        const tu = tractorSafetyGroup.userData;
+        if (tu.tripodGroup) {
+          const oscAngle = Math.sin(time * 3.8) * 0.035;
+          tu.tripodGroup.rotation.z = oscAngle;
+          const liveRoll = (tu.meanSlope || 12) * 0.68 + oscAngle * (180 / Math.PI);
+          const needle = document.getElementById('trInclineNeedle');
+          const degLabel = document.getElementById('trRollDegrees');
+          if (needle) needle.style.transform = `rotate(${liveRoll.toFixed(1)}deg)`;
+          if (degLabel) degLabel.innerText = `${liveRoll >= 0 ? '+' : ''}${liveRoll.toFixed(1)}° ROLL`;
+        }
       }
 
       // Direct clicked building escape route animation
@@ -9475,30 +9835,54 @@
       const dial = document.getElementById('compass-dial');
       if (dial) dial.style.transform = `rotate(${-angleDeg}deg)`;
 
-      // ️ Weather & Disaster Particle Dynamics & Unique Calamity Visual FX
+      // Weather & Disaster Particle Dynamics & Unique Calamity Visual FX
       if (activeDisasterType && activeDisasterType !== 'clear') {
         // 1. Specialized CalamityFX Mesh Dynamics
         if (activeDisasterType === 'landslide' && currentModel) {
           const box = new THREE.Box3().setFromObject(currentModel);
           const bSize = box.getSize(new THREE.Vector3());
-          const maxX = center.x + bSize.x * 0.48;
-          const minY = center.y - bSize.y * 0.48;
+          const maxX = center.x + bSize.x * 0.45;
+          const minY = center.y - bSize.y * 0.45;
+          const groundZ = box.min.z + bSize.z * 0.12;
 
           calamityFX.landslideRocks.forEach((rock) => {
             rock.position.x += rock.userData.vx;
             rock.position.y += rock.userData.vy;
-            rock.position.z += rock.userData.vz;
-            rock.rotation.x += rock.userData.rotX;
-            rock.rotation.y += rock.userData.rotY;
-            rock.rotation.z += rock.userData.rotZ;
+            rock.rotation.x += 0.08;
+            rock.rotation.y += 0.11;
+            rock.rotation.z += 0.06;
 
-            // When rock crosses valley floor or lower boundaries, respawn at mountain ridge top
-            if (rock.position.x > maxX || rock.position.y < minY || rock.position.z < box.min.z) {
+            // Rock trajectory: descend along mountain flank with kinetic bounces
+            const t = (rock.position.x - rock.userData.originX) / (bSize.x * 0.65);
+            const naturalZ = rock.userData.originZ - t * (bSize.z * 0.78);
+            rock.position.z = Math.max(groundZ, naturalZ + Math.abs(Math.sin((rock.position.x + rock.userData.tOffset) * 0.2)) * rock.userData.bounce);
+
+            if (rock.position.x > maxX || rock.position.y < minY || rock.position.z <= groundZ + 0.2) {
+              if (Math.random() < 0.25 && calamityFX.talusFan) {
+                calamityFX.talusFan.scale.set(1.0 + Math.sin(Date.now()*0.002)*0.08, 1.0 + Math.sin(Date.now()*0.002)*0.08, 1);
+              }
               rock.position.set(
-                rock.userData.originX + (Math.random() - 0.5) * 35,
-                rock.userData.originY + (Math.random() - 0.5) * 35,
-                rock.userData.originZ + (Math.random() - 0.5) * 12
+                rock.userData.originX + (Math.random() - 0.5) * 30,
+                rock.userData.originY + (Math.random() - 0.5) * 25,
+                rock.userData.originZ + (Math.random() - 0.5) * 8
               );
+            }
+          });
+
+          // Volumetric Regolith Dust Trail Clouds
+          calamityFX.dustTrails.forEach((d) => {
+            d.position.x += d.userData.vx;
+            d.position.y += d.userData.vy;
+            d.userData.life += d.userData.scaleRate;
+            if (d.userData.life > 1.0) {
+              d.userData.life = 0;
+              const pickRock = calamityFX.landslideRocks[Math.floor(Math.random() * calamityFX.landslideRocks.length)];
+              if (pickRock) d.position.copy(pickRock.position);
+              d.scale.set(0.2, 0.2, 0.2);
+            } else {
+              const s = 1.0 + d.userData.life * 2.8;
+              d.scale.set(s, s, s);
+              d.material.opacity = (1.0 - d.userData.life) * 0.35;
             }
           });
         } else if (activeDisasterType === 'hail') {
@@ -9545,39 +9929,55 @@
             }
           });
         } else if (activeDisasterType === 'tsunami') {
-          calamityFX.saltCrusts.forEach((patch) => {
-            if (patch.userData.currentScale < patch.userData.targetScale) {
-              patch.userData.currentScale += 0.005;
-              patch.scale.set(patch.userData.currentScale, patch.userData.currentScale, 1);
+          // Efflorescing 3D crystalline salt crust growth & specular facet shimmer
+          calamityFX.saltCrusts.forEach((cluster, idx) => {
+            if (cluster.userData.currentScale < cluster.userData.targetScale) {
+              cluster.userData.currentScale += 0.006;
+              cluster.scale.setScalar(cluster.userData.currentScale);
             }
+            cluster.children.forEach((c) => {
+              if (c.material) {
+                c.material.emissiveIntensity = 0.25 + Math.sin(Date.now() * 0.004 + idx) * 0.2;
+              }
+            });
           });
           if (calamityFX.surgeWaveFront && currentModel) {
             const box = new THREE.Box3().setFromObject(currentModel);
             const bSize = box.getSize(new THREE.Vector3());
-            calamityFX.surgeWaveFront.position.x += 1.4;
-            if (calamityFX.surgeWaveFront.position.x > center.x + bSize.x * 0.45) {
-              calamityFX.surgeWaveFront.position.x = center.x - bSize.x * 0.5;
+            calamityFX.surgeWaveFront.position.x += 1.2;
+            if (calamityFX.surgeWaveFront.position.x > center.x + bSize.x * 0.42) {
+              calamityFX.surgeWaveFront.position.x = center.x - bSize.x * 0.48;
             }
           }
         } else if (activeDisasterType === 'flood') {
+          // Animate terrain channel velocity streamlines
+          if (calamityFX.riverFlowLines && calamityFX.riverFlowLines.length > 0) {
+            calamityFX.riverFlowLines.forEach((line) => {
+              if (line.material && line.material.dashOffset !== undefined) {
+                line.material.dashOffset -= 0.14;
+              }
+            });
+          }
           if (calamityFX.surgeWaveFront && currentModel) {
             const box = new THREE.Box3().setFromObject(currentModel);
             const bSize = box.getSize(new THREE.Vector3());
-            calamityFX.surgeWaveFront.position.x += 1.8;
-            calamityFX.surgeWaveFront.position.y -= 1.1;
-            calamityFX.surgeWaveFront.scale.x = 1.0 + Math.sin(Date.now() * 0.004) * 0.15;
-            if (calamityFX.surgeWaveFront.position.x > center.x + bSize.x * 0.48) {
+            calamityFX.surgeWaveFront.position.x += 1.4;
+            calamityFX.surgeWaveFront.position.y -= 0.9;
+            calamityFX.surgeWaveFront.scale.x = 1.0 + Math.sin(Date.now() * 0.004) * 0.12;
+            if (calamityFX.surgeWaveFront.position.x > center.x + bSize.x * 0.42) {
               calamityFX.surgeWaveFront.position.x = center.x - bSize.x * 0.38;
               calamityFX.surgeWaveFront.position.y = center.y + bSize.y * 0.42;
             }
           }
-        } else if (activeDisasterType === 'sandstorm' && calamityFX.dustDevil) {
-          calamityFX.dustDevil.rotation.y += 0.09;
-          calamityFX.dustDevil.userData.angle += 0.016;
-          const a = calamityFX.dustDevil.userData.angle;
-          const r = calamityFX.dustDevil.userData.radius;
-          calamityFX.dustDevil.position.x = center.x + Math.cos(a) * r + Math.sin(a * 2.3) * (r * 0.4);
-          calamityFX.dustDevil.position.y = center.y + Math.sin(a) * r + Math.cos(a * 1.7) * (r * 0.3);
+        } else if (activeDisasterType === 'sandstorm' && calamityFX.dustDevils) {
+          calamityFX.dustDevils.forEach((devil) => {
+            devil.rotation.y += 0.09;
+            devil.userData.angle += devil.userData.speed;
+            const a = devil.userData.angle;
+            const r = devil.userData.radius;
+            devil.position.x = center.x + Math.cos(a) * r;
+            devil.position.y = center.y + Math.sin(a) * (r * 0.75);
+          });
         } else if (activeDisasterType === 'rain') {
           calamityFX.splashRings.forEach((ring) => {
             ring.userData.life += 0.045;
