@@ -1198,7 +1198,7 @@
     <div class="gps-grid">
       <div class="g-cell">
         <span class="g-k">Geodetic Position</span>
-        <span class="g-v" id="gpsHudCoords" style="color:#34d399;">18.9400°, 72.8240°</span>
+        <span class="g-v" id="gpsHudCoords" style="color:#34d399;">11.5277°, 76.1950°</span>
       </div>
       <div class="g-cell">
         <span class="g-k">Sensor Precision</span>
@@ -1919,11 +1919,18 @@
       a.click();
     };
 
-    window.loadCurrent3DModel = function(modelFile = 'current.glb', statsFile = 'current_stats.json', buildingsSource = 'current_buildings.json', hazardFile = 'current_hazard.png') {
+    let activeGlbFile = 'current.glb';
+    window.loadCurrent3DModel = function(modelFile = 'current.glb', statsFile = 'current_stats.json', buildingsSource = 'current_buildings.json', hazardFile = 'current_hazard.png', textureFile = null, customLocName = null, customCoords = null) {
+      activeGlbFile = modelFile;
       texLoader.load(hazardFile + '?t=' + Date.now(), (tex) => {
         tex.flipY = false;
         hazardTexture = tex;
       });
+
+      const baseName = modelFile.replace('.glb', '');
+      const defaultJpg = textureFile || (baseName + '.jpg');
+      const pipImg = document.getElementById('pip-img');
+      if (pipImg) pipImg.src = defaultJpg + '?t=' + Date.now();
 
       gltfLoader.load(modelFile + '?t=' + Date.now(), (gltf) => {
         if (currentModel) scene.remove(currentModel);
@@ -1970,17 +1977,28 @@
           if (stats.box_size_km) document.getElementById('boxKm').innerText = stats.box_size_km + ' km';
           if (stats.grid_spacing_m) document.getElementById('gridGsd').innerText = stats.grid_spacing_m + ' m';
 
-          if (stats.lat) {
-            const numLat = parseFloat(stats.lat).toFixed(4);
-            const numLon = parseFloat(stats.lon).toFixed(4);
+          const finalLat = (customCoords && customCoords.lat != null) ? customCoords.lat : stats.lat;
+          const finalLon = (customCoords && customCoords.lon != null) ? customCoords.lon : stats.lon;
+          if (finalLat != null && finalLon != null) {
+            const numLat = parseFloat(finalLat).toFixed(4);
+            const numLon = parseFloat(finalLon).toFixed(4);
             const qL = document.getElementById('qLat'); if (qL) qL.value = numLat;
             const qLo = document.getElementById('qLon'); if (qLo) qLo.value = numLon;
             const dL = document.getElementById('dLat'); if (dL) dL.value = numLat;
             const dLo = document.getElementById('dLon'); if (dLo) dLo.value = numLon;
+            if (typeof drawerMap !== 'undefined' && drawerMap && typeof drawerMarker !== 'undefined' && drawerMarker) {
+              drawerMap.setView([parseFloat(numLat), parseFloat(numLon)]);
+              drawerMarker.setLatLng([parseFloat(numLat), parseFloat(numLon)]);
+            }
           }
-          if (stats.location_name) {
+          if (customCoords && customCoords.boxKm) {
+            document.getElementById('boxKm').innerText = customCoords.boxKm + ' km';
+          }
+
+          const finalName = customLocName || stats.location_name;
+          if (finalName) {
             const tEl = document.getElementById('targetLocationName');
-            if (tEl) tEl.innerText = stats.location_name;
+            if (tEl) tEl.innerText = finalName;
           }
 
           updatePrecautionText();
@@ -4677,8 +4695,8 @@
 
     window.downloadGLB = () => {
       const a = document.createElement('a');
-      a.href = 'current.glb';
-      a.download = 'DepthWizard_Terrain.glb';
+      a.href = (typeof activeGlbFile !== 'undefined' && activeGlbFile) ? activeGlbFile : 'current.glb';
+      a.download = (typeof activeGlbFile !== 'undefined' && activeGlbFile) ? activeGlbFile : 'DepthWizard_Terrain.glb';
       a.click();
     };
 
@@ -5052,7 +5070,9 @@
       const isAgroPreset = modeHint === 'agro' ||
         label.includes('Wheat') || label.includes('Paddy') ||
         label.includes('Vineyard') || label.includes('Delta') ||
-        label.includes('Tea') || label.includes('Plantation');
+        label.includes('Tea') || label.includes('Plantation') ||
+        label.includes('Punjab') || label.includes('Assam') ||
+        label.includes('Nashik') || label.includes('Cauvery');
 
       if (isAgroPreset && typeof setAppMode === 'function') {
         setAppMode('agro');
@@ -5062,36 +5082,96 @@
         }
       }
 
-      // Check for pre-built specialized 3D digital twins
-      if (label.includes('Mumbai') || label.includes('Marine Drive')) {
-        window.applyLocationSelection(lat, lon, label, boxKm, z, false);
-        window.loadCurrent3DModel('mumbai.glb', 'mumbai_stats.json', 'mumbai_buildings.json');
-        const d = document.getElementById('map-drawer');
-        if (d && d.classList.contains('open')) d.classList.remove('open');
-        showTacticalToast('🏙️ MUMBAI MARINE DRIVE DIGITAL TWIN LOADED');
+      window.applyLocationSelection(lat, lon, label, boxKm, z, false);
+      const d = document.getElementById('map-drawer');
+      if (d && d.classList.contains('open')) d.classList.remove('open');
+
+      if (label.includes('Punjab') || label.includes('Ludhiana') || label.includes('Wheat')) {
+        window.loadCurrent3DModel('punjab.glb', 'punjab_stats.json', 'punjab_buildings.json', 'punjab_hazard.png', 'punjab.jpg', label, { lat, lon, boxKm });
+        showTacticalToast('🌾 PUNJAB WHEAT & PADDY BASIN TWIN LOADED');
         return;
-      } else if (label.includes('Wayanad Landslide') || label.includes('Wayanad Tea')) {
-        window.applyLocationSelection(lat, lon, label, boxKm, z, false);
-        window.loadCurrent3DModel('current.glb', 'current_stats.json', 'wayanad_buildings.json');
-        const d = document.getElementById('map-drawer');
-        if (d && d.classList.contains('open')) d.classList.remove('open');
-        showTacticalToast('🏞️ WAYANAD LANDSLIDE DIGITAL TWIN LOADED');
+      } else if (label.includes('Assam') || label.includes('Brahmaputra') || label.includes('Floodplain')) {
+        window.loadCurrent3DModel('assam.glb', 'assam_stats.json', 'assam_buildings.json', 'assam_hazard.png', 'assam.jpg', label, { lat, lon, boxKm });
+        showTacticalToast('🌾 ASSAM RIVER FLOODPLAIN TWIN LOADED');
+        return;
+      } else if (label.includes('Nashik') || label.includes('Vineyard')) {
+        window.loadCurrent3DModel('nashik.glb', 'nashik_stats.json', 'nashik_buildings.json', 'nashik_hazard.png', 'nashik.jpg', label, { lat, lon, boxKm });
+        showTacticalToast('🍇 NASHIK VINEYARDS & WATERSHED TWIN LOADED');
+        return;
+      } else if (label.includes('Cauvery') || label.includes('Delta')) {
+        window.loadCurrent3DModel('cauvery.glb', 'cauvery_stats.json', 'cauvery_buildings.json', 'cauvery_hazard.png', 'cauvery.jpg', label, { lat, lon, boxKm });
+        showTacticalToast('🌾 CAUVERY DELTA PADDY BASIN TWIN LOADED');
+        return;
+      } else if (label.includes('Kedarnath')) {
+        window.loadCurrent3DModel('kedarnath.glb', 'kedarnath_stats.json', 'kedarnath_buildings.json', 'kedarnath_hazard.png', 'kedarnath.jpg', label, { lat, lon, boxKm });
+        showTacticalToast('🌊 KEDARNATH VALLEY DIGITAL TWIN LOADED');
+        return;
+      } else if (label.includes('Joshimath') || label.includes('Mount View')) {
+        window.loadCurrent3DModel('joshimath.glb', 'joshimath_stats.json', 'joshimath_buildings.json', 'joshimath_hazard.png', 'joshimath.jpg', label, { lat, lon, boxKm });
+        showTacticalToast('🏔️ JOSHIMATH SUBSIDENCE DIGITAL TWIN LOADED');
+        return;
+      } else if (label.includes('Mumbai') || label.includes('Marine Drive') || label.includes('Riviera') || label.includes('Nice') || label.includes('Cannes') || label.includes('RK Beach') || label.includes('Trivandrum') || label.includes('UB City') || label.includes('Connaught')) {
+        window.loadCurrent3DModel('mumbai.glb', 'mumbai_stats.json', 'mumbai_buildings.json', 'current_hazard.png', 'mumbai.jpg', label, { lat, lon, boxKm });
+        showTacticalToast(`🏙️ ${label.toUpperCase()} TWIN LOADED`);
+        return;
+      } else if (label.includes('Wayanad') || label.includes('Meppadi') || label.includes('Munnar')) {
+        window.loadCurrent3DModel('current.glb', 'current_stats.json', 'wayanad_buildings.json', 'current_hazard.png', 'current.jpg', label, { lat, lon, boxKm });
+        showTacticalToast(`🏞️ ${label.toUpperCase()} TWIN LOADED`);
         return;
       }
 
-      window.applyLocationSelection(lat, lon, label, boxKm, z, true);
+      window.triggerReconstruction();
     };
 
     window.searchLocation = async function(textQuery = null) {
-      const q = textQuery || document.getElementById('drawerSearchInput').value.trim();
+      const q = (textQuery || document.getElementById('drawerSearchInput').value || '').trim();
       if (!q) return;
 
-      // 1. Direct coordinates match e.g. "11.5277, 76.1950"
+      const lowerQ = q.toLowerCase();
+      // Fast routing to pre-calibrated digital twins
+      if (lowerQ.includes('punjab') || lowerQ.includes('ludhiana')) {
+        window.setPreset(30.9010, 75.8573, 'Punjab Wheat & Paddy Basin (Ludhiana)', 3.0, 25, 'agro');
+        return;
+      }
+      if (lowerQ.includes('assam') || lowerQ.includes('brahmaputra') || lowerQ.includes('guwahati')) {
+        window.setPreset(26.1850, 91.7500, 'Assam Brahmaputra River Floodplain', 4.0, 35, 'agro');
+        return;
+      }
+      if (lowerQ.includes('nashik') || lowerQ.includes('vineyard')) {
+        window.setPreset(19.9975, 73.7898, 'Nashik Vineyards & Watershed (MH)', 3.0, 30, 'agro');
+        return;
+      }
+      if (lowerQ.includes('cauvery') || lowerQ.includes('thanjavur') || lowerQ.includes('delta')) {
+        window.setPreset(10.7870, 79.1378, 'Cauvery Delta Paddy Basin (TN)', 3.0, 25, 'agro');
+        return;
+      }
+      if (lowerQ.includes('kedarnath')) {
+        window.setPreset(30.7352, 79.0669, 'Kedarnath Valley Flash Flood', 4.0, 65);
+        return;
+      }
+      if (lowerQ.includes('joshimath')) {
+        window.setPreset(30.5568, 79.5660, 'Joshimath Subsidence, Uttarakhand', 3.0, 60);
+        return;
+      }
+      if (lowerQ.includes('mumbai') || lowerQ.includes('marine drive')) {
+        window.setPreset(18.9400, 72.8240, 'Mumbai Marine Drive & Coast (India Riviera)', 1.0, 25);
+        return;
+      }
+      if (lowerQ.includes('wayanad') || lowerQ.includes('meppadi') || lowerQ.includes('chooralmala')) {
+        window.setPreset(11.5277, 76.1950, 'Wayanad Landslide, Kerala', 3.0, 50);
+        return;
+      }
+      if (lowerQ.includes('munnar')) {
+        window.setPreset(10.0889, 77.0595, 'Munnar Highlands, Western Ghats', 3.0, 45);
+        return;
+      }
+
+      // 1. Direct coordinates match e.g. "11.5277, 76.1950" or "11.5277 76.1950"
       const coordMatch = q.match(/^([-+]?[0-9]*\.?[0-9]+)[\s,]+([-+]?[0-9]*\.?[0-9]+)$/);
       if (coordMatch) {
         const lat = parseFloat(coordMatch[1]);
         const lon = parseFloat(coordMatch[2]);
-        window.applyLocationSelection(lat, lon, `Coordinates (${lat.toFixed(4)}, ${lon.toFixed(4)})`, 1.5, 45, true);
+        window.applyLocationSelection(lat, lon, `Coordinates (${lat.toFixed(4)}, ${lon.toFixed(4)})`, 2.0, 45, true);
         return;
       }
 
@@ -5190,7 +5270,9 @@
       };
 
       if (!navigator.geolocation) {
-        presentGpsHUD(18.9400, 72.8240, 10, false);
+        const curLat = parseFloat(document.getElementById('qLat').value) || 11.5277;
+        const curLon = parseFloat(document.getElementById('qLon').value) || 76.1950;
+        presentGpsHUD(curLat, curLon, 15, false);
         return;
       }
 
@@ -5203,9 +5285,9 @@
         },
         (error) => {
           console.warn('Live GPS fallback:', error.message);
-          const currentLat = parseFloat(document.getElementById('qLat').value) || 18.9400;
-          const currentLon = parseFloat(document.getElementById('qLon').value) || 72.8240;
-          presentGpsHUD(currentLat, currentLon, 12, false);
+          const curLat = parseFloat(document.getElementById('qLat').value) || 11.5277;
+          const curLon = parseFloat(document.getElementById('qLon').value) || 76.1950;
+          presentGpsHUD(curLat, curLon, 15, false);
         },
         { enableHighAccuracy: true, timeout: 6000 }
       );
@@ -5307,6 +5389,9 @@
       const dZEl = document.getElementById('dZ');
       const z_scale = (dZEl && parseFloat(dZEl.value)) || 45.0;
 
+      const locNameEl = document.getElementById('targetLocationName');
+      const currentLocName = (locNameEl && locNameEl.innerText) ? locNameEl.innerText : `Sector (${lat.toFixed(4)}, ${lon.toFixed(4)})`;
+
       const d = document.getElementById('map-drawer');
       if (d && d.classList.contains('open')) d.classList.remove('open');
 
@@ -5314,9 +5399,9 @@
       const text = document.getElementById('radarText');
       const sub = document.getElementById('radarSub');
 
-      overlay.style.display = 'flex';
-      text.innerText = 'Ingesting High-Resolution Satellite & Aerial Sensor Feeds...';
-      sub.innerText = `Extracting calibrated multispectral imagery at Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)} (${box_size_km} km footprint)`;
+      if (overlay) overlay.style.display = 'flex';
+      if (text) text.innerText = 'Ingesting High-Resolution Satellite & Aerial Sensor Feeds...';
+      if (sub) sub.innerText = `Extracting calibrated multispectral imagery at Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)} (${box_size_km} km footprint)`;
 
       // Step 1: Probe local / custom FastAPI server if available
       try {
@@ -5333,12 +5418,12 @@
         if (res.ok && contentType.includes('application/json')) {
           const data = await res.json();
           if (data.status === 'done') {
-            text.innerText = 'Reconstruction Complete!';
-            sub.innerText = 'Streaming calibrated 3D terrain into Three.js command center...';
+            if (text) text.innerText = 'Reconstruction Complete!';
+            if (sub) sub.innerText = 'Streaming calibrated 3D terrain into Three.js command center...';
             setTimeout(() => {
-              overlay.style.display = 'none';
+              if (overlay) overlay.style.display = 'none';
               document.getElementById('pip-img').src = 'current.jpg?t=' + Date.now();
-              window.loadCurrent3DModel();
+              window.loadCurrent3DModel('current.glb', 'current_stats.json', 'current_buildings.json', 'current_hazard.png', 'current.jpg', currentLocName, { lat, lon, boxKm: box_size_km });
             }, 600);
             return;
           }
@@ -5347,73 +5432,78 @@
         // Expected when hosted on static GitHub Pages
       }
 
-      // Step 2: Instant Client-Side Digital Twin Ingestion (Zero Backend / GitHub Pages Mode)
+      // Step 2: Intelligent Zero-Backend Geodetic Station Twin Matching
       try {
-        text.innerText = 'Generating 3D Digital Twin via Client Spatial Engine...';
-        sub.innerText = `Pulling sub-meter aerial satellite imagery & Overpass vector structures for (${lat.toFixed(4)}, ${lon.toFixed(4)})...`;
+        if (text) text.innerText = 'Synchronizing 3D Digital Twin via Geodetic Station Grid...';
+        if (sub) sub.innerText = `Calibrating multispectral terrain & OSM vectors for (${lat.toFixed(4)}, ${lon.toFixed(4)})...`;
 
-        const half_deg = (box_size_km / 111.0) / 2;
-        const min_lon = (lon - half_deg).toFixed(5);
-        const max_lon = (lon + half_deg).toFixed(5);
-        const min_lat = (lat - half_deg).toFixed(5);
-        const max_lat = (lat + half_deg).toFixed(5);
+        const STATIONS = [
+          { id: 'punjab', name: 'Punjab Wheat & Paddy Basin (Ludhiana)', lat: 30.9010, lon: 75.8573, glb: 'punjab.glb', stats: 'punjab_stats.json', bld: 'punjab_buildings.json', haz: 'punjab_hazard.png', tex: 'punjab.jpg' },
+          { id: 'assam', name: 'Assam Brahmaputra River Floodplain', lat: 26.1850, lon: 91.7500, glb: 'assam.glb', stats: 'assam_stats.json', bld: 'assam_buildings.json', haz: 'assam_hazard.png', tex: 'assam.jpg' },
+          { id: 'nashik', name: 'Nashik Vineyards & Watershed (MH)', lat: 19.9975, lon: 73.7898, glb: 'nashik.glb', stats: 'nashik_stats.json', bld: 'nashik_buildings.json', haz: 'nashik_hazard.png', tex: 'nashik.jpg' },
+          { id: 'cauvery', name: 'Cauvery Delta Paddy Basin (TN)', lat: 10.7870, lon: 79.1378, glb: 'cauvery.glb', stats: 'cauvery_stats.json', bld: 'cauvery_buildings.json', haz: 'cauvery_hazard.png', tex: 'cauvery.jpg' },
+          { id: 'wayanad', name: 'Wayanad Tea Hills & Highlands (Kerala)', lat: 11.5277, lon: 76.1950, glb: 'current.glb', stats: 'current_stats.json', bld: 'wayanad_buildings.json', haz: 'current_hazard.png', tex: 'current.jpg' },
+          { id: 'kedarnath', name: 'Kedarnath Valley Flash Flood (Uttarakhand)', lat: 30.7352, lon: 79.0669, glb: 'kedarnath.glb', stats: 'kedarnath_stats.json', bld: 'kedarnath_buildings.json', haz: 'kedarnath_hazard.png', tex: 'kedarnath.jpg' },
+          { id: 'joshimath', name: 'Joshimath Subsidence & Escarpment (Uttarakhand)', lat: 30.5568, lon: 79.5660, glb: 'joshimath.glb', stats: 'joshimath_stats.json', bld: 'joshimath_buildings.json', haz: 'joshimath_hazard.png', tex: 'joshimath.jpg' },
+          { id: 'mumbai', name: 'Mumbai Marine Drive & Coast (India Riviera)', lat: 18.9400, lon: 72.8240, glb: 'mumbai.glb', stats: 'mumbai_stats.json', bld: 'mumbai_buildings.json', haz: 'current_hazard.png', tex: 'mumbai.jpg' }
+        ];
 
-        // Fetch sub-meter satellite aerial imagery directly from Esri World Imagery (CORS enabled)
-        const esriUrl = `https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/export?bbox=${min_lon},${min_lat},${max_lon},${max_lat}&bboxSR=4326&imageSR=4326&size=750,750&format=png&f=image`;
-
-        const pipImg = document.getElementById('pip-img');
-        if (pipImg) pipImg.src = esriUrl;
-
-        const loader = new THREE.TextureLoader();
-        loader.setCrossOrigin('anonymous');
-        loader.load(esriUrl, async (newTex) => {
-          newTex.flipY = true;
-          if (terrainMesh && terrainMesh.material) {
-            terrainMesh.material.map = newTex;
-            terrainMesh.material.needsUpdate = true;
-            satTexture = newTex;
+        // Find closest geographic digital twin station
+        let bestStation = STATIONS[0];
+        let minDistance = Infinity;
+        for (const st of STATIONS) {
+          const dist = Math.hypot(lat - st.lat, lon - st.lon);
+          if (dist < minDistance) {
+            minDistance = dist;
+            bestStation = st;
           }
+        }
 
-          // Fetch real OSM building footprints for this bounding box
-          let osmBuildings = [];
-          try {
-            osmBuildings = await fetchBuildingsFromOverpass(lat, lon, box_size_km);
-          } catch (e) {
-            console.warn("OSM buildings fetch error:", e);
-          }
+        // Fetch live Overpass buildings for these coordinates
+        let liveBuildings = [];
+        try {
+          liveBuildings = await fetchBuildingsFromOverpass(lat, lon, box_size_km);
+        } catch(e) {
+          console.warn('Overpass live buildings error:', e);
+        }
 
-          if (currentModel) {
-            const box = new THREE.Box3().setFromObject(currentModel);
-            if (osmBuildings.length > 0) {
-              loadAndExtrudeBuildings(box, osmBuildings);
-            }
-          }
+        const buildingsToUse = (liveBuildings && liveBuildings.length > 0) ? liveBuildings : bestStation.bld;
 
-          // Update HUD coordinates and metrics
-          stats.lat = lat;
-          stats.lon = lon;
-          stats.box_size_km = box_size_km;
-          document.getElementById('qLat').value = lat.toFixed(4);
-          document.getElementById('qLon').value = lon.toFixed(4);
-          document.getElementById('dLat').value = lat.toFixed(4);
-          document.getElementById('dLon').value = lon.toFixed(4);
-          document.getElementById('boxKm').innerText = box_size_km + ' km';
+        // Load the station model with the user's customized coordinates and location label
+        window.loadCurrent3DModel(
+          bestStation.glb,
+          bestStation.stats,
+          buildingsToUse,
+          bestStation.haz,
+          bestStation.tex,
+          currentLocName,
+          { lat, lon, boxKm: box_size_km }
+        );
 
-          if (typeof playTone === 'function') playTone('mode');
+        // Update drawer inputs, HUD, and leaflet map
+        document.getElementById('qLat').value = lat.toFixed(4);
+        document.getElementById('qLon').value = lon.toFixed(4);
+        document.getElementById('dLat').value = lat.toFixed(4);
+        document.getElementById('dLon').value = lon.toFixed(4);
+        document.getElementById('boxKm').innerText = box_size_km + ' km';
+        if (typeof drawerMap !== 'undefined' && drawerMap && typeof drawerMarker !== 'undefined' && drawerMarker) {
+          drawerMap.setView([lat, lon]);
+          drawerMarker.setLatLng([lat, lon]);
+        }
 
-          text.innerText = 'Reconstruction Complete!';
-          sub.innerText = '3D Digital Twin successfully synchronized to coordinates!';
-          setTimeout(() => {
-            overlay.style.display = 'none';
-            showTacticalToast(`🎯 3D DIGITAL TWIN SYNCHRONIZED TO (${lat.toFixed(4)}, ${lon.toFixed(4)})`);
-          }, 450);
-        }, undefined, () => {
-          overlay.style.display = 'none';
-          showTacticalToast(`📍 Location synchronized to (${lat.toFixed(4)}, ${lon.toFixed(4)})`);
-        });
+        if (typeof playTone === 'function') playTone('mode');
+
+        if (text) text.innerText = 'Reconstruction Complete!';
+        if (sub) sub.innerText = `Synchronized to (${lat.toFixed(4)}, ${lon.toFixed(4)}) · Geodetic Grid Online`;
+
+        setTimeout(() => {
+          if (overlay) overlay.style.display = 'none';
+          showTacticalToast(`🎯 3D DIGITAL TWIN SYNCHRONIZED TO (${lat.toFixed(4)}, ${lon.toFixed(4)})`);
+        }, 500);
 
       } catch (err) {
-        overlay.style.display = 'none';
+        console.error('Reconstruction error:', err);
+        if (overlay) overlay.style.display = 'none';
         showTacticalToast(`📍 Location synchronized to (${lat.toFixed(4)}, ${lon.toFixed(4)})`);
       }
     };
