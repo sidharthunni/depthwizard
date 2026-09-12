@@ -1126,6 +1126,10 @@
           <span class="stat-label">PMFBY Claim Exposure</span>
           <span class="stat-num" id="tempClaimExposure" style="color:#fb7185;">₹62.4 L</span>
         </div>
+        <div class="stat-cell" style="grid-column: span 2;">
+          <span class="stat-label">Calamity Origin & Trigger Mechanism</span>
+          <span class="stat-num" id="tempOriginDesc" style="color:#fbbf24; font-size:10.5px; font-weight:700;">--</span>
+        </div>
       </div>
       <div id="tempAdvisoryCard" style="margin-top:8px; font-size:10px; color:#fed7aa; background:rgba(120,53,15,0.35); border:1px solid rgba(251,146,60,0.3); padding:7px 9px; border-radius:8px; line-height:1.4;">
         💡 <b>PMFBY Advisory:</b> <span id="tempAdvisoryText">Severe crop damage identified. Automated claim dossier ready for Pradhan Mantri Fasal Bima Yojana underwriter assessment.</span>
@@ -6907,6 +6911,32 @@
     weatherParticleGroup.add(particlePoints);
     weatherParticleGroup.visible = false;
 
+    // 🌧️ Dedicated Slanted Rain Streak Line Droplets
+    const RAIN_DROPLET_COUNT = 1600;
+    const rainGeo = new THREE.BufferGeometry();
+    const rainPos = new Float32Array(RAIN_DROPLET_COUNT * 6);
+    for (let i = 0; i < RAIN_DROPLET_COUNT; i++) {
+      const rx = (Math.random() - 0.5) * 360;
+      const ry = (Math.random() - 0.5) * 360;
+      const rz = Math.random() * 220 - 20;
+      rainPos[i * 6] = rx;
+      rainPos[i * 6 + 1] = ry;
+      rainPos[i * 6 + 2] = rz;
+      rainPos[i * 6 + 3] = rx - 1.2;
+      rainPos[i * 6 + 4] = ry - 0.6;
+      rainPos[i * 6 + 5] = rz + 8.5;
+    }
+    rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+    const rainMat = new THREE.LineBasicMaterial({
+      color: 0xa5f3fc,
+      transparent: true,
+      opacity: 0.75,
+      linewidth: 1.5
+    });
+    const rainLineSegments = new THREE.LineSegments(rainGeo, rainMat);
+    rainLineSegments.visible = false;
+    weatherParticleGroup.add(rainLineSegments);
+
     // 🌋 Specialized Visual FX Subsystem for Distinct Natural Calamities
     const particleVelocities = [];
     for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -6916,14 +6946,66 @@
     const calamityFX = {
       group: new THREE.Group(),
       landslideRocks: [],
+      scarpLine: null,
       saltCrusts: [],
       hailPatches: [],
+      hailStones: [],
       splashRings: [],
       dustDevil: null,
       surgeWaveFront: null,
+      originMarker: null,
 
       init() {
         scene.add(this.group);
+      },
+
+      createOriginMarker(x, y, z, badgeText, badgeColor = '#f59e0b', pulseColor = 0xf59e0b) {
+        if (this.originMarker) {
+          this.group.remove(this.originMarker);
+          this.originMarker = null;
+        }
+        const oGroup = new THREE.Group();
+        oGroup.position.set(x, y, z);
+
+        const sphere = new THREE.Mesh(
+          new THREE.SphereGeometry(size * 0.012, 16, 16),
+          new THREE.MeshBasicMaterial({ color: pulseColor })
+        );
+        oGroup.add(sphere);
+
+        const ringGeo = new THREE.RingGeometry(size * 0.014, size * 0.022, 24);
+        ringGeo.rotateX(Math.PI / 2);
+        const ring = new THREE.Mesh(
+          ringGeo,
+          new THREE.MeshBasicMaterial({ color: pulseColor, side: THREE.DoubleSide, transparent: true, opacity: 0.85 })
+        );
+        oGroup.add(ring);
+        oGroup.userData = { ring, sphere, baseScale: 1.0 };
+
+        const sprite = makeTextSprite(badgeText, 'rgba(15, 23, 42, 0.96)', badgeColor, '#ffffff');
+        sprite.scale.set(size * 0.16, size * 0.024, 1);
+        sprite.position.set(0, 0, size * 0.038);
+        oGroup.add(sprite);
+
+        if (terrainMesh) {
+          const ray = new THREE.Raycaster(new THREE.Vector3(x, y, z + 50), new THREE.Vector3(0, 0, -1));
+          const hits = ray.intersectObject(terrainMesh);
+          if (hits.length > 0) {
+            const lineGeo = new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(0, 0, 0),
+              new THREE.Vector3(0, 0, hits[0].point.z - z)
+            ]);
+            const guideLine = new THREE.Line(
+              lineGeo,
+              new THREE.LineDashedMaterial({ color: pulseColor, dashSize: 2.5, gapSize: 1.5, transparent: true, opacity: 0.65 })
+            );
+            guideLine.computeLineDistances();
+            oGroup.add(guideLine);
+          }
+        }
+
+        this.originMarker = oGroup;
+        this.group.add(oGroup);
       },
 
       clearAll() {
@@ -6937,11 +7019,14 @@
           }
         }
         this.landslideRocks = [];
+        this.scarpLine = null;
         this.saltCrusts = [];
         this.hailPatches = [];
+        this.hailStones = [];
         this.splashRings = [];
         this.dustDevil = null;
         this.surgeWaveFront = null;
+        this.originMarker = null;
       },
 
       // 🌋 1. Horizontal Mountain Flank Landslide with 3D Tumbling Boulders
@@ -6950,25 +7035,45 @@
         if (!box) return;
         const bSize = box.getSize(new THREE.Vector3());
         const rockGeos = [
-          new THREE.DodecahedronGeometry(2.4, 0),
-          new THREE.DodecahedronGeometry(3.6, 0),
-          new THREE.IcosahedronGeometry(2.0, 0),
-          new THREE.DodecahedronGeometry(4.8, 0),
-          new THREE.IcosahedronGeometry(3.2, 0)
+          new THREE.DodecahedronGeometry(3.0, 0),
+          new THREE.DodecahedronGeometry(4.2, 0),
+          new THREE.IcosahedronGeometry(2.6, 0),
+          new THREE.DodecahedronGeometry(5.4, 0),
+          new THREE.IcosahedronGeometry(3.8, 0)
         ];
         const rockColors = [0x57534e, 0x78350f, 0x451a03, 0x292524, 0x854d0e];
 
-        // Origin at high slope flank (top-left mountain ridge)
-        const originX = center.x - bSize.x * 0.44;
-        const originY = center.y + bSize.y * 0.38;
-        const originZ = box.max.z + 5;
+        const originX = center.x - bSize.x * 0.42;
+        const originY = center.y + bSize.y * 0.36;
+        const originZ = box.max.z - bSize.z * 0.05;
 
-        for (let i = 0; i < 35; i++) {
+        this.createOriginMarker(
+          originX, originY, originZ + size * 0.02,
+          '🌋 Landslide Crown Scarp Origin: Saturated Regolith Escarpment | Slope: 42° · Alt: 1,380m AMSL | Mass: 320k m³',
+          '#ef4444', 0xef4444
+        );
+
+        const scarpGeo = new THREE.BufferGeometry();
+        const scarpPts = [];
+        for (let s = -40; s <= 40; s += 5) {
+          scarpPts.push(
+            originX + s * 0.85,
+            originY + Math.sin(s * 0.35) * 10,
+            originZ + Math.cos(s * 0.28) * 5
+          );
+        }
+        scarpGeo.setAttribute('position', new THREE.Float32BufferAttribute(scarpPts, 3));
+        const scarpMat = new THREE.LineBasicMaterial({ color: 0xef4444, linewidth: 3 });
+        this.scarpLine = new THREE.Line(scarpGeo, scarpMat);
+        this.group.add(this.scarpLine);
+
+        for (let i = 0; i < 45; i++) {
           const geo = rockGeos[i % rockGeos.length];
           const mat = new THREE.MeshStandardMaterial({
             color: rockColors[i % rockColors.length],
             roughness: 0.9,
-            metalness: 0.15
+            metalness: 0.15,
+            flatShading: true
           });
           const mesh = new THREE.Mesh(geo, mat);
           const t = Math.random();
@@ -6979,58 +7084,79 @@
           );
           mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
           mesh.userData = {
-            vx: 3.5 + Math.random() * 2.5,
-            vy: -3.0 - Math.random() * 2.2,
-            vz: -1.8 - Math.random() * 1.4,
-            rotX: (Math.random() - 0.5) * 0.35,
-            rotY: (Math.random() - 0.5) * 0.35,
-            rotZ: (Math.random() - 0.5) * 0.35,
+            vx: 3.8 + Math.random() * 2.8,
+            vy: -3.2 - Math.random() * 2.5,
+            vz: -2.0 - Math.random() * 1.5,
+            rotX: (Math.random() - 0.5) * 0.45,
+            rotY: (Math.random() - 0.5) * 0.45,
+            rotZ: (Math.random() - 0.5) * 0.45,
             originX, originY, originZ
           };
           this.landslideRocks.push(mesh);
           this.group.add(mesh);
         }
-
-        // Landslide Scarp Rupture Line on Ridge
-        const scarpGeo = new THREE.BufferGeometry();
-        const scarpPts = [];
-        for (let s = -35; s <= 35; s += 5) {
-          scarpPts.push(
-            originX + s * 0.8,
-            originY + Math.sin(s * 0.4) * 8,
-            originZ + Math.cos(s * 0.3) * 4
-          );
-        }
-        scarpGeo.setAttribute('position', new THREE.Float32BufferAttribute(scarpPts, 3));
-        const scarpMat = new THREE.LineBasicMaterial({ color: 0xef4444, linewidth: 2 });
-        const scarpLine = new THREE.Line(scarpGeo, scarpMat);
-        this.group.add(scarpLine);
       },
 
-      // ❄️ 2. Severe Hailstorm Ground Frost & Ice Accumulation
+      // ❄️ 2. Severe Hailstorm Ground Frost & 3D Bouncing Ice Chunks
       setupHail(box) {
         this.clearAll();
         if (!box) return;
         const bSize = box.getSize(new THREE.Vector3());
+
+        const origX = center.x + bSize.x * 0.12;
+        const origY = center.y - bSize.y * 0.12;
+        const origZ = box.max.z + bSize.z * 0.45;
+        this.createOriginMarker(
+          origX, origY, origZ,
+          '❄️ Hailstorm Origin: Supercell Mesocyclone Core | Alt: 4,800m AMSL | Hailstone Diam: 3.5cm · Kinetic Energy: 42 J',
+          '#60a5fa', 0x93c5fd
+        );
+
+        const hailGeo = new THREE.DodecahedronGeometry(1.8, 0);
+        const hailMat = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          roughness: 0.12,
+          metalness: 0.35,
+          flatShading: true,
+          emissive: 0xe0f2fe,
+          emissiveIntensity: 0.25
+        });
+
+        for (let i = 0; i < 65; i++) {
+          const mesh = new THREE.Mesh(hailGeo, hailMat);
+          const x = center.x + (Math.random() - 0.5) * bSize.x * 0.9;
+          const y = center.y + (Math.random() - 0.5) * bSize.y * 0.9;
+          const z = origZ + Math.random() * 60;
+          mesh.position.set(x, y, z);
+          mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+          mesh.userData = {
+            vx: (Math.random() - 0.5) * 2.0,
+            vy: (Math.random() - 0.5) * 2.0,
+            vz: -26.0 - Math.random() * 8.0,
+            origZ
+          };
+          this.hailStones.push(mesh);
+          this.group.add(mesh);
+        }
+
         const frostMat = new THREE.MeshStandardMaterial({
           color: 0xf8fafc,
           roughness: 0.15,
           metalness: 0.1,
           transparent: true,
-          opacity: 0.85
+          opacity: 0.88
         });
-
-        for (let i = 0; i < 28; i++) {
-          const rad = 5.0 + Math.random() * 10.0;
+        for (let i = 0; i < 35; i++) {
+          const rad = 6.0 + Math.random() * 12.0;
           const geo = new THREE.CircleGeometry(rad, 16);
           const mesh = new THREE.Mesh(geo, frostMat);
-          const x = center.x + (Math.random() - 0.5) * bSize.x * 0.8;
-          const y = center.y + (Math.random() - 0.5) * bSize.y * 0.8;
+          const x = center.x + (Math.random() - 0.5) * bSize.x * 0.85;
+          const y = center.y + (Math.random() - 0.5) * bSize.y * 0.85;
           let z = box.min.z + bSize.z * 0.25;
           if (terrainMesh) {
             const ray = new THREE.Raycaster(new THREE.Vector3(x, y, box.max.z + 50), new THREE.Vector3(0, 0, -1));
             const hits = ray.intersectObject(terrainMesh);
-            if (hits.length > 0) z = hits[0].point.z + 0.15;
+            if (hits.length > 0) z = hits[0].point.z + 0.2;
           }
           mesh.position.set(x, y, z);
           mesh.scale.set(0.01, 0.01, 0.01);
@@ -7046,6 +7172,15 @@
         if (!box) return;
         const bSize = box.getSize(new THREE.Vector3());
 
+        const origX = center.x - bSize.x * 0.48;
+        const origY = center.y;
+        const origZ = box.min.z + bSize.z * 0.15;
+        this.createOriginMarker(
+          origX, origY, origZ,
+          '🧂 Coastal Saline Surge Origin: High-Tide Estuarine Storm Inflow | Salinity EC: 12.4 dS/m | Seawater Ingress: +3.6m',
+          '#34d399', 0x34d399
+        );
+
         const saltMat = new THREE.MeshStandardMaterial({
           color: 0xffffff,
           roughness: 0.95,
@@ -7053,7 +7188,7 @@
           transparent: true,
           opacity: 0.90
         });
-        for (let i = 0; i < 32; i++) {
+        for (let i = 0; i < 35; i++) {
           const rad = 6.0 + Math.random() * 12.0;
           const geo = new THREE.CircleGeometry(rad, 16);
           const mesh = new THREE.Mesh(geo, saltMat);
@@ -7081,16 +7216,26 @@
         });
         this.surgeWaveFront = new THREE.Mesh(waveGeo, waveMat);
         this.surgeWaveFront.rotation.z = Math.PI / 2;
-        this.surgeWaveFront.position.set(center.x - bSize.x * 0.5, center.y, box.min.z + bSize.z * 0.35);
+        this.surgeWaveFront.position.set(origX, origY, box.min.z + bSize.z * 0.35);
         this.group.add(this.surgeWaveFront);
       },
 
-      // 🌪️ 4. Aeolian Haboob Corkscrewing Dust Devil
+      // 🌪️ 4. Aeolian Haboob Sweeping Sand Sheets & Corkscrewing Dust Devil
       setupSandstorm(box) {
         this.clearAll();
         if (!box) return;
         const bSize = box.getSize(new THREE.Vector3());
-        const coneGeo = new THREE.ConeGeometry(bSize.x * 0.08, bSize.z * 0.75, 16, 8, true);
+
+        const origX = center.x - bSize.x * 0.48;
+        const origY = center.y - bSize.y * 0.32;
+        const origZ = box.min.z + bSize.z * 0.15;
+        this.createOriginMarker(
+          origX, origY, origZ,
+          '🌪️ Aeolian Haboob Origin: Western Barometric Desert Front · Wind Vector: 68 km/h WNW | PM10: 950 µg/m³',
+          '#fbbf24', 0xf59e0b
+        );
+
+        const coneGeo = new THREE.ConeGeometry(bSize.x * 0.09, bSize.z * 0.85, 16, 8, true);
         const coneMat = new THREE.MeshBasicMaterial({
           color: 0xd97706,
           transparent: true,
@@ -7104,19 +7249,58 @@
         this.group.add(this.dustDevil);
       },
 
-      // 🌧️ 5. Torrential Rain Expanding Splash Rings
+      // 🌊 5. Turbid Riverine Flash Flood Surge & Inflow Origin
+      setupFlood(box) {
+        this.clearAll();
+        if (!box) return;
+        const bSize = box.getSize(new THREE.Vector3());
+
+        const origX = center.x - bSize.x * 0.38;
+        const origY = center.y + bSize.y * 0.42;
+        const origZ = box.min.z + bSize.z * 0.20;
+        this.createOriginMarker(
+          origX, origY, origZ,
+          '🌊 Flood Inflow Origin: Upper Catchment Barrage Breach · Peak Inflow: 4,200 m³/s | Surge Crest: +4.8m',
+          '#38bdf8', 0x0284c7
+        );
+
+        const waveGeo = new THREE.CylinderGeometry(bSize.y * 0.55, bSize.y * 0.55, 4.0, 32, 1, true);
+        const waveMat = new THREE.MeshStandardMaterial({
+          color: 0x38bdf8,
+          transparent: true,
+          opacity: 0.75,
+          roughness: 0.2,
+          wireframe: false
+        });
+        this.surgeWaveFront = new THREE.Mesh(waveGeo, waveMat);
+        this.surgeWaveFront.rotation.z = Math.PI / 2;
+        this.surgeWaveFront.position.set(origX, origY, box.min.z + bSize.z * 0.38);
+        this.group.add(this.surgeWaveFront);
+      },
+
+      // 🌧️ 6. Torrential Rain Droplet Streaks & Expanding Ground Splash Rings
       setupRain(box) {
         this.clearAll();
         if (!box) return;
         const bSize = box.getSize(new THREE.Vector3());
+
+        const origX = center.x;
+        const origY = center.y;
+        const origZ = box.max.z + bSize.z * 0.45;
+        this.createOriginMarker(
+          origX, origY, origZ,
+          '🌧️ Monsoonal Cloudburst Origin: Deep Convective Nimbus Core · Alt: 2,650m AMSL | Precipitation: 85 mm/hr',
+          '#38bdf8', 0x38bdf8
+        );
+
         const ringMat = new THREE.MeshBasicMaterial({
           color: 0x93c5fd,
           transparent: true,
           opacity: 0.7,
           side: THREE.DoubleSide
         });
-        for (let i = 0; i < 30; i++) {
-          const geo = new THREE.RingGeometry(0.5, 2.5, 16);
+        for (let i = 0; i < 35; i++) {
+          const geo = new THREE.RingGeometry(0.5, 2.8, 16);
           const mesh = new THREE.Mesh(geo, ringMat);
           const x = center.x + (Math.random() - 0.5) * bSize.x * 0.85;
           const y = center.y + (Math.random() - 0.5) * bSize.y * 0.85;
@@ -7346,7 +7530,7 @@
       particleMat.needsUpdate = true;
     }
 
-    function updateTemporalHUD(hazard, pre, post, lossPct, deltaNdvi, claim, advisory) {
+    function updateTemporalHUD(hazard, pre, post, lossPct, deltaNdvi, claim, advisory, originDesc) {
       const elHazard = document.getElementById('tempHazardType');
       const elPre = document.getElementById('tempPreCanopy');
       const elPost = document.getElementById('tempPostIntact');
@@ -7355,6 +7539,7 @@
       const elDelta = document.getElementById('tempDeltaNdvi');
       const elClaim = document.getElementById('tempClaimExposure');
       const elAdv = document.getElementById('tempAdvisoryText');
+      const elOrigin = document.getElementById('tempOriginDesc');
 
       if (elHazard) elHazard.innerText = hazard;
       if (elPre) elPre.innerText = pre;
@@ -7364,6 +7549,7 @@
       if (elDelta) elDelta.innerText = deltaNdvi + ' ΔNDVI';
       if (elClaim) elClaim.innerText = claim;
       if (elAdv) elAdv.innerText = advisory;
+      if (elOrigin && originDesc) elOrigin.innerText = originDesc;
     }
 
     window.triggerDisasterSim = function(type) {
@@ -7382,6 +7568,8 @@
         setTimeout(() => { if (clearBtn) clearBtn.classList.remove('active'); }, 600);
 
         if (weatherParticleGroup) weatherParticleGroup.visible = false;
+        if (rainLineSegments) rainLineSegments.visible = false;
+        if (particlePoints) particlePoints.visible = false;
         calamityFX.clearAll();
         scene.fog = new THREE.FogExp2(0x030712, 0.0010);
         sunLight.intensity = 1.5;
@@ -7434,6 +7622,8 @@
         scene.fog = new THREE.FogExp2(0x1e293b, 0.0018);
         sunLight.intensity = 0.65;
         rimLight.intensity = 0.35;
+        if (rainLineSegments) rainLineSegments.visible = true;
+        if (particlePoints) particlePoints.visible = false;
         if (waterMesh) {
           waterMesh.visible = true;
           if (waterMesh.material) {
@@ -7447,33 +7637,66 @@
             calamityFX.setupRain(box);
           }
         }
-        updateTemporalHUD('Torrential Cloudburst (210 mm)', '0.82 NDVI', '0.41 NDVI', '-50.0%', '-0.41', '₹48.6 L', 'Severe furrow waterlogging. Initiate emergency canal sluice discharge.');
+        updateTemporalHUD(
+          'Torrential Cloudburst (210 mm)',
+          '0.82 NDVI',
+          '0.41 NDVI',
+          '-50.0%',
+          '-0.41',
+          '₹48.6 L',
+          'Severe furrow waterlogging. Initiate emergency canal sluice discharge.',
+          '🌧️ Origin: Convective Nimbus Core (Alt: 2,650m AMSL) | Microburst downburst: 45 km/h'
+        );
         showTacticalToast('🌧️ SIMULATING SLANTED TORRENTIAL CLOUDBURST & SPLASH RINGS');
       } else if (type === 'hail') {
         scene.fog = new THREE.FogExp2(0x334155, 0.0016);
         sunLight.intensity = 0.8;
         rimLight.intensity = 0.6;
+        if (rainLineSegments) rainLineSegments.visible = false;
+        if (particlePoints) particlePoints.visible = false;
         if (waterMesh) waterMesh.visible = floodMode;
         if (currentModel) {
           const box = new THREE.Box3().setFromObject(currentModel);
           calamityFX.setupHail(box);
         }
-        updateTemporalHUD('Severe Hailstorm & Lodging', '0.85 NDVI', '0.28 NDVI', '-67.1%', '-0.57', '₹74.2 L', 'Catastrophic canopy shredding & lodging across paddy and maize parcels.');
+        updateTemporalHUD(
+          'Severe Hailstorm & Lodging',
+          '0.85 NDVI',
+          '0.28 NDVI',
+          '-67.1%',
+          '-0.57',
+          '₹74.2 L',
+          'Catastrophic canopy shredding & lodging across paddy and maize parcels.',
+          '❄️ Origin: Supercell Mesocyclone Freezing Level (Alt: 4,800m AMSL) | Kinetic impact: 42 J/stone'
+        );
         showTacticalToast('❄️ SIMULATING SEVERE HAILSTORM WITH BOUNCING ICE IMPACTS');
       } else if (type === 'sandstorm') {
         scene.fog = new THREE.FogExp2(0x78350f, 0.0035);
         sunLight.intensity = 0.45;
         rimLight.intensity = 0.2;
+        if (rainLineSegments) rainLineSegments.visible = false;
+        if (particlePoints) particlePoints.visible = true;
         if (waterMesh) waterMesh.visible = floodMode;
         if (currentModel) {
           const box = new THREE.Box3().setFromObject(currentModel);
           calamityFX.setupSandstorm(box);
         }
-        updateTemporalHUD('Aeolian Haboob & Dust Storm', '0.71 NDVI', '0.22 NDVI', '-69.0%', '-0.49', '₹52.8 L', 'High-velocity wind gusts stripping topsoil. Mulching & windbreak shelterbelts advised.');
+        updateTemporalHUD(
+          'Aeolian Haboob & Dust Storm',
+          '0.71 NDVI',
+          '0.22 NDVI',
+          '-69.0%',
+          '-0.49',
+          '₹52.8 L',
+          'High-velocity wind gusts stripping topsoil. Mulching & windbreak shelterbelts advised.',
+          '🌪️ Origin: Western Arid Barometric Depression Front | Haboob gust: 68 km/h WNW | PM10: 950 µg/m³'
+        );
         showTacticalToast('🌪️ SIMULATING HORIZONTAL HABOOB & DUST VORTEX');
       } else if (type === 'flood') {
         scene.fog = new THREE.FogExp2(0x0f172a, 0.0014);
         sunLight.intensity = 0.9;
+        if (rainLineSegments) rainLineSegments.visible = false;
+        if (particlePoints) particlePoints.visible = true;
         if (waterMesh) {
           waterMesh.visible = true;
           if (waterMesh.material) {
@@ -7484,13 +7707,25 @@
             const box = new THREE.Box3().setFromObject(currentModel);
             currentWaterZ = box.min.z + box.getSize(new THREE.Vector3()).z * 0.42;
             waterMesh.position.z = currentWaterZ;
+            calamityFX.setupFlood(box);
           }
         }
-        updateTemporalHUD('Riverine Flash Flood (+4.8m)', '0.79 NDVI', '0.19 NDVI', '-75.9%', '-0.60', '₹89.4 L', 'Extensive arable basin drowning. High hypoxia risk (<24 hrs) for submerged roots.');
+        updateTemporalHUD(
+          'Riverine Flash Flood (+4.8m)',
+          '0.79 NDVI',
+          '0.19 NDVI',
+          '-75.9%',
+          '-0.60',
+          '₹89.4 L',
+          'Extensive arable basin drowning. High hypoxia risk (<24 hrs) for submerged roots.',
+          '🌊 Origin: Upper Catchment Barrage Breach | Peak discharge: 4,200 m³/s | Wave crest: +4.8m'
+        );
         showTacticalToast('🌊 SIMULATING TURBID RIVERINE SILT FLOOD SURGE');
       } else if (type === 'tsunami') {
         scene.fog = new THREE.FogExp2(0x064e3b, 0.0015);
         sunLight.intensity = 0.7;
+        if (rainLineSegments) rainLineSegments.visible = false;
+        if (particlePoints) particlePoints.visible = true;
         if (waterMesh) {
           waterMesh.visible = true;
           if (waterMesh.material) {
@@ -7505,17 +7740,37 @@
             calamityFX.setupSaline(box);
           }
         }
-        updateTemporalHUD('Coastal Saline Inundation Surge', '0.76 NDVI', '0.12 NDVI', '-84.2%', '-0.64', '₹1.15 Cr', 'Severe coastal saline intrusion (EC > 8 dS/m). White salt efflorescence deposited.');
+        updateTemporalHUD(
+          'Coastal Saline Inundation Surge',
+          '0.76 NDVI',
+          '0.12 NDVI',
+          '-84.2%',
+          '-0.64',
+          '₹1.15 Cr',
+          'Severe coastal saline intrusion (EC > 8 dS/m). White salt efflorescence deposited.',
+          '🧂 Origin: High-Tide Estuarine Storm Inflow | Seawater EC: 12.4 dS/m | Ingress: +3.6m'
+        );
         showTacticalToast('🧂 SIMULATING SALINE SEAWATER SURGE & SALT CRUST');
       } else if (type === 'landslide') {
         scene.fog = new THREE.FogExp2(0x451a03, 0.0022);
         sunLight.intensity = 0.6;
+        if (rainLineSegments) rainLineSegments.visible = false;
+        if (particlePoints) particlePoints.visible = false;
         if (waterMesh) waterMesh.visible = floodMode;
         if (currentModel) {
           const box = new THREE.Box3().setFromObject(currentModel);
           calamityFX.setupLandslide(box);
         }
-        updateTemporalHUD('Horizontal Hillside Debris Torrent', '0.88 NDVI', '0.08 NDVI', '-90.9%', '-0.80', '₹96.2 L', 'Catastrophic horizontal scarp failure & rockfall avalanche tearing down slopes.');
+        updateTemporalHUD(
+          'Horizontal Hillside Debris Torrent',
+          '0.88 NDVI',
+          '0.08 NDVI',
+          '-90.9%',
+          '-0.80',
+          '₹96.2 L',
+          'Catastrophic horizontal scarp failure & rockfall avalanche tearing down slopes.',
+          '🌋 Origin: Saturated Regolith Escarpment Crown Scarp | Slope: 42° · Alt: 1,380m AMSL | Mass: 320k m³'
+        );
         showTacticalToast('🌋 SIMULATING HORIZONTAL MOUNTAIN ROCKFALL & DEBRIS CASCADE');
       }
 
@@ -8992,6 +9247,42 @@
               patch.scale.set(patch.userData.currentScale, patch.userData.currentScale, 1);
             }
           });
+          const groundZ = (currentWaterZ || 0) + (currentModel ? -12 : -15);
+          calamityFX.hailStones.forEach((hail) => {
+            hail.position.x += hail.userData.vx;
+            hail.position.y += hail.userData.vy;
+            hail.position.z += hail.userData.vz;
+            hail.rotation.x += 0.08;
+            hail.rotation.y += 0.12;
+            hail.userData.vz -= 1.3; // Gravity acceleration
+
+            if (hail.position.z < groundZ) {
+              if (hail.userData.bounces < 3) {
+                hail.userData.vz = -hail.userData.vz * 0.42; // Elastic restitution rebound
+                hail.userData.vx = (Math.random() - 0.5) * 8.0;
+                hail.userData.vy = (Math.random() - 0.5) * 8.0;
+                hail.userData.bounces = (hail.userData.bounces || 0) + 1;
+                hail.position.z = groundZ + 0.5;
+              } else {
+                // Respawn at supercell mesocyclone cloud ceiling
+                if (currentModel) {
+                  const box = new THREE.Box3().setFromObject(currentModel);
+                  const bSize = box.getSize(new THREE.Vector3());
+                  hail.position.set(
+                    center.x + (Math.random() - 0.5) * bSize.x * 0.9,
+                    center.y + (Math.random() - 0.5) * bSize.y * 0.9,
+                    hail.userData.origZ + Math.random() * 50
+                  );
+                } else {
+                  hail.position.z = hail.userData.origZ + Math.random() * 50;
+                }
+                hail.userData.vz = -26.0 - Math.random() * 8.0;
+                hail.userData.vx = (Math.random() - 0.5) * 2.0;
+                hail.userData.vy = (Math.random() - 0.5) * 2.0;
+                hail.userData.bounces = 0;
+              }
+            }
+          });
         } else if (activeDisasterType === 'tsunami') {
           calamityFX.saltCrusts.forEach((patch) => {
             if (patch.userData.currentScale < patch.userData.targetScale) {
@@ -9005,6 +9296,18 @@
             calamityFX.surgeWaveFront.position.x += 1.4;
             if (calamityFX.surgeWaveFront.position.x > center.x + bSize.x * 0.45) {
               calamityFX.surgeWaveFront.position.x = center.x - bSize.x * 0.5;
+            }
+          }
+        } else if (activeDisasterType === 'flood') {
+          if (calamityFX.surgeWaveFront && currentModel) {
+            const box = new THREE.Box3().setFromObject(currentModel);
+            const bSize = box.getSize(new THREE.Vector3());
+            calamityFX.surgeWaveFront.position.x += 1.8;
+            calamityFX.surgeWaveFront.position.y -= 1.1;
+            calamityFX.surgeWaveFront.scale.x = 1.0 + Math.sin(Date.now() * 0.004) * 0.15;
+            if (calamityFX.surgeWaveFront.position.x > center.x + bSize.x * 0.48) {
+              calamityFX.surgeWaveFront.position.x = center.x - bSize.x * 0.38;
+              calamityFX.surgeWaveFront.position.y = center.y + bSize.y * 0.42;
             }
           }
         } else if (activeDisasterType === 'sandstorm' && calamityFX.dustDevil) {
@@ -9027,6 +9330,51 @@
               ring.material.opacity = (1.0 - ring.userData.life) * 0.7;
             }
           });
+        }
+
+        // Calamity Origin Beacon Radar Ring & Text Sprite Pulse
+        if (calamityFX.originMarker) {
+          const ot = Date.now() * 0.003;
+          const ring = calamityFX.originMarker.userData.ring;
+          const sphere = calamityFX.originMarker.userData.sphere;
+          if (ring) {
+            const s = 1.0 + Math.sin(ot * 4) * 0.45;
+            ring.scale.set(s, s, 1);
+            ring.material.opacity = 0.45 + Math.cos(ot * 4) * 0.4;
+          }
+          if (sphere && sphere.material) {
+            sphere.scale.setScalar(1.0 + Math.sin(ot * 6) * 0.25);
+          }
+        }
+
+        // Dedicated Slanted Torrential Rain Streak Lines Dynamics
+        if (rainLineSegments && rainLineSegments.visible) {
+          const rPos = rainGeo.attributes.position.array;
+          for (let i = 0; i < RAIN_DROPLET_COUNT; i++) {
+            const idx = i * 6;
+            const vx = 2.0;
+            const vy = 0.8;
+            const vz = -24.0;
+            rPos[idx] += vx;
+            rPos[idx + 1] += vy;
+            rPos[idx + 2] += vz;
+            rPos[idx + 3] += vx;
+            rPos[idx + 4] += vy;
+            rPos[idx + 5] += vz;
+
+            if (rPos[idx + 2] < -30) {
+              const rx = (Math.random() - 0.5) * 360;
+              const ry = (Math.random() - 0.5) * 360;
+              const rz = 180 + Math.random() * 40;
+              rPos[idx] = rx;
+              rPos[idx + 1] = ry;
+              rPos[idx + 2] = rz;
+              rPos[idx + 3] = rx - 1.2;
+              rPos[idx + 4] = ry - 0.6;
+              rPos[idx + 5] = rz + 8.5;
+            }
+          }
+          rainGeo.attributes.position.needsUpdate = true;
         }
 
         // 2. High-Performance Particle Cloud Dynamics
