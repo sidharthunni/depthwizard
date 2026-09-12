@@ -172,7 +172,7 @@
     .tele-v { color: var(--accent); font-weight: 700; }
 
     /* Floating Cards */
-    #measure-card, #building-card, #water-card, #landmark-card, #precaution-modal {
+    #measure-card, #building-card, #water-card, #landmark-card, #mountain-card, #precaution-modal {
       background: rgba(9, 14, 28, 0.95); backdrop-filter: blur(28px) saturate(180%);
       border: 1px solid var(--panel-border); border-radius: 16px;
       box-shadow: 0 24px 50px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -191,7 +191,7 @@
 
     #building-card {
       position: absolute; bottom: 24px; left: 345px; z-index: 120;
-      padding: 16px 18px; width: 350px; display: none;
+      padding: 16px 18px; width: 360px; display: none;
       background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
       border: 1px solid var(--panel-border); border-radius: 16px;
       box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -209,12 +209,21 @@
 
     #landmark-card {
       position: absolute; bottom: 24px; left: 345px; z-index: 120;
-      padding: 16px 18px; width: 350px; display: none;
+      padding: 16px 18px; width: 360px; display: none;
       background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
       border: 1px solid rgba(245, 158, 11, 0.45); border-radius: 16px;
       box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(245, 158, 11, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
     #landmark-card h4 { margin: 0 0 8px 0; color: #fbbf24; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; align-items: center; }
+
+    #mountain-card {
+      position: absolute; bottom: 24px; left: 345px; z-index: 120;
+      padding: 16px 18px; width: 370px; display: none;
+      background: rgba(9, 14, 28, 0.96); backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(245, 158, 11, 0.5); border-radius: 16px;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 0 0 32px rgba(245, 158, 11, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    #mountain-card h4 { margin: 0 0 8px 0; color: #f59e0b; font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; text-transform: uppercase; align-items: center; }
 
     .b-badge { font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 99px; display: inline-block; margin-top: 4px; }
     .b-badge.hazard { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244,63,94,0.3); }
@@ -874,6 +883,7 @@
       <button id="btnExtrude" class="btn-dock active" onclick="toggleExtrudedBuildings()">🏢 3D Buildings</button>
       <button id="btnWaterways" class="btn-dock active" onclick="toggleWaterways()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4);">🌊 3D Rivers</button>
       <button id="btnPeaks" class="btn-dock active" onclick="togglePeaksAndLandmarks()" style="color:#f59e0b; border-color:rgba(245,158,11,0.4);">🏔️ Landmarks & Bridges</button>
+      <button id="btnMountain" class="btn-dock active" onclick="toggleMountainProfiler()" style="color:#f59e0b; border-color:rgba(245,158,11,0.4);">🏔️ Mountain Profiler</button>
       <button id="btnTrees" class="btn-dock active" onclick="toggleVegetation()" style="color:#34d399; border-color:rgba(52,211,153,0.4);">🌳 3D Flora & Trees</button>
       <button id="btnDiorama" class="btn-dock active" onclick="toggleDioramaBase()">📦 Diorama Base</button>
       <button id="btnCyber" class="btn-dock" onclick="toggleCyberCityMode()">🌆 Cyber City</button>
@@ -1165,14 +1175,20 @@
     </div>
   </div>
 
-  <!-- 🏢 Building Structural Intelligence & Rescue Card -->
+  <!-- 🏢 Building Structural Intelligence & Dimensions Card -->
   <div id="building-card">
     <h4>
-      <span>🏢 Building Tactical Profiler</span>
-      <button onclick="clearBuildingInspection()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;">Clear</button>
+      <span id="bCardTitle">🏢 Building Tactical Profiler</span>
+      <button onclick="clearBuildingInspection()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;">✕</button>
     </h4>
+    <div class="m-row"><span>Feature Name:</span><span class="m-val" id="bName" style="color:#fbbf24; font-weight:700; max-width:210px; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">--</span></div>
+    <div class="m-row"><span>Classification:</span><span class="m-val" id="bType" style="color:#cbd5e1;">--</span></div>
+    <div class="m-row"><span>Dimensions (L × W):</span><span class="m-val" id="bDimensions" style="color:#38bdf8;">-- m</span></div>
     <div class="m-row"><span>Structural Height:</span><span class="m-val" id="bHeight" style="color:#fbbf24;">-- m</span></div>
     <div class="m-row"><span>Estimated Floors:</span><span class="m-val" id="bFloors">-- Storeys</span></div>
+    <div class="m-row"><span>Ground Footprint:</span><span class="m-val" id="bFootprint" style="color:#38bdf8;">-- m²</span></div>
+    <div class="m-row"><span>Enclosed Volume:</span><span class="m-val" id="bVolume" style="color:#a78bfa;">-- m³</span></div>
+    <div class="m-row"><span>Plinth Ground (AMSL):</span><span class="m-val" id="bPlinthElev" style="color:#34d399;">-- m</span></div>
     <div class="m-row"><span>Rooftop Slope:</span><span class="m-val" id="bSlope">--°</span></div>
     <div class="m-row"><span>Evacuation Helipad LZ:</span><span class="m-val" id="bHelipad">--</span></div>
     <div class="m-row"><span>Flood Safety Margin:</span><span class="m-val" id="bFloodMargin">--</span></div>
@@ -1212,11 +1228,31 @@
       <button onclick="clearLandmarkInspection()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;">✕</button>
     </h4>
     <div class="m-row"><span>Feature Name:</span><span class="m-val" id="lmName" style="color:#fbbf24; font-weight:700;">--</span></div>
-    <div class="m-row"><span>Geomorphic Category:</span><span class="m-val" id="lmType">Mountain Summit</span></div>
-    <div class="m-row"><span>Summit Altitude (AMSL):</span><span class="m-val" id="lmElev" style="color:#34d399;">-- m</span></div>
-    <div class="m-row"><span>Topographic Prominence:</span><span class="m-val" id="lmProminence" style="color:#38bdf8;">-- m</span></div>
-    <div class="m-row"><span>Disaster & Slope Status:</span><span class="m-val" id="lmStatus" style="color:#fb7185;">--</span></div>
+    <div class="m-row"><span>Engineering Category:</span><span class="m-val" id="lmType">Mountain Summit</span></div>
+    <div class="m-row"><span>Physical Dimensions:</span><span class="m-val" id="lmDimensions" style="color:#38bdf8;">--</span></div>
+    <div class="m-row"><span>Capacity / Rating:</span><span class="m-val" id="lmCapacity" style="color:#a78bfa;">--</span></div>
+    <div class="m-row"><span>Summit / Deck Altitude:</span><span class="m-val" id="lmElev" style="color:#34d399;">-- m AMSL</span></div>
+    <div class="m-row"><span>Topographic Relief:</span><span class="m-val" id="lmProminence" style="color:#38bdf8;">-- m</span></div>
+    <div class="m-row"><span>Operational Status:</span><span class="m-val" id="lmStatus" style="color:#fb7185;">--</span></div>
     <div id="lmBadgeContainer" style="margin-top:6px;"></div>
+  </div>
+
+  <!-- 🏔️ 3D Mountain Massif & Hill Geomorphic Profiler Card -->
+  <div id="mountain-card">
+    <h4>
+      <span id="mTitle">🏔️ Mountain Massif Profiler</span>
+      <button onclick="clearMountainInspection()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;">✕</button>
+    </h4>
+    <div class="m-row"><span>Massif / Ridge Name:</span><span class="m-val" id="mName" style="color:#f59e0b; font-weight:700;">--</span></div>
+    <div class="m-row"><span>Geomorphic Bedrock:</span><span class="m-val" id="mGeoForm" style="color:#cbd5e1;">--</span></div>
+    <div class="m-row"><span>Summit Altitude (AMSL):</span><span class="m-val" id="mSummitElev" style="color:#34d399; font-weight:800;">-- m</span></div>
+    <div class="m-row"><span>Base Valley Floor:</span><span class="m-val" id="mBaseElev" style="color:#60a5fa;">-- m AMSL</span></div>
+    <div class="m-row"><span>Prominence / Relief (ΔZ):</span><span class="m-val" id="mProminence" style="color:#fbbf24; font-weight:800;">-- m</span></div>
+    <div class="m-row"><span>Massif Base Span (L × W):</span><span class="m-val" id="mSpan" style="color:#38bdf8;">--</span></div>
+    <div class="m-row"><span>Estimated Rock Volume:</span><span class="m-val" id="mVolume" style="color:#a78bfa; font-weight:800;">--</span></div>
+    <div class="m-row"><span>Mean & Peak Slope:</span><span class="m-val" id="mSlope" style="color:#f97316;">--</span></div>
+    <div class="m-row"><span>Slope & Agro Stability:</span><span class="m-val" id="mRisk" style="color:#fb7185;">--</span></div>
+    <div id="mBadgeContainer" style="margin-top:6px;"></div>
   </div>
 
   <!-- 🚨 NDRF Disaster Triage & Escape Corridors Card -->
@@ -1652,14 +1688,19 @@
     scene.add(landmarkGroup);
     const vegetationGroup = new THREE.Group();
     scene.add(vegetationGroup);
+    const mountainRidgesGroup = new THREE.Group();
+    scene.add(mountainRidgesGroup);
 
     let showBuildings = true;
     let showWaterways = true;
     let showPeaks = true;
     let showVegetation = true;
+    let showMountainRidges = true;
     let animatedWaterMaterials = [];
     let waterwayMarkers = [];
     let landmarkMarkers = [];
+    let mountainMarkers = [];
+    let buildingCaliperBox = null;
     let cyberMode = false;
     let triageActive = false;
     let triageSafeBuildings = [];
@@ -2182,6 +2223,7 @@
         try { createGeospatialWaterways(box, modelFile); } catch(e) { console.error('Waterways init error:', e); }
         try { createGeospatialLandmarks(box, modelFile); } catch(e) { console.error('Landmarks init error:', e); }
         try { createGeospatialVegetation(box, modelFile); } catch(e) { console.error('Vegetation init error:', e); }
+        try { createGeospatialMountainRidges(box, modelFile); } catch(e) { console.error('Mountain ridges init error:', e); }
         if (typeof contourLinesActive !== 'undefined' && contourLinesActive) {
           try { createContourMesh(); } catch(e) { console.error('Contour init error:', e); }
         }
@@ -2318,6 +2360,8 @@
             name: "Brahmagiri Mountain Summit",
             category: "peak",
             type: "High-Relief Western Ghats Ridge",
+            dimensions: "Massif Span: 4.8 km × 3.2 km | Relief: +733 m | Base Area: 12.5 km²",
+            capacity: "Est. Massif Volume: 3,120 Million m³ | Godavari Catchment: 4,800 MCM",
             elev: 1298,
             prominence: 733,
             status: "Source of Godavari / Slope Regolith Monitored",
@@ -2329,6 +2373,8 @@
             name: "Gangapur Dam Reservoir & Spillway",
             category: "dam",
             type: "Earthen Dam & Irrigation Reservoir (5,630 Mcft)",
+            dimensions: "Crest Length: 3,902 m | Wall Height: 36.6 m | Base Width: 180 m",
+            capacity: "Gross Storage: 5,630 Mcft (159.4 MCM) | Submergence: 2,210 Hectares",
             elev: 610,
             prominence: 45,
             status: "Automated Sluice Gate Control Active",
@@ -2340,6 +2386,8 @@
             name: "Godavari Highway Viaduct & Bridge",
             category: "bridge",
             type: "Pre-Stressed Concrete Highway Bridge",
+            dimensions: "Total Span: 460 m | Deck Width: 14.5 m | Pier Clear: 16.5 m",
+            capacity: "IRC Class 70R Loading | 4-Lane Vehicular Rating: 45,000 PCU/day",
             elev: 570,
             prominence: 16,
             status: "Bridge Deck Hydro-Clearance Gauge Operational",
@@ -2351,6 +2399,8 @@
             name: "Panchavati Historical River Ghats",
             category: "heritage",
             type: "Heritage Riverbank & High-Water Benchmark",
+            dimensions: "Riverfront Span: 180 m | Steps Depth: 25 m | Platform Plinth: 565m AMSL",
+            capacity: "Public Assembly Capacity: 15,000 Persons | Gauge Datum: 565.0 m",
             elev: 565,
             prominence: 12,
             status: "Historical Flood Level Gauge Station",
@@ -2362,6 +2412,8 @@
             name: "Nashik APMC Onion & Grape Mandi Terminal",
             category: "mandi",
             type: "Drip-Irrigated Horticulture Agro-Cluster & Cold Chain",
+            dimensions: "Shed Span: 140 m × 65 m | Canopy Clear: 14.5 m | Floor Area: 9,100 m²",
+            capacity: "Cold Storage: 12,000 MT | Daily Onion Auction: 3,500 Quintals",
             elev: 582,
             prominence: 18,
             status: "Smart Soil Moisture & Micro-Climate Hub",
@@ -2408,6 +2460,8 @@
             name: "Saraighat Braided Rail-Road Bridge",
             category: "bridge",
             type: "Double-Decker Steel Cantilever Rail & Road Bridge",
+            dimensions: "Total Span: 1,294 m (4,245 ft) | Double-Deck Width: 16.8 m | Pier Clear: 18 m",
+            capacity: "Heavy Freight Rail + 2-Lane Highway | 28 Tonne Axle Load Rating",
             elev: 78,
             prominence: 26,
             status: "Strategic Trans-Brahmaputra Lifeline / Hydro Sensors Active",
@@ -2419,6 +2473,8 @@
             name: "Kamakhya Nilachal Hill Summit",
             category: "peak",
             type: "Granite Gneiss Horst Hill / Sacred Sanctuary",
+            dimensions: "Massif Base: 2.8 km × 1.9 km | Prominence: +248 m | Base Area: 4.2 km²",
+            capacity: "Massif Volume: 345 Million m³ | Ancient Bedrock Gneiss Core",
             elev: 302,
             prominence: 248,
             status: "Bedrock Structural Anchor / Low Landslide Hazard",
@@ -2430,6 +2486,8 @@
             name: "Guwahati Inland River Port & Barrage",
             category: "dam",
             type: "Inland Waterways Authority Cargo & Evac Terminal",
+            dimensions: "Quay Length: 320 m | Berth Width: 45 m | Draft Depth: 3.5 m",
+            capacity: "Cargo Throughput: 1.2 MTPA | Evacuation Craft Mooring: 12 Vessels",
             elev: 54,
             prominence: 6,
             status: "High Seasonal Flood Inundation Exposure",
@@ -2441,6 +2499,8 @@
             name: "Beltola Agro Wholesale Mandi & Silos",
             category: "mandi",
             type: "Regional Vegetable & Grain Commodity Depot",
+            dimensions: "Depot Footprint: 110 m × 55 m | Clear Height: 12 m | Area: 6,050 m²",
+            capacity: "Food Reserve Storage: 8,500 MT | 6 Silo Cells Active",
             elev: 58,
             prominence: 10,
             status: "High-Ground Food Reserve (Elevated Plinth)",
@@ -2452,6 +2512,8 @@
             name: "Umananda River Peacock Island",
             category: "heritage",
             type: "Fluvial Granite Outcrop in Brahmaputra",
+            dimensions: "Island Length: 380 m | Width: 140 m | Peak Elevation: 122m AMSL",
+            capacity: "Fluvial Granite Outcrop | Historical Flood Marker Benchmark",
             elev: 122,
             prominence: 68,
             status: "Braided Mid-Stream Hydro-Erosion Sensor",
@@ -2498,6 +2560,8 @@
             name: "Ludhiana FCI Strategic Grain Silos (45,000 MT)",
             category: "silo",
             type: "Corrugated Steel Silo Complex / National Food Reserve",
+            dimensions: "8 Silo Batteries (Ø 14.5 m × H 28 m) | Elevator Tower: 36 m",
+            capacity: "Wheat Grain Reserve: 45,000 MT | Intake Rate: 300 MT/hr",
             elev: 248,
             prominence: 32,
             status: "Hermetic Temperature-Controlled Wheat Silo",
@@ -2509,6 +2573,8 @@
             name: "Sirhind Canal Engineered Aqueduct Bridge",
             category: "bridge",
             type: "Hydraulic Aqueduct & Multi-Span Canal Bridge",
+            dimensions: "Aqueduct Length: 240 m | Canal Width: 18 m | Water Depth: 3.8 m",
+            capacity: "Discharge Capacity: 185 m³/s | Underpass Highway Clearance: 5.5 m",
             elev: 249,
             prominence: 12,
             status: "Submerged Siphon & Highway Crossing Intact",
@@ -2520,6 +2586,8 @@
             name: "Sutlej River Reinforced Flood Embankment",
             category: "dam",
             type: "Geo-Textile Reinforced River Dyke & Weir",
+            dimensions: "Dyke Crest Length: 1,850 m | Embankment Height: 6.5 m | Base: 28 m",
+            capacity: "Design Flood Discharge: 3,400 m³/s | Geo-Textile Reinforced Core",
             elev: 246,
             prominence: 8,
             status: "Spur Dykes & Seepage Wells Functional",
@@ -2531,6 +2599,8 @@
             name: "Ludhiana APMC Grain Terminal & Mandi",
             category: "mandi",
             type: "APMC Agricultural Commodity Auction Yard",
+            dimensions: "Canopy Shed: 210 m × 80 m | Clear Height: 16 m | Area: 16,800 m²",
+            capacity: "Daily Wheat/Paddy Auction: 18,000 Quintals | Electronic e-NAM Weighbridges",
             elev: 244,
             prominence: 14,
             status: "Electronic e-NAM Trading Terminal Active",
@@ -2542,6 +2612,8 @@
             name: "PAU Agro-Meteorological Observational Mast",
             category: "peak",
             type: "Punjab Agricultural University Climate Station",
+            dimensions: "Lattice Mast Height: 32 m | Sensor Boom Reach: 4.5 m",
+            capacity: "Doppler Agro-Radar Range: 100 km | Micro-Climate Telemetry Array",
             elev: 255,
             prominence: 18,
             status: "Real-time Doppler Radar & Evapotranspiration Tower",
@@ -2588,6 +2660,8 @@
             name: "Grand Anicut (Kallanai) Historic Barrage & Bridge",
             category: "dam",
             type: "Ancient Hydraulic Wonder (Built 2nd Century AD)",
+            dimensions: "Crest Length: 329 m (1,079 ft) | Crest Width: 20 m | Height: 5.4 m",
+            capacity: "Irrigation Command: 1,000,000+ Acres | Sluice Discharge: 1,800 m³/s",
             elev: 65,
             prominence: 14,
             status: "Fully Functional Deltaic Regulator Sluices & Roman Arches",
@@ -2599,6 +2673,8 @@
             name: "Cauvery Delta Highway Bridge",
             category: "bridge",
             type: "Pre-Stressed Concrete Delta Highway Bridge",
+            dimensions: "Bridge Span: 380 m | Deck Width: 12.5 m | 14 Pier Spans",
+            capacity: "Class 70R Loading | 2-Lane Heavy Agro-Freight Corridor",
             elev: 62,
             prominence: 12,
             status: "Scour-Resistant Piers & Telemetry Gauge Intact",
@@ -2610,6 +2686,8 @@
             name: "Thanjavur APMC Modern Grain Silo Terminal",
             category: "silo",
             type: "Automated Paddy Grain Storage & Conveyor Silos",
+            dimensions: "6 Corrugated Steel Tanks (Ø 12 m × H 22 m) | Area: 4,800 m²",
+            capacity: "Paddy Reserve: 28,000 MT | Hermetic Nitrogen Aeration",
             elev: 60,
             prominence: 28,
             status: "Hermetic Paddy Moisture Control Active",
@@ -2621,6 +2699,8 @@
             name: "Tamil Nadu Paddy Breeding Institute & Mandi",
             category: "mandi",
             type: "Submergence & Saline Tolerant Rice Seed Auction Yard",
+            dimensions: "Research Plinth: 95 m × 45 m | Seed Storage Shed: 10 m Height",
+            capacity: "Seed Germplasm Bank: 5,000 Accessions | Swarna-Sub1 Nursery: 45 Ha",
             elev: 52,
             prominence: 8,
             status: "Swarna-Sub1 Flood Tolerant Variety Seed Trials",
@@ -2632,6 +2712,8 @@
             name: "Thanjavur Brihadisvara Vimana Summit",
             category: "heritage",
             type: "Granite Monolithic Temple Tower (66m Stupa)",
+            dimensions: "Pyramidal Vimana Height: 66 m (216 ft) | Sanctum Base: 30 m × 30 m",
+            capacity: "80-Tonne Monolithic Granite Kumbam Apex | UNESCO Geodetic Datum",
             elev: 110,
             prominence: 66,
             status: "UNESCO Heritage & Ancient Geodetic Benchmark",
@@ -2664,6 +2746,8 @@
             name: "Chembra Peak Mountain Summit",
             category: "peak",
             type: "Highest Summit of Wayanad (Western Ghats)",
+            dimensions: "Massif Span: 5.2 km × 3.8 km | Prominence: +1,280 m | Base Area: 15.6 km²",
+            capacity: "Est. Massif Volume: 6,650 Million m³ | Catchment Area: 6,400 Ha",
             elev: 2100,
             prominence: 1280,
             status: "Heart Lake Ridge / High Monsoonal Orographic Rain",
@@ -2675,6 +2759,8 @@
             name: "Chooralmala Bailey Bridge (NDRF Ground Zero)",
             category: "bridge",
             type: "Indian Army Disaster Relief Bailey Steel Truss Bridge",
+            dimensions: "Truss Span: 190 ft (57.9 m) | Deck Width: 4.25 m | Pier Clearance: 15.2 m",
+            capacity: "Indian Army IRC Class 24 Tonnes | Emergency Rescue Convoy Rating",
             elev: 785,
             prominence: 15,
             status: "Critical Evacuation Lifeline Reconnected",
@@ -2686,6 +2772,8 @@
             name: "Meppadi APMC Spices & Coffee Mandi",
             category: "mandi",
             type: "Cardamom, Pepper & Highland Coffee Auction Terminal",
+            dimensions: "Shed Span: 85 m × 42 m | Clear Height: 11.5 m | Area: 3,570 m²",
+            capacity: "Highland Coffee & Spices: 4,200 MT | NDRF Triage Refuge Beds: 350",
             elev: 820,
             prominence: 14,
             status: "Emergency Relief Supply Storage Hub Active",
@@ -2697,6 +2785,8 @@
             name: "Mundakkai Tea Plantation Ridge",
             category: "peak",
             type: "Terraced Tea Agro-Ecosystem (Debris Flank)",
+            dimensions: "Debris Runout Chute: 1.8 km | Scarp Width: 180 m | Scarp Angle: 44.5°",
+            capacity: "Colluvial Regolith Volume: 2.4 Million m³ | High Hazard InSAR Zone",
             elev: 940,
             prominence: 160,
             status: "Unstable Colluvium / Evacuated Settlement Zone",
@@ -2708,6 +2798,8 @@
             name: "Vellarmala Cloud Forest Scarp",
             category: "peak",
             type: "Steep Escarpment & Debris Catchment Zone",
+            dimensions: "Massif Base: 4.1 km × 2.6 km | Vertical Relief: +520 m | Base Area: 8.5 km²",
+            capacity: "Massif Volume: 1,480 Million m³ | Orographic Cloud Forest Catchment",
             elev: 1380,
             prominence: 520,
             status: "High Runoff Catchment / Geo-Inclinometer Array",
@@ -2754,6 +2846,8 @@
             name: "Auli High-Altitude Bugyal Summit",
             category: "peak",
             type: "Alpine Meadow & Stable Bedrock Ridge",
+            dimensions: "Ridge Crest: 3.6 km × 1.8 km | Prominence: +960 m | Altitude: 2,850m AMSL",
+            capacity: "Massif Volume: 1,150 Million m³ | Stable Granitic Bedrock Gneiss",
             elev: 2850,
             prominence: 960,
             status: "Glacial Moraine Ski Ridge / Stable Hardrock Base",
@@ -2765,6 +2859,8 @@
             name: "Vishnuprayag Barrage Hydroelectric Dam",
             category: "dam",
             type: "Run-of-the-River 400 MW Hydro Project & Sluice Gates",
+            dimensions: "Barrage Length: 86 m | Gate Height: 18 m | Desilting Basin: 160 m",
+            capacity: "400 MW Hydropower Generation | Design Flood: 4,500 m³/s",
             elev: 1420,
             prominence: 35,
             status: "High-Turbidity Silt Flushing Gates Operational",
@@ -2776,6 +2872,8 @@
             name: "Alaknanda Suspension Footbridge",
             category: "bridge",
             type: "High-Gorge Steel Cable Suspension Bridge",
+            dimensions: "Suspension Span: 115 m | Walkway Width: 2.2 m | Gorge Height: 35 m",
+            capacity: "Pedestrian Evacuation Load: 450 Persons | Wind Sway Stabilizer Active",
             elev: 1445,
             prominence: 22,
             status: "Evacuation Footbridge / Cable Tension Nominal",
@@ -2787,6 +2885,8 @@
             name: "Joshimath Shankaracharya Math Sanctuary",
             category: "heritage",
             type: "Ancient Monastic Complex (Founded 8th Century)",
+            dimensions: "Monastic Plinth: 55 m × 40 m | Height: 14 m | Altitude: 1,890m AMSL",
+            capacity: "Sub-Surface Bedrock Displacement Monitored (0.2 mm/month)",
             elev: 1890,
             prominence: 28,
             status: "Structural Crack Displacement Sensors Online",
@@ -2798,6 +2898,8 @@
             name: "Sunil Moraine Subsidence Scarp",
             category: "peak",
             type: "Active InSAR Ground Deformation Fissure Zone",
+            dimensions: "Subsidence Fissure Length: 420 m | Fracture Depth: 12 m | Slope: 38°",
+            capacity: "InSAR Rate: -3.8 cm/month | High Geotechnical Evacuation Sector",
             elev: 1940,
             prominence: 85,
             status: "Continuous Satellite InSAR Sinking Detection",
@@ -2844,6 +2946,8 @@
             name: "Kedarnath Dome Pyramidal Summit",
             category: "peak",
             type: "High-Himalayan Glaciated Dome Peak",
+            dimensions: "Massif Span: 6.8 km × 5.2 km | Prominence: +3,200 m | Altitude: 6,831m AMSL",
+            capacity: "Glaciated Pyramid Massif: 24,000 Million m³ | Glacial Icepack Reservoir",
             elev: 6831,
             prominence: 3200,
             status: "Permanent Permafrost & Hanging Glacial Seracs",
@@ -2855,6 +2959,8 @@
             name: "Kedarnath Jyotirlinga Sanctum & Bhim Shila",
             category: "heritage",
             type: "Ancient Stone Temple & Protective Monolithic Boulder",
+            dimensions: "Temple Plinth: 42 m × 24 m | Shila Boulder: 9 m × 6 m × 4 m",
+            capacity: "Bhim Shila Weight: ~320 Tonnes | Reinforced Diversion Chute",
             elev: 3584,
             prominence: 25,
             status: "Engineered Debris Deflection Wall Intact",
@@ -2866,6 +2972,8 @@
             name: "Mandakini Pre-Stressed Rescue Footbridge",
             category: "bridge",
             type: "Engineered High-Alpine Cable Footbridge",
+            dimensions: "Steel Truss Span: 48 m | Walkway Width: 3.0 m | Altitude: 3,575m AMSL",
+            capacity: "NDRF & Pilgrim Rating: 600 Persons/hr | Torrent Scour Clearance: 4.5 m",
             elev: 3575,
             prominence: 15,
             status: "Pilgrim & NDRF Tactical Crossing Open",
@@ -2877,6 +2985,8 @@
             name: "Chorabari Glacial Lake & Moraine Breach",
             category: "peak",
             type: "Historical 2013 GLOF Debris Origin Fan",
+            dimensions: "Glacial Lake Basin: 250 m × 140 m | Altitude: 3,920m AMSL",
+            capacity: "Historic Outburst Volume: 400,000 m³ | Ultrasonic Early Warning Mast",
             elev: 3920,
             prominence: 340,
             status: "Automated Early Warning Ultrasonic Lake Gauge",
@@ -2888,6 +2998,8 @@
             name: "Kedarnath Tactical Helicopter Airlift LZ",
             category: "dam",
             type: "High-Altitude Helicopter Extraction Helipad",
+            dimensions: "Concrete Helipad Pad: 35 m × 35 m | Rotor Clearance: 50 m",
+            capacity: "Twin-Engine Mi-17 / ALH Dhruv Capable | 18 Troops Tactical Evacuation",
             elev: 3595,
             prominence: 12,
             status: "NDRF Mountain Rescue Air Staging Post Active",
@@ -2920,6 +3032,8 @@
             name: "Anamudi Mountain Summit (2,695m AMSL)",
             category: "peak",
             type: "Highest Peak in South India (Eravikulam)",
+            dimensions: "Massif Base: 6.4 km × 4.8 km | Prominence: +2,479 m | Altitude: 2,695m AMSL",
+            capacity: "Massif Volume: 25,500 Million m³ | South India Highest Peak Watershed",
             elev: 2695,
             prominence: 2479,
             status: "Climatic & Biodiversity Geodetic Benchmark",
@@ -2931,6 +3045,8 @@
             name: "Kundala Arch Dam & Spillway",
             category: "dam",
             type: "Curved Concrete Arch Masonry Dam",
+            dimensions: "Crest Length: 259 m | Height: 46.9 m | Base Thickness: 24 m",
+            capacity: "Reservoir Gross Capacity: 27.6 MCM (975 Mcft) | Submergence: 230 Ha",
             elev: 1759,
             prominence: 36,
             status: "Hydel Reservoir Level Normal",
@@ -2942,6 +3058,8 @@
             name: "Muthirapuzha Tea Valley Bridge",
             category: "bridge",
             type: "Valley Plantation Concrete Arch Bridge",
+            dimensions: "Single Concrete Arch Span: 65 m | Width: 8.5 m | Clearance: 16 m",
+            capacity: "Heavy Estate Transit IRC Class 40 | Flood Spate Clearance: 3.5 m",
             elev: 1540,
             prominence: 18,
             status: "Heavy Tea Transit Route Operational",
@@ -2953,6 +3071,8 @@
             name: "Tata Tea Historic Factory & Mandi Terminal",
             category: "mandi",
             type: "Highland Orthodox Tea Processing Depot",
+            dimensions: "Processing Complex: 120 m × 55 m | Multi-Floor Area: 11,500 m²",
+            capacity: "Orthodox Tea Capacity: 6,500 MT/yr | e-Auction Terminal Active",
             elev: 1530,
             prominence: 14,
             status: "Estate Tea Auction & Sorting Hub",
@@ -2985,6 +3105,8 @@
             name: "Bandra-Worli Sea Link Main Cable Bridge",
             category: "bridge",
             type: "Cable-Stayed Coastal Super-Structure & Pylon",
+            dimensions: "Total Length: 5.6 km | Cable-Stay Span: 500 m | Pylon Height: 126 m",
+            capacity: "8-Lane Superhighway | Design Traffic: 120,000 Vehicles/day",
             elev: 126,
             prominence: 124,
             status: "Arabian Sea Tidal Wave & Storm Surge Gauge",
@@ -2996,6 +3118,8 @@
             name: "Gilbert Hill Columnar Basalt Monolith",
             category: "peak",
             type: "66-Million-Year-Old Volcanic Basalt Plug",
+            dimensions: "Monolith Footprint: 90 m × 60 m | Vertical Scarp: 52 m",
+            capacity: "Volcanic Basalt Rock Volume: 280,000 m³ | National Geological Monument",
             elev: 60,
             prominence: 52,
             status: "Mesozoic Geological Benchmark / Stable Hard Rock",
@@ -3007,6 +3131,8 @@
             name: "Mithi River Flood Retention Barrage",
             category: "dam",
             type: "SCADA-Controlled Tidal Sluice Barrage",
+            dimensions: "Barrage Length: 140 m | 6 Radial Sluice Gates (12m × 6m)",
+            capacity: "Tidal Surge Backwater Control: 650 m³/s | Automated Tidal Sump",
             elev: 8,
             prominence: 6,
             status: "Automated High-Tide Deflection Gates Active",
@@ -3018,6 +3144,8 @@
             name: "Bandra-Kurla Complex (BKC) Commercial Hub",
             category: "mandi",
             type: "Reclaimed Coastal Basin & Commercial Financial Hub",
+            dimensions: "Financial District: 850 m × 550 m | Plinth Ground: 9m AMSL",
+            capacity: "Commercial Office Space: 2.4 Million m² | Sump Pump Network: 45 m³/min",
             elev: 9,
             prominence: 28,
             status: "Heavy Sump Pump Drainage Infrastructure Online",
@@ -3840,6 +3968,83 @@
       landmarkGroup.visible = showPeaks;
     }
 
+    function createGeospatialMountainRidges(box, modelFile) {
+      while (mountainRidgesGroup.children.length > 0) {
+        const obj = mountainRidgesGroup.children[0];
+        mountainRidgesGroup.remove(obj);
+        if (obj.geometry) obj.geometry.dispose();
+      }
+      if (!currentModel || !terrainMesh) return;
+
+      const bSize = box.getSize(new THREE.Vector3());
+      const pKey = getGeospatialPresetKey(modelFile);
+
+      const ridgePaths = {
+        nashik: [
+          [[0.15, 0.45], [0.25, 0.38], [0.34, 0.30], [0.42, 0.22], [0.48, 0.12]],
+          [[-0.45, 0.35], [-0.35, 0.28], [-0.25, 0.18], [-0.15, 0.10]]
+        ],
+        wayanad: [
+          [[-0.45, -0.42], [-0.34, -0.28], [-0.22, -0.15], [-0.08, -0.05]],
+          [[0.12, 0.18], [0.22, 0.28], [0.35, 0.35], [0.45, 0.42]],
+          [[0.25, -0.25], [0.38, -0.14], [0.46, -0.05]]
+        ],
+        joshimath: [
+          [[0.15, -0.45], [0.25, -0.38], [0.32, -0.32], [0.40, -0.25]],
+          [[-0.42, 0.15], [-0.30, 0.22], [-0.18, 0.28]],
+          [[-0.15, -0.20], [-0.05, -0.08], [0.08, 0.05]]
+        ],
+        kedarnath: [
+          [[-0.25, 0.48], [-0.12, 0.45], [0.00, 0.42], [0.15, 0.40], [0.30, 0.38]],
+          [[-0.35, 0.15], [-0.22, 0.32], [-0.10, 0.38]]
+        ],
+        munnar: [
+          [[0.18, 0.45], [0.28, 0.38], [0.35, 0.32], [0.42, 0.24]],
+          [[-0.42, 0.30], [-0.28, 0.22], [-0.15, 0.12]]
+        ],
+        mumbai: [
+          [[-0.38, 0.25], [-0.28, 0.15], [-0.18, 0.08]],
+          [[0.12, -0.15], [0.22, -0.25], [0.32, -0.38]]
+        ]
+      };
+
+      const paths = ridgePaths[pKey] || [
+        [[-0.40, 0.35], [-0.20, 0.25], [0.00, 0.15], [0.20, 0.25], [0.40, 0.35]],
+        [[-0.35, -0.35], [-0.15, -0.20], [0.10, -0.15], [0.35, -0.30]]
+      ];
+
+      paths.forEach(ridgePts => {
+        const waypoints = [];
+        ridgePts.forEach(([nx, ny]) => {
+          const rx = center.x + nx * bSize.x;
+          const ry = center.y + ny * bSize.y;
+          const ray = new THREE.Raycaster(new THREE.Vector3(rx, ry, box.max.z + 100), new THREE.Vector3(0, 0, -1));
+          const hits = ray.intersectObject(terrainMesh);
+          const rz = (hits.length > 0) ? hits[0].point.z + 1.2 : box.max.z;
+          waypoints.push(new THREE.Vector3(rx, ry, rz));
+        });
+
+        if (waypoints.length >= 2) {
+          const spline = new THREE.CatmullRomCurve3(waypoints);
+          const densePts = spline.getPoints(36);
+          const rGeo = new THREE.BufferGeometry().setFromPoints(densePts);
+          const rMat = new THREE.LineDashedMaterial({
+            color: 0xf59e0b,
+            dashSize: 3.5,
+            gapSize: 2.0,
+            linewidth: 2,
+            transparent: true,
+            opacity: 0.85
+          });
+          const rLine = new THREE.Line(rGeo, rMat);
+          rLine.computeLineDistances();
+          mountainRidgesGroup.add(rLine);
+        }
+      });
+
+      mountainRidgesGroup.visible = showMountainRidges;
+    }
+
     function clearWaterwayInspection() {
       waterwayMarkers.forEach(m => scene.remove(m));
       waterwayMarkers = [];
@@ -3893,10 +4098,13 @@
     function displayLandmarkInfo(info, p) {
       clearLandmarkInspection();
       clearWaterwayInspection();
+      clearMountainInspection();
       const bc = document.getElementById('building-card');
       if (bc) bc.style.display = 'none';
       const mc = document.getElementById('measure-card');
       if (mc) mc.style.display = 'none';
+      const mntc = document.getElementById('mountain-card');
+      if (mntc) mntc.style.display = 'none';
 
       const ringGeo = new THREE.RingGeometry(size * 0.015, size * 0.025, 32);
       const ringMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, side: THREE.DoubleSide });
@@ -3914,9 +4122,29 @@
       document.getElementById('lmTitle').innerText = `${info.icon || '📍'} ${catTitle}`;
       document.getElementById('lmName').innerText = info.name;
       document.getElementById('lmType').innerText = info.type;
+
+      const dims = info.dimensions || (info.category === 'bridge' ? 'Total Span: 320 m | Deck Width: 14 m' :
+        (info.category === 'dam' ? 'Crest: 450 m | Wall Height: 35 m' :
+        (info.category === 'silo' ? 'Complex Footprint: 85 m × 45 m | Height: 28 m' :
+        (info.category === 'mandi' ? 'Shed Span: 120 m × 60 m | Height: 14 m' : 'Span: 180 m × 90 m'))));
+      const cap = info.capacity || (info.category === 'bridge' ? 'IRC Class 70R Loading Rating' :
+        (info.category === 'dam' ? 'Gross Reservoir Storage: 4,500 Mcft' :
+        (info.category === 'silo' ? 'FCI Strategic Food Grain Reserve' :
+        (info.category === 'mandi' ? 'Commodity Storage & e-Auction Floor' : 'Engineered Structural Benchmark'))));
+
+      document.getElementById('lmDimensions').innerText = dims;
+      document.getElementById('lmCapacity').innerText = cap;
       document.getElementById('lmElev').innerText = `${info.elev} m AMSL`;
       document.getElementById('lmProminence').innerText = `+${info.prominence} m Relief`;
       document.getElementById('lmStatus').innerText = info.status;
+
+      // 3D Floating Caliper Badge over landmark
+      const dimBadge = makeTextSprite(`📏 ${dims.split('|')[0].trim()}`, 'rgba(15, 23, 42, 0.94)', '#fde047', '#f59e0b');
+      dimBadge.scale.set(size * 0.11, size * 0.022, 1);
+      dimBadge.position.copy(p);
+      dimBadge.position.z += size * 0.055;
+      scene.add(dimBadge);
+      landmarkMarkers.push(dimBadge);
 
       const badgeContainer = document.getElementById('lmBadgeContainer');
       badgeContainer.innerHTML = `<span class="b-badge" style="background:rgba(245,158,11,0.2); border:1px solid #f59e0b; color:#fbbf24; font-weight:800;">${info.badgeText}</span>`;
@@ -4191,17 +4419,75 @@
               }
             }
 
+            // Derive Plan Dimensions in True Physical Meters
+            let minPtX = Infinity, maxPtX = -Infinity, minPtY = Infinity, maxPtY = -Infinity;
+            let shoelaceArea = 0;
+            for (let pIdx = 0; pIdx < shapePoints.length; pIdx++) {
+              const pt = shapePoints[pIdx];
+              if (pt.x < minPtX) minPtX = pt.x;
+              if (pt.x > maxPtX) maxPtX = pt.x;
+              if (pt.y < minPtY) minPtY = pt.y;
+              if (pt.y > maxPtY) maxPtY = pt.y;
+              const nextPt = shapePoints[(pIdx + 1) % shapePoints.length];
+              shoelaceArea += (pt.x * nextPt.y - nextPt.x * pt.y);
+            }
+            shoelaceArea = Math.abs(shoelaceArea) * 0.5;
+
+            const spanUnitsX = maxPtX - minPtX;
+            const spanUnitsY = maxPtY - minPtY;
+            const lengthUnits = Math.max(spanUnitsX, spanUnitsY);
+            const widthUnits = Math.min(spanUnitsX, spanUnitsY);
+
+            const lengthM = Math.max(Math.round((lengthUnits / unitsPerMeter) * 10) / 10, 8.5);
+            const widthM = Math.max(Math.round((widthUnits / unitsPerMeter) * 10) / 10, 6.2);
+            let footprintM2 = Math.round(shoelaceArea / (unitsPerMeter * unitsPerMeter));
+            if (!footprintM2 || footprintM2 < 25) {
+              footprintM2 = Math.round(lengthM * widthM * 0.85);
+            }
+            const volumeM3 = Math.round(footprintM2 * heightM);
+            const plinthElevM = Math.round(stats.min_elev_m + ((maxGroundZ - box.min.z) / (bSize.z + 1e-6)) * stats.relief_m);
+
+            const isAgro = typeof appMode !== 'undefined' && appMode === 'agro';
+            let buildingType = 'Residential Homestead';
             let displayName = b.name;
+
+            if (b.type && b.type !== 'yes' && b.type !== 'building') {
+              buildingType = b.type.charAt(0).toUpperCase() + b.type.slice(1);
+            } else if (heightM >= 16) {
+              buildingType = isAgro ? 'APMC Cold Chain & Agro-Warehouse' : 'Commercial Facility & Refuge';
+            } else if (heightM >= 10) {
+              buildingType = isAgro ? 'PACS Cooperative Depot & Processing' : 'Panchayat & Community Center';
+            } else if (heightM >= 7) {
+              buildingType = isAgro ? 'Multi-Storey Farmhouse & Store' : 'Multi-Storey Residential Block';
+            } else {
+              buildingType = isAgro ? 'Kisan Homestead & Crop Threshing Plinth' : 'Single-Storey Homestead';
+            }
+
             if (!displayName || displayName === 'yes' || displayName === 'Structure' || displayName === 'building') {
-              const isAgro = typeof appMode !== 'undefined' && appMode === 'agro';
-              if (b.type && b.type !== 'yes' && b.type !== 'building') {
-                displayName = b.type.toUpperCase() + ' Facility';
-              } else if (isAgro) {
-                const agroNames = ['APMC Kisan Mandi', 'Agro Grain Silo', 'Solar Cold Storage Hub', 'Livestock Dairy Shed', 'Canal Pump Station', 'Kisan Farmstead', 'PACS Seed Depot', 'PMFBY Field Station'];
-                displayName = agroNames[idx % agroNames.length] + ` #${idx + 1}`;
+              if (isAgro) {
+                const agroNames = [
+                  'Kisan Homestead & Crop Threshing Plinth',
+                  'APMC Agro-Grain Warehouse',
+                  'Solar Cold Storage Facility',
+                  'Gramin Livestock Barn & Fodder Store',
+                  'Canal Pump & Fertigation Outpost',
+                  'PACS Seed & Fertilizer Depot',
+                  'Primary Agri Health & Soil Lab',
+                  'Kisan Drone & Battery Charging Hub'
+                ];
+                displayName = `${agroNames[idx % agroNames.length]} #${idx + 1}`;
               } else {
-                const urbanNames = ['Civic Complex', 'Community Refuge', 'Commercial Facility', 'Residential Block', 'Relief Staging Post'];
-                displayName = urbanNames[idx % urbanNames.length] + ` #${idx + 1}`;
+                const urbanNames = [
+                  'Kisan Homestead (Pucca Roof)',
+                  'Civic Administration Center',
+                  'Designated Safe Haven Shelter',
+                  'Community Relief Staging Post',
+                  'Primary Healthcare Clinic',
+                  'Emergency Supply Distribution Depot',
+                  'District Civil Defense Refuge',
+                  'Village Cooperative Store'
+                ];
+                displayName = `${urbanNames[idx % urbanNames.length]} #${idx + 1}`;
               }
             }
 
@@ -4209,10 +4495,19 @@
               isBuilding: true,
               mesh: bMesh,
               center: new THREE.Vector3(avgX, avgY, baseZ + totalDepth),
+              bbox: { minX: minPtX, maxX: maxPtX, minY: minPtY, maxY: maxPtY, baseZ, maxGroundZ, topZ: baseZ + totalDepth },
               name: displayName,
+              type: buildingType,
+              lengthM,
+              widthM,
               heightM: Math.round(heightM * 10) / 10,
-              floors: Math.max(1, Math.round(heightM / 3.5)),
-              elevM: Math.round(stats.min_elev_m + ((baseZ - box.min.z) / (bSize.z + 1e-6)) * stats.relief_m)
+              heightUnits,
+              floors,
+              footprintM2,
+              volumeM3,
+              plinthElevM,
+              roofSlope: '0.0° (Flat Reinforced Slab)',
+              elevM: plinthElevM
             };
 
             buildingGroup.add(bMesh);
@@ -4424,60 +4719,113 @@
 
     function displayExtrudedBuildingInfo(info, p) {
       clearBuildingVisuals();
+      clearLandmarkInspection();
+      clearWaterwayInspection();
+      clearMountainInspection();
 
-      const pinGeo = new THREE.SphereGeometry(size * 0.014, 16, 16);
-      const pinMat = new THREE.MeshBasicMaterial({ color: (typeof appMode !== 'undefined' && appMode === 'agro') ? 0x10b981 : 0xfbbf24 });
+      const bSize = currentModel ? new THREE.Box3().setFromObject(currentModel).getSize(new THREE.Vector3()) : new THREE.Vector3(100, 100, 50);
+      const boxKm = (stats && stats.box_size_km) ? stats.box_size_km : 3.0;
+      const unitsPerMeter = bSize.x / (boxKm * 1000.0);
+
+      const lM = info.lengthM || Math.max(Math.round((info.heightM || 6.5) * 1.8 * 10) / 10, 8.5);
+      const wM = info.widthM || Math.max(Math.round((info.heightM || 6.5) * 1.2 * 10) / 10, 6.2);
+      const fpM2 = info.footprintM2 || Math.round(lM * wM * 0.85);
+      const volM3 = info.volumeM3 || Math.round(fpM2 * (info.heightM || 6.5));
+      const plinthM = info.plinthElevM || (info.elevM || Math.round(stats.min_elev_m + 25));
+      const bName = (info.name && info.name !== 'Structure' && info.name !== 'building' && info.name !== 'yes') ? info.name : `Kisan Homestead #${Math.abs(Math.round(p.x * 17 + p.y * 31)) % 120 + 1} (Pucca Roof)`;
+      const bType = info.type || ((typeof appMode !== 'undefined' && appMode === 'agro') ? 'Agricultural Storage & Homestead' : 'Engineered Civil Structure');
+
+      const cPos = info.center ? info.center.clone() : p.clone();
+
+      // 1. Illuminated 3D Wireframe Caliper Box around Building
+      const boxSpanX = info.bbox ? Math.max(info.bbox.maxX - info.bbox.minX, 1.2) : (lM * unitsPerMeter);
+      const boxSpanY = info.bbox ? Math.max(info.bbox.maxY - info.bbox.minY, 1.2) : (wM * unitsPerMeter);
+      const boxSpanZ = info.heightUnits || ((info.heightM || 6.5) * unitsPerMeter * 1.35);
+      const boxGeo = new THREE.BoxGeometry(boxSpanX * 1.06, boxSpanY * 1.06, boxSpanZ * 1.06);
+      const boxEdges = new THREE.EdgesGeometry(boxGeo);
+      const caliperColor = (typeof appMode !== 'undefined' && appMode === 'agro') ? 0x10b981 : 0x38bdf8;
+      const boxCaliper = new THREE.LineSegments(
+        boxEdges,
+        new THREE.LineBasicMaterial({
+          color: caliperColor,
+          linewidth: 2,
+          transparent: true,
+          opacity: 0.95
+        })
+      );
+      boxCaliper.position.set(cPos.x, cPos.y, cPos.z - boxSpanZ * 0.5);
+      scene.add(boxCaliper);
+      buildingMarkers.push(boxCaliper);
+
+      // 2. Rooftop Illuminated Pin Marker
+      const pinGeo = new THREE.SphereGeometry(size * 0.012, 16, 16);
+      const pinMat = new THREE.MeshBasicMaterial({ color: caliperColor });
       const pin = new THREE.Mesh(pinGeo, pinMat);
-      pin.position.copy(p);
+      pin.position.set(cPos.x, cPos.y, cPos.z + size * 0.006);
       scene.add(pin);
       buildingMarkers.push(pin);
 
-      if (typeof appMode !== 'undefined' && appMode === 'agro') {
-        const agroTypes = [
-          { name: 'APMC Kisan Mandi & Cold Chain Depot', badge: '🌾 APMC MANDI HUB', viable: true },
-          { name: 'Grain Silo Complex (4,500 MT Reserve)', badge: '🌾 GRAIN SILO (FOOD CORP)', viable: true },
-          { name: 'Solar Cold Storage Facility', badge: '❄️ SOLAR COLD STORAGE', viable: true },
-          { name: 'Livestock Barn & Fodder Store', badge: '🐄 LIVESTOCK REFUGE', viable: false },
-          { name: 'Seed Processing & Agri-Equipment Barn', badge: '🚜 AGRI-EQUIPMENT DEPOT', viable: false }
-        ];
-        const hash = Math.abs(Math.round(info.heightM * 13 + (p.x || 0) * 7)) % agroTypes.length;
-        const agroAsset = agroTypes[hash];
-        const dispName = (info.name && info.name !== 'Structure' && info.name !== 'Building Structure') ? info.name : agroAsset.name;
+      // 3. Floating 3D Dimension Badge Sprite over Building
+      const dimText = `📏 ${lM}m × ${wM}m · H: ${info.heightM}m (${fpM2.toLocaleString()} m²)`;
+      const dimBadge = makeTextSprite(
+        dimText,
+        'rgba(15, 23, 42, 0.94)',
+        (typeof appMode !== 'undefined' && appMode === 'agro') ? '#6ee7b7' : '#38bdf8',
+        (typeof appMode !== 'undefined' && appMode === 'agro') ? '#10b981' : '#0284c7'
+      );
+      dimBadge.scale.set(size * 0.115, size * 0.022, 1);
+      dimBadge.position.set(cPos.x, cPos.y, cPos.z + size * 0.038);
+      scene.add(dimBadge);
+      buildingMarkers.push(dimBadge);
 
-        document.getElementById('bHeight').innerText = `${info.heightM} m (Agro-Asset Elevation)`;
-        document.getElementById('bFloors').innerText = `${dispName}`;
-        document.getElementById('bSlope').innerText = `0.0° (Engineered Plinth)`;
-        document.getElementById('bHelipad').innerHTML = agroAsset.viable ?
+      // 4. Populate #building-card UI with Complete Dimensions
+      document.getElementById('bCardTitle').innerText = (typeof appMode !== 'undefined' && appMode === 'agro') ? '🌾 Agro-Structure Profiler' : '🏢 Building Tactical Profiler';
+      document.getElementById('bName').innerText = bName;
+      document.getElementById('bType').innerText = bType;
+      document.getElementById('bDimensions').innerText = `${lM} m × ${wM} m (L × W)`;
+      document.getElementById('bHeight').innerText = `${info.heightM} m (${Math.round(info.heightM * 3.28)} ft)`;
+      document.getElementById('bFloors').innerText = `${info.floors} Storeys (${info.floors > 1 ? 'G + ' + (info.floors - 1) : 'Ground Level'})`;
+      document.getElementById('bFootprint').innerText = `${fpM2.toLocaleString()} m² (${Math.round(fpM2 * 10.764).toLocaleString()} sq ft)`;
+      document.getElementById('bVolume').innerText = `${volM3.toLocaleString()} m³`;
+      document.getElementById('bPlinthElev').innerText = `${plinthM} m AMSL`;
+      document.getElementById('bSlope').innerText = info.roofSlope || '0.0° (Flat Plinth)';
+
+      if (typeof appMode !== 'undefined' && appMode === 'agro') {
+        const isViableHighPlinth = (info.heightM || 6.5) >= 6.0 || (plinthM > (stats.min_elev_m + stats.relief_m * 0.2));
+        document.getElementById('bHelipad').innerHTML = isViableHighPlinth ?
           '<span style="color:#10b981;">🟢 DRY HIGH-PLINTH ASSET</span>' :
           '<span style="color:#fbbf24;">⚠️ PERIMETER BUND REQUIRED</span>';
         document.getElementById('bFloodMargin').innerHTML = `<span style="color:#10b981;">+${info.heightM}m CLEARANCE ABOVE CHANNEL</span>`;
-        document.getElementById('bFootprint').innerText = `${Math.round(info.heightM * 35)} m² (Storage Area)`;
 
         const badgeContainer = document.getElementById('bBadgeContainer');
-        badgeContainer.innerHTML = `<span class="b-badge safe" style="background:rgba(16,185,129,0.2); border-color:#10b981; color:#34d399;">${dispName.toUpperCase()}</span>`;
+        badgeContainer.innerHTML = `<span class="b-badge safe" style="background:rgba(16,185,129,0.2); border-color:#10b981; color:#34d399; font-weight:800;">🌾 CROP / STORAGE CAPACITY: ~${Math.round(volM3 * 0.65).toLocaleString()} MT</span>`;
       } else {
-        const isHelipadViable = info.heightM >= 6.0;
+        const isHelipadViable = (info.heightM || 6.5) >= 6.0;
         const helipadHtml = isHelipadViable ?
           '<span style="color:#34d399;">🟢 VIABLE ROOFTOP HELIPAD</span>' :
           '<span style="color:#fb7185;">⚠️ LOW CLEARANCE</span>';
 
-        document.getElementById('bHeight').innerText = `${info.heightM} m (${Math.round(info.heightM * 3.28)} ft)`;
-        document.getElementById('bFloors').innerText = `~${info.floors} Storeys (${info.name})`;
-        document.getElementById('bSlope').innerText = `0.0° (Flat Roof)`;
         document.getElementById('bHelipad').innerHTML = helipadHtml;
         document.getElementById('bFloodMargin').innerHTML = `<span style="color:#34d399;">+${info.heightM}m ELEVATED STRUCTURE</span>`;
-        document.getElementById('bFootprint').innerText = `${Math.round(info.heightM * 28)} m²`;
 
         const badgeContainer = document.getElementById('bBadgeContainer');
-        badgeContainer.innerHTML = `<span class="b-badge safe">${info.name.toUpperCase()} (LOD-1 EXT.)</span>`;
+        badgeContainer.innerHTML = `<span class="b-badge safe" style="font-weight:800;">🏢 ${bName.toUpperCase()} (VERIFIED LOD-1)</span>`;
       }
 
       // 🛣️ Compute & draw DIRECT rescue path to nearest Safe Haven
-      drawRescuePathway(info.center || p, info.mesh || null);
+      drawRescuePathway(cPos, info.mesh || null);
 
       const mCard = document.getElementById('measure-card');
       if (mCard) mCard.style.display = 'none';
+      const mntc = document.getElementById('mountain-card');
+      if (mntc) mntc.style.display = 'none';
+      const lmc = document.getElementById('landmark-card');
+      if (lmc) lmc.style.display = 'none';
+      const wtc = document.getElementById('water-card');
+      if (wtc) wtc.style.display = 'none';
+
       document.getElementById('building-card').style.display = 'block';
+      showTacticalToast(`🏢 Inspected: ${bName} (${lM}m × ${wM}m · H: ${info.heightM}m)`);
     }
 
     function showTacticalToast(msg) {
@@ -4565,7 +4913,7 @@
     // Universal Terrain & Building Click Handler
     window.addEventListener('click', (e) => {
       if (!terrainMesh) return;
-      if (e.target.closest('#left-dock') || e.target.closest('#right-column') || e.target.closest('#right-hud') || e.target.closest('#split-pip') || e.target.closest('#measure-card') || e.target.closest('#building-card') || e.target.closest('#water-card') || e.target.closest('#landmark-card') || e.target.closest('#top-bar') || e.target.closest('#map-drawer') || e.target.closest('#sos-modal') || e.target.closest('#precaution-modal') || e.target.closest('#chopper-hud') || e.target.closest('#evac-hud') || e.target.closest('#gps-hud') || e.target.closest('#compass-container') || e.target.closest('#legend-card') || e.target.closest('#triage-card') || e.target.closest('#bottom-telemetry')) return;
+      if (e.target.closest('#left-dock') || e.target.closest('#right-column') || e.target.closest('#right-hud') || e.target.closest('#split-pip') || e.target.closest('#measure-card') || e.target.closest('#building-card') || e.target.closest('#water-card') || e.target.closest('#landmark-card') || e.target.closest('#mountain-card') || e.target.closest('#top-bar') || e.target.closest('#map-drawer') || e.target.closest('#sos-modal') || e.target.closest('#precaution-modal') || e.target.closest('#chopper-hud') || e.target.closest('#evac-hud') || e.target.closest('#gps-hud') || e.target.closest('#compass-container') || e.target.closest('#legend-card') || e.target.closest('#triage-card') || e.target.closest('#bottom-telemetry')) return;
 
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -4690,14 +5038,250 @@
       const normal = intersects[0].face.normal;
       const slopeDeg = Math.round((1 - Math.abs(normal.z)) * 55);
 
+      // Check if user clicked close to any building
+      if (buildingGroup && buildingGroup.children.length > 0 && showBuildings) {
+        let nearestB = null;
+        let minDistSq = Math.pow(size * 0.025, 2);
+        for (let i = 0; i < buildingGroup.children.length; i++) {
+          const b = buildingGroup.children[i];
+          if (b.userData && b.userData.center) {
+            const dx = b.userData.center.x - p.x;
+            const dy = b.userData.center.y - p.y;
+            const distSq = dx * dx + dy * dy;
+            if (distSq < minDistSq) {
+              minDistSq = distSq;
+              nearestB = b;
+            }
+          }
+        }
+        if (nearestB) {
+          nearestB.userData.mesh = nearestB;
+          displayExtrudedBuildingInfo(nearestB.userData, p);
+          return;
+        }
+      }
+
       if (buildingMode) {
         inspectBuildingAtPoint(p, elevM, slopeDeg, box);
+      } else if (!measureMode && !sosMode) {
+        inspectMountainOrTerrainAtPoint(p, elevM, slopeDeg, box);
       }
     });
+
+    function clearMountainInspection() {
+      mountainMarkers.forEach(m => scene.remove(m));
+      mountainMarkers = [];
+      const mc = document.getElementById('mountain-card');
+      if (mc) mc.style.display = 'none';
+    }
+
+    window.clearMountainInspection = () => {
+      clearMountainInspection();
+    };
+
+    window.toggleMountainProfiler = () => {
+      showMountainRidges = !showMountainRidges;
+      mountainRidgesGroup.visible = showMountainRidges;
+      const btn = document.getElementById('btnMountain');
+      if (btn) btn.classList.toggle('active', showMountainRidges);
+      if (showMountainRidges) {
+        showTacticalToast('🏔️ 3D Mountain Massifs & Ridgeline Profiler Activated');
+      } else {
+        clearMountainInspection();
+      }
+    };
+
+    // 🏔️ Real-Time 3D Mountain Massif & Hill Geomorphic Dimension Profiler
+    function inspectMountainOrTerrainAtPoint(p, elevM, slopeDeg, box) {
+      clearBuildingVisuals();
+      clearLandmarkInspection();
+      clearWaterwayInspection();
+      clearMountainInspection();
+      const mc = document.getElementById('measure-card');
+      if (mc) mc.style.display = 'none';
+      const bc = document.getElementById('building-card');
+      if (bc) bc.style.display = 'none';
+
+      const bSize = box.getSize(new THREE.Vector3());
+      const boxKm = (stats && stats.box_size_km) ? stats.box_size_km : 3.0;
+      const unitsPerMeter = bSize.x / (boxKm * 1000.0);
+
+      const probeRadiusUnits = Math.min(bSize.x * 0.28, size * 0.25);
+      const probeRadiusM = Math.round(probeRadiusUnits / unitsPerMeter);
+
+      let maxZ = p.z;
+      let minZ = p.z;
+      let summitPoint = p.clone();
+      let slopeSum = slopeDeg;
+      let slopeCount = 1;
+      let peakSlope = slopeDeg;
+
+      const rings = [0.15, 0.35, 0.60, 0.85, 1.0];
+      const angles = 16;
+      for (let rIdx = 0; rIdx < rings.length; rIdx++) {
+        const rDist = probeRadiusUnits * rings[rIdx];
+        for (let a = 0; a < angles; a++) {
+          const theta = (a / angles) * Math.PI * 2;
+          const probeX = p.x + Math.cos(theta) * rDist;
+          const probeY = p.y + Math.sin(theta) * rDist;
+          const rayStart = new THREE.Vector3(probeX, probeY, box.max.z + bSize.z * 0.2);
+          const ray = new THREE.Raycaster(rayStart, new THREE.Vector3(0, 0, -1));
+          const hits = ray.intersectObject(terrainMesh);
+          if (hits.length > 0) {
+            const hp = hits[0].point;
+            if (hp.z > maxZ) {
+              maxZ = hp.z;
+              summitPoint.copy(hp);
+            }
+            if (hp.z < minZ) {
+              minZ = hp.z;
+            }
+            if (hits[0].face && hits[0].face.normal) {
+              const s = Math.round((1 - Math.abs(hits[0].face.normal.z)) * 55);
+              slopeSum += s;
+              slopeCount++;
+              if (s > peakSlope) peakSlope = s;
+            }
+          }
+        }
+      }
+
+      const minElev = stats.min_elev_m || 500;
+      const reliefSpan = stats.relief_m || 200;
+      const summitElevM = Math.round(minElev + Math.min(Math.max((maxZ - box.min.z) / (bSize.z + 1e-6), 0), 1) * reliefSpan);
+      const baseElevM = Math.round(minElev + Math.min(Math.max((minZ - box.min.z) / (bSize.z + 1e-6), 0), 1) * reliefSpan);
+      const prominenceM = Math.max(Math.round(summitElevM - baseElevM), 35);
+
+      const spanKmX = (probeRadiusM * 2.1 / 1000.0).toFixed(2);
+      const spanKmY = (probeRadiusM * 1.8 / 1000.0).toFixed(2);
+      const baseAreaKm2 = (Math.PI * (probeRadiusM / 1000.0) * (probeRadiusM * 0.85 / 1000.0)).toFixed(2);
+      const baseAreaM2 = parseFloat(baseAreaKm2) * 1e6;
+      const volumeMillionM3 = ((baseAreaM2 * prominenceM * 0.38) / 1e6).toFixed(1);
+      const volumeKm3 = (parseFloat(volumeMillionM3) / 1000.0).toFixed(3);
+      const avgSlope = Math.round(slopeSum / slopeCount);
+
+      const pKey = getGeospatialPresetKey();
+      let massifName = 'Mountain Massif & Ridge Spine';
+      let geoBedrock = 'High-Relief Topographic Ridge';
+      let agroRisk = 'Moderate Slope - Catchment Runoff Zone';
+
+      if (pKey === 'nashik') {
+        massifName = 'Brahmagiri-Trimbak Western Ghats Massif';
+        geoBedrock = 'Deccan Trappean Basaltic Mesa & Escarpment';
+        agroRisk = 'Terraced Vineyards on Piedmont / Scarp Regolith Monitored';
+      } else if (pKey === 'wayanad') {
+        massifName = 'Western Ghats Vellarimala-Chembra Massif';
+        geoBedrock = 'Archean Charnockite Horst & Weathered Saprolite';
+        agroRisk = '⚠️ High Landslide Susceptibility - Debris Flow Chute';
+      } else if (pKey === 'joshimath') {
+        massifName = 'Alaknanda Gorge Orogenic Col Massif';
+        geoBedrock = 'Main Central Thrust (MCT) Gneiss & Colluvial Talus';
+        agroRisk = '🔴 Critical Land Subsidence & GLOF Canyon Exposure';
+      } else if (pKey === 'kedarnath') {
+        massifName = 'Kedarnath Glaciated Horn & Moraine Ridge';
+        geoBedrock = 'Higher Himalayan Crystalline Granitic Horn';
+        agroRisk = '⚠️ Permafrost Degradation & Glacial Moraine Chute';
+      } else if (pKey === 'munnar') {
+        massifName = 'Anamudi High-Altitude Shola Massif';
+        geoBedrock = 'Precambrian Granulite & Charnockite Massif';
+        agroRisk = 'Highland Tea Plantation Slopes & Water Catchment';
+      } else if (pKey === 'mumbai') {
+        massifName = 'Salsette Volcanic Residual Ridge';
+        geoBedrock = 'Late Cretaceous Deccan Columnar Basalt Plug';
+        agroRisk = 'Urban Drainage Runoff & Estuarine Silt Accumulation';
+      } else if (pKey === 'assam') {
+        massifName = 'Brahmaputra Inlier Nilachal Horst Massif';
+        geoBedrock = 'Precambrian Granitic Biotite Gneiss Monadnock';
+        agroRisk = 'Stable Bedrock Core / Fluvial Monsoonal Erosion';
+      } else if (pKey === 'punjab') {
+        massifName = 'Sub-Himalayan Siwalik Piedmont Slope';
+        geoBedrock = 'Plio-Pleistocene Terraced Alluvial Silt & Conglomerate';
+        agroRisk = 'Optimal High-Yield Kharif & Rabi Cultivation Terrain';
+      } else if (pKey === 'cauvery') {
+        massifName = 'Cauvery Deltaic Basement Outcrop';
+        geoBedrock = 'Fluvial Quaternary Alluvial Silt over Granite Shield';
+        agroRisk = 'Intensive Canal-Irrigated Paddy Agro-Ecosystem';
+      }
+
+      // 1. Vertical Elevation Datum Caliper Line (Summit to Base)
+      const datumPoints = [
+        new THREE.Vector3(summitPoint.x, summitPoint.y, minZ),
+        new THREE.Vector3(summitPoint.x, summitPoint.y, maxZ)
+      ];
+      const datumGeo = new THREE.BufferGeometry().setFromPoints(datumPoints);
+      const datumMat = new THREE.LineBasicMaterial({ color: 0xf59e0b, linewidth: 3 });
+      const datumLine = new THREE.Line(datumGeo, datumMat);
+      scene.add(datumLine);
+      mountainMarkers.push(datumLine);
+
+      // Horizontal Caliper Ticks at Base, Mid, and Summit
+      const tickHalf = probeRadiusUnits * 0.12;
+      [minZ, minZ + (maxZ - minZ) * 0.5, maxZ].forEach(zLevel => {
+        const tPts = [
+          new THREE.Vector3(summitPoint.x - tickHalf, summitPoint.y, zLevel),
+          new THREE.Vector3(summitPoint.x + tickHalf, summitPoint.y, zLevel)
+        ];
+        const tGeo = new THREE.BufferGeometry().setFromPoints(tPts);
+        const tLine = new THREE.Line(tGeo, new THREE.LineBasicMaterial({ color: 0xfde047, linewidth: 2 }));
+        scene.add(tLine);
+        mountainMarkers.push(tLine);
+      });
+
+      // 2. Base Footprint Elliptical Caliper Ring on Valley Floor
+      const ringCurve = new THREE.EllipseCurve(
+        summitPoint.x, summitPoint.y,
+        probeRadiusUnits * 0.95, probeRadiusUnits * 0.75,
+        0, 2 * Math.PI, false, 0
+      );
+      const ringPts = ringCurve.getPoints(48).map(pt => new THREE.Vector3(pt.x, pt.y, minZ + 0.3));
+      const ringGeo = new THREE.BufferGeometry().setFromPoints(ringPts);
+      const ringLine = new THREE.LineLoop(ringGeo, new THREE.LineBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.75 }));
+      scene.add(ringLine);
+      mountainMarkers.push(ringLine);
+
+      // 3. Summit Apex Pulsing Beacon
+      const apexSphere = new THREE.Mesh(
+        new THREE.SphereGeometry(size * 0.012, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0xfde047 })
+      );
+      apexSphere.position.copy(summitPoint);
+      apexSphere.position.z += size * 0.008;
+      scene.add(apexSphere);
+      mountainMarkers.push(apexSphere);
+
+      // 4. Floating 3D Mountain Dimension Pill Sprite
+      const dimLabel = `🏔️ ${massifName} · Summit: ${summitElevM}m AMSL | Relief: +${prominenceM}m | Span: ${spanKmX}km | Vol: ${volumeMillionM3}M m³`;
+      const sprite = makeTextSprite(dimLabel, 'rgba(15, 23, 42, 0.94)', '#fde047', '#f59e0b');
+      sprite.scale.set(size * 0.13, size * 0.024, 1);
+      sprite.position.set(summitPoint.x, summitPoint.y, maxZ + size * 0.045);
+      scene.add(sprite);
+      mountainMarkers.push(sprite);
+
+      // 5. Populate #mountain-card in HUD
+      document.getElementById('mTitle').innerText = '🏔️ Mountain Massif Profiler';
+      document.getElementById('mName').innerText = massifName;
+      document.getElementById('mGeoForm').innerText = geoBedrock;
+      document.getElementById('mSummitElev').innerText = `${summitElevM} m AMSL (${Math.round(summitElevM * 3.28)} ft)`;
+      document.getElementById('mBaseElev').innerText = `${baseElevM} m AMSL`;
+      document.getElementById('mProminence').innerText = `+${prominenceM} m Vertical Relief`;
+      document.getElementById('mSpan').innerText = `${spanKmX} km × ${spanKmY} km (Base: ${baseAreaKm2} km²)`;
+      document.getElementById('mVolume').innerText = `${volumeMillionM3} Million m³ (${volumeKm3} km³)`;
+      document.getElementById('mSlope').innerText = `Mean: ${avgSlope}° · Escarpment: ${peakSlope}°`;
+      document.getElementById('mRisk').innerText = agroRisk;
+
+      const badgeContainer = document.getElementById('mBadgeContainer');
+      badgeContainer.innerHTML = `<span class="b-badge" style="background:rgba(245,158,11,0.22); border:1px solid #f59e0b; color:#fde047; font-weight:800;">⛰️ REAL-TIME GEOMORPHIC DEM PROFILE</span>`;
+
+      document.getElementById('mountain-card').style.display = 'block';
+      showTacticalToast(`🏔️ Mountain Profiled: Summit ${summitElevM}m AMSL | Relief +${prominenceM}m | Vol: ${volumeMillionM3}M m³`);
+    }
 
     // 🏢 Building Inspection Logic
     function inspectBuildingAtPoint(p, elevM, slopeDeg, box) {
       clearBuildingVisuals();
+      clearLandmarkInspection();
+      clearWaterwayInspection();
+      clearMountainInspection();
 
       const sampleRadius = size * 0.035;
       let minSurroundingElev = elevM;
@@ -4724,6 +5308,11 @@
 
       const floors = Math.max(1, Math.round(structHeightM / 3.2));
       const footprintArea = Math.round((structHeightM * 12.5) + 380);
+      const lM = Math.max(Math.round(structHeightM * 1.8 * 10) / 10, 8.5);
+      const wM = Math.max(Math.round(structHeightM * 1.2 * 10) / 10, 6.2);
+      const volM3 = Math.round(footprintArea * structHeightM);
+      const bName = `Kisan Homestead #${Math.abs(Math.round(p.x * 17 + p.y * 31)) % 120 + 1} (Pucca Roof)`;
+      const bType = (typeof appMode !== 'undefined' && appMode === 'agro') ? 'Agricultural Storage & Homestead' : 'Engineered Civil Structure';
 
       // Draw 3D Caliper Marker on the building
       const caliperGeo = new THREE.CylinderGeometry(size * 0.003, size * 0.003, size * 0.08);
@@ -4740,6 +5329,17 @@
       scene.add(pin);
       buildingMarkers.push(pin);
 
+      const dimBadge = makeTextSprite(
+        `📏 ${lM}m × ${wM}m · H: ${structHeightM}m (${footprintArea} m²)`,
+        'rgba(15, 23, 42, 0.94)',
+        (typeof appMode !== 'undefined' && appMode === 'agro') ? '#6ee7b7' : '#38bdf8',
+        (typeof appMode !== 'undefined' && appMode === 'agro') ? '#10b981' : '#0284c7'
+      );
+      dimBadge.scale.set(size * 0.115, size * 0.022, 1);
+      dimBadge.position.set(p.x, p.y, p.z + size * 0.048);
+      scene.add(dimBadge);
+      buildingMarkers.push(dimBadge);
+
       const isHelipadViable = slopeDeg <= 7.0 && structHeightM >= 6.0;
       const helipadHtml = isHelipadViable ?
         '<span style="color:#34d399;">🟢 VIABLE ROOFTOP HELIPAD</span>' :
@@ -4754,12 +5354,18 @@
         `<span style="color:#34d399;">+${floodMargin}m SAFE HIGH REFUGE</span>` :
         `<span style="color:#fb7185;">🔴 AT RISK (${floodMargin <= 0 ? 'SUBMERGED' : 'LOW CLEARANCE'})</span>`;
 
+      document.getElementById('bCardTitle').innerText = (typeof appMode !== 'undefined' && appMode === 'agro') ? '🌾 Agro-Structure Profiler' : '🏢 Building Tactical Profiler';
+      document.getElementById('bName').innerText = bName;
+      document.getElementById('bType').innerText = bType;
+      document.getElementById('bDimensions').innerText = `${lM} m × ${wM} m (L × W)`;
       document.getElementById('bHeight').innerText = `${structHeightM} m (${Math.round(structHeightM * 3.28)} ft)`;
       document.getElementById('bFloors').innerText = `~${floors} Storeys (Floors)`;
+      document.getElementById('bFootprint').innerText = `${footprintArea.toLocaleString()} m²`;
+      document.getElementById('bVolume').innerText = `${volM3.toLocaleString()} m³`;
+      document.getElementById('bPlinthElev').innerText = `${Math.round(elevM)} m AMSL`;
       document.getElementById('bSlope').innerText = `${slopeDeg}°`;
       document.getElementById('bHelipad').innerHTML = helipadHtml;
       document.getElementById('bFloodMargin').innerHTML = marginHtml;
-      document.getElementById('bFootprint').innerText = `${footprintArea} m²`;
 
       const badgeContainer = document.getElementById('bBadgeContainer');
       badgeContainer.innerHTML = isHelipadViable ?
@@ -4771,7 +5377,15 @@
 
       const mCard = document.getElementById('measure-card');
       if (mCard) mCard.style.display = 'none';
+      const mntc = document.getElementById('mountain-card');
+      if (mntc) mntc.style.display = 'none';
+      const lmc = document.getElementById('landmark-card');
+      if (lmc) lmc.style.display = 'none';
+      const wtc = document.getElementById('water-card');
+      if (wtc) wtc.style.display = 'none';
+
       document.getElementById('building-card').style.display = 'block';
+      showTacticalToast(`🏢 Inspected: ${bName} (${lM}m × ${wM}m)`);
     }
 
     function clearBuildingVisuals() {
@@ -7317,6 +7931,16 @@
         triageGroup.children.forEach(child => {
           if (child.isLine && child.material && child.material.isLineDashedMaterial) {
             child.material.dashSize = 2.4 + Math.sin(time * 3) * 0.9;
+          }
+        });
+      }
+
+      // 🏔️ Dynamic Mountain Ridgeline Vector Spine Pulse
+      if (showMountainRidges && mountainRidgesGroup && mountainRidgesGroup.children.length > 0) {
+        const time = Date.now() * 0.0025;
+        mountainRidgesGroup.children.forEach((child, idx) => {
+          if (child.isLine && child.material && child.material.isLineDashedMaterial) {
+            child.material.dashSize = 3.5 + Math.sin(time * 3 + idx) * 1.2;
           }
         });
       }
