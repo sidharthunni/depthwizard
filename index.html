@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#050315">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>DepthWizard 3D — Geospatial & Structural Intelligence Command Center</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -45,7 +49,7 @@
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' width='100%25' height='100%25' preserveAspectRatio='none'%3E%3Cpath d='M0,320 C320,380 440,220 720,280 C1000,340 1140,240 1440,300 L1440,900 L0,900 Z' fill='%232f27ce' fill-opacity='0.04'/%3E%3Cpath d='M0,480 C260,430 520,540 760,490 C1000,440 1200,520 1440,480 L1440,900 L0,900 Z' fill='%23433bff' fill-opacity='0.03'/%3E%3Cpath d='M0,640 C380,590 740,680 1080,630 C1260,600 1380,640 1440,650 L1440,900 L0,900 Z' fill='%23dedcff' fill-opacity='0.018'/%3E%3C/svg%3E");
       background-size: cover;
     }
-    canvas { display: block; position: relative; z-index: 2; }
+    canvas { display: block; position: relative; z-index: 2; touch-action: none; -webkit-touch-callout: none; }
 
     /* Motion-Primitives: Shiny Badge Sweep */
     .shiny-badge {
@@ -991,6 +995,202 @@
       padding: 22px 24px;
       animation: cardSpringIn 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
+
+    /* ========================================================= */
+    /* RESPONSIVE CROSS-DEVICE STYLING (PC / LAPTOP / TABLET / MOBILE) */
+    /* ========================================================= */
+
+    /* Mobile Quick-Access Floating Pill Bar (Phones & Small Tablets) */
+    #mobile-nav-pill {
+      display: none;
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 220;
+      background: rgba(5, 3, 21, 0.94);
+      backdrop-filter: blur(32px) saturate(190%);
+      -webkit-backdrop-filter: blur(32px) saturate(190%);
+      border: 1px solid var(--panel-border);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.92), 0 0 24px rgba(67, 59, 255, 0.35);
+      border-radius: 99px;
+      padding: 5px 8px;
+      gap: 6px;
+      align-items: center;
+      pointer-events: auto;
+    }
+    .m-pill-btn {
+      background: rgba(222, 220, 255, 0.08);
+      border: 1px solid rgba(222, 220, 255, 0.14);
+      color: #dedcff;
+      padding: 6px 12px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: inherit;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .m-pill-btn:active {
+      transform: scale(0.95);
+      background: var(--accent);
+      color: #fff;
+    }
+    .m-pill-btn.active {
+      background: var(--accent-grad);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 2px 12px var(--accent-glow);
+    }
+
+    /* Tablet Optimizations (769px to 1024px) */
+    @media screen and (max-width: 1024px) {
+      #top-bar {
+        left: 12px; right: 12px; top: 10px;
+        padding: 0 12px;
+      }
+      .brand-title { font-size: 14px; }
+      .quick-coords-bar input { width: 75px; }
+      #left-dock {
+        left: 12px; top: 76px; width: 280px;
+        max-height: calc(100vh - 96px);
+      }
+      #right-column {
+        right: 12px; top: 76px; width: 240px;
+      }
+      #agro-hud, #temporal-hud {
+        width: 240px;
+      }
+      #measure-card, #building-card, #water-card, #landmark-card, #mountain-card, #waterlogging-card, #subsurface-card, #tractor-card {
+        left: 304px; width: 330px;
+      }
+    }
+
+    /* Mobile Phones (< 768px) */
+    @media screen and (max-width: 768px) {
+      #mobile-nav-pill {
+        display: flex;
+      }
+
+      /* Top Bar: Compact header */
+      #top-bar {
+        left: 8px; right: 8px; top: 8px; height: auto;
+        padding: 8px 10px;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .top-left {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .brand-title { font-size: 13px; }
+      .mission-status span { display: none; }
+      .mission-status { padding: 3px 6px; }
+
+      .top-center {
+        width: 100%;
+        justify-content: space-between;
+        gap: 6px;
+      }
+      .coords-pill {
+        font-size: 10px;
+        padding: 5px 8px;
+        max-width: 145px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .quick-coords-bar {
+        display: none;
+      }
+      .top-right {
+        display: none;
+      }
+
+      /* Left Dock: Bottom Sheet Drawer */
+      #left-dock {
+        position: fixed !important;
+        top: auto !important;
+        bottom: 60px !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        max-height: 58vh !important;
+        border-radius: 20px !important;
+        z-index: 210 !important;
+        transform: translateY(130%) !important;
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.95), 0 0 20px rgba(67, 59, 255, 0.25) !important;
+      }
+      #left-dock.mobile-open {
+        transform: translateY(0%) !important;
+      }
+
+      /* Right Column: Bottom Sheet Drawer */
+      #right-column {
+        position: fixed !important;
+        top: auto !important;
+        bottom: 60px !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        z-index: 210 !important;
+        transform: translateY(130%) !important;
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      }
+      #right-column.mobile-open {
+        transform: translateY(0%) !important;
+      }
+      #right-hud, #agro-hud, #temporal-hud {
+        width: 100% !important;
+        max-height: 58vh !important;
+        overflow-y: auto !important;
+      }
+
+      /* Floating Inspection Cards: Mobile Bottom Sheets */
+      #measure-card, #building-card, #water-card, #landmark-card, #mountain-card, #waterlogging-card, #subsurface-card, #tractor-card, #precaution-modal {
+        position: fixed !important;
+        bottom: 60px !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        max-width: 100% !important;
+        max-height: 60vh !important;
+        overflow-y: auto !important;
+        z-index: 215 !important;
+        border-radius: 20px !important;
+      }
+
+      #bottom-telemetry {
+        display: none !important;
+      }
+
+      #tactical-toast {
+        bottom: 70px !important;
+        width: calc(100% - 24px) !important;
+        max-width: 360px !important;
+        font-size: 10.5px !important;
+        padding: 8px 14px !important;
+      }
+
+      /* Modals */
+      #pmfby-modal, #kisan-modal, #sos-modal {
+        width: calc(100vw - 16px) !important;
+        max-width: 100% !important;
+        padding: 16px 14px !important;
+        border-radius: 18px !important;
+        max-height: 90vh !important;
+      }
+      .pmfby-grid {
+        grid-template-columns: 1fr !important;
+      }
+      #pmfby-modal div[style*="grid-template-columns: 240px 1fr"] {
+        grid-template-columns: 1fr !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1075,6 +1275,26 @@
         Expand
       </button>
     </div>
+  </div>
+
+  <!-- Mobile Quick-Access Floating Pill Bar (Phones & Small Tablets) -->
+  <div id="mobile-nav-pill">
+    <button class="m-pill-btn" id="mBtnTools" onclick="toggleMobileDock()" title="Tools & Layers">
+      <svg class="dw-ico" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+      <span>Tools</span>
+    </button>
+    <button class="m-pill-btn" id="mBtnStats" onclick="toggleMobileTelemetry()" title="Telemetry & Crop Risk">
+      <svg class="dw-ico" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span>Stats</span>
+    </button>
+    <button class="m-pill-btn" onclick="togglePrecautionAdvisor()" title="SOP & Guidelines">
+      <svg class="dw-ico" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>SOP</span>
+    </button>
+    <button class="m-pill-btn" onclick="toggleDrawer()" title="Switch Location">
+      <svg class="dw-ico" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+      <span>Maps</span>
+    </button>
   </div>
 
   <!-- Left Tactical Tool Dock (Executive SDSS Floating Island) -->
@@ -5492,6 +5712,49 @@
           if (el) el.style.display = 'none';
         }
       });
+      // On mobile screens, close mobile drawer if a card opens
+      if (window.innerWidth <= 768 && exceptId) {
+        const dock = document.getElementById('left-dock');
+        const rightCol = document.getElementById('right-column');
+        if (dock) dock.classList.remove('mobile-open');
+        if (rightCol) rightCol.classList.remove('mobile-open');
+        const bTools = document.getElementById('mBtnTools');
+        const bStats = document.getElementById('mBtnStats');
+        if (bTools) bTools.classList.remove('active');
+        if (bStats) bStats.classList.remove('active');
+      }
+    };
+
+    window.toggleMobileDock = function() {
+      const dock = document.getElementById('left-dock');
+      const rightCol = document.getElementById('right-column');
+      if (rightCol) {
+        rightCol.classList.remove('mobile-open');
+        const bStats = document.getElementById('mBtnStats');
+        if (bStats) bStats.classList.remove('active');
+      }
+      if (dock) {
+        dock.classList.toggle('mobile-open');
+        const bTools = document.getElementById('mBtnTools');
+        if (bTools) bTools.classList.toggle('active', dock.classList.contains('mobile-open'));
+      }
+      if (typeof playTone === 'function') playTone('click');
+    };
+
+    window.toggleMobileTelemetry = function() {
+      const rightCol = document.getElementById('right-column');
+      const dock = document.getElementById('left-dock');
+      if (dock) {
+        dock.classList.remove('mobile-open');
+        const bTools = document.getElementById('mBtnTools');
+        if (bTools) bTools.classList.remove('active');
+      }
+      if (rightCol) {
+        rightCol.classList.toggle('mobile-open');
+        const bStats = document.getElementById('mBtnStats');
+        if (bStats) bStats.classList.toggle('active', rightCol.classList.contains('mobile-open'));
+      }
+      if (typeof playTone === 'function') playTone('click');
     };
 
     function showTacticalToast(msg) {
@@ -5499,7 +5762,7 @@
       if (!el) {
         el = document.createElement('div');
         el.id = 'tactical-toast';
-        el.style.cssText = 'position:fixed; bottom:32px; left:50%; transform:translateX(-50%); z-index:99999; background:rgba(8,14,28,0.94); backdrop-filter:blur(28px) saturate(180%); -webkit-backdrop-filter:blur(28px) saturate(180%); color:#f1f5f9; border:1px solid rgba(56,189,248,0.4); padding:10px 24px; border-radius:999px; font-size:11px; font-weight:700; font-family:"JetBrains Mono",monospace; letter-spacing:0.4px; box-shadow:0 16px 40px rgba(0,0,0,0.85),0 0 24px rgba(56,189,248,0.2); display:none; pointer-events:none; transition:opacity 0.25s, transform 0.25s;';
+        el.style.cssText = 'position:fixed; bottom:28px; left:50%; transform:translateX(-50%); z-index:99999; background:rgba(5,3,21,0.95); backdrop-filter:blur(32px) saturate(190%); -webkit-backdrop-filter:blur(32px) saturate(190%); color:#fbfbfe; border:1px solid rgba(67,59,255,0.45); padding:10px 24px; border-radius:999px; font-size:11px; font-weight:700; font-family:"JetBrains Mono",monospace; letter-spacing:0.4px; box-shadow:0 16px 40px rgba(0,0,0,0.92),0 0 24px rgba(67,59,255,0.35); display:none; pointer-events:none; transition:opacity 0.25s, transform 0.25s;';
         document.body.appendChild(el);
       }
       let cleanMsg = (typeof msg === 'string') ?
