@@ -743,6 +743,7 @@
     <div class="btn-grid">
       <button id="btnSat" class="btn-dock active" onclick="setLayer('sat')">🛰️ True Color</button>
       <button id="btnHazard" class="btn-dock btn-danger" onclick="setLayer('hazard')">🌋 Slope Risk</button>
+      <button id="btnNDVI" class="btn-dock" onclick="setLayer('ndvi')" style="color:#34d399; border-color:rgba(52,211,153,0.35);">🌱 NDVI Canopy</button>
       <button id="btnContour" class="btn-dock" onclick="toggleContourLines()">🗺️ Contour Bunding</button>
       <button id="btnSplitLens" class="btn-dock" onclick="toggleSplitLens()">⚡ Twin Split Lens</button>
     </div>
@@ -1178,11 +1179,11 @@
     </div>
   </div>
 
-  <!-- Slope Hazard Legend -->
+  <!-- Slope Hazard & NDVI Legend -->
   <div id="legend-card">
-    <div style="font-weight:700; color:#f1f5f9;">Landslide Hazard Grade</div>
-    <div class="grad-bar"></div>
-    <div style="display:flex; justify-content:space-between; font-size:9px; color:#94a3b8;">
+    <div id="legendTitle" style="font-weight:700; color:#f1f5f9;">Landslide Hazard Grade</div>
+    <div class="grad-bar" id="legendBar"></div>
+    <div id="legendLabels" style="display:flex; justify-content:space-between; font-size:9px; color:#94a3b8;">
       <span>&lt; 15° (Safe)</span>
       <span>15°-30°</span>
       <span>&gt; 35° (High)</span>
@@ -1536,9 +1537,14 @@
         if (lblDisaster) lblDisaster.innerText = 'Agro & Watershed Intelligence';
         if (lblRescue) lblRescue.innerText = 'Agro-Asset & Livestock Triage';
 
+        const btnMeasure = document.getElementById('btnMeasure');
+        if (btnMeasure) btnMeasure.innerHTML = '🌱 Irrigation & Slope';
+        const btnClearSOS = document.querySelector('#left-dock button[onclick="clearAllSOSBeacons()"]');
+        if (btnClearSOS) btnClearSOS.innerText = 'Clear Crop Alerts';
+
         if (btnFlood) btnFlood.innerHTML = '🌾 Crop Inundation';
         if (btnTriage) btnTriage.innerHTML = '🚜 Agro Triage';
-        if (btnHelipad) btnHelipad.innerHTML = '🌾 Silos / Cold Storage';
+        if (btnHelipad) btnHelipad.innerHTML = '🛸 Kisan Drone / Silos';
         if (btnBuilding) btnBuilding.innerHTML = '🏡 Inspect Agro-Asset';
         if (btnSOS) btnSOS.innerHTML = '🚨 Crop Emergency';
         if (btnFocusRefuge) btnFocusRefuge.innerHTML = '🐄 Livestock Escape Route';
@@ -1547,6 +1553,18 @@
 
         if (hudTitle) hudTitle.innerText = 'Agro-Terrain Telemetry';
         if (lblRiskSlope) lblRiskSlope.innerText = 'Topsoil Runoff';
+
+        // Rebrand Cross-Section Measurement Card for Agricultural Runoff
+        const mH4 = document.querySelector('#measure-card h4 span');
+        if (mH4) mH4.innerText = '🌱 Canal Irrigation & Runoff Gradient';
+        const mStatus = document.getElementById('measure-status');
+        if (mStatus) mStatus.innerHTML = '💡 Click 2 points along furrow, canal, or slope to calculate gravity flow gradient';
+        const mDistLbl = document.querySelector('#measure-card .m-row:nth-child(3) span:first-child');
+        if (mDistLbl) mDistLbl.innerText = 'Canal Section Distance:';
+        const mHeadLbl = document.querySelector('#measure-card .m-row:nth-child(4) span:first-child');
+        if (mHeadLbl) mHeadLbl.innerText = 'Hydraulic Head (ΔH):';
+        const mGradeLbl = document.querySelector('#measure-card .m-row:nth-child(5) span:first-child');
+        if (mGradeLbl) mGradeLbl.innerText = 'Infiltration & Runoff Grade:';
 
         // Update triage card title and buttons
         const trH4 = document.querySelector('#triage-card h4 span');
@@ -1559,6 +1577,16 @@
         if (trPopLbl) trPopLbl.innerText = '🐄 At-Risk Livestock/Cattle:';
         const trBtn = document.querySelector('#triage-card button[onclick="dispatchEvacuationOrder()"]');
         if (trBtn) trBtn.innerText = '📢 Dispatch Kisan Crisis & PMFBY Advisory';
+
+        // Synchronize numbers if triage is active
+        const trPopEl = document.getElementById('trPop');
+        if (trPopEl && trPopEl.innerText.includes('citizens')) {
+          trPopEl.innerText = trPopEl.innerText.replace('citizens', 'Cattle & Herd Head');
+        }
+        const trSafeEl = document.getElementById('trSafe');
+        if (trSafeEl && trSafeEl.innerText.includes('Shelters')) {
+          trSafeEl.innerText = trSafeEl.innerText.replace('Shelters', 'Silos/Barns');
+        }
 
         showTacticalToast('🌾 SWITCHED TO PRECISION AGRO & WATERSHED RESILIENCE MODE');
       } else {
@@ -1575,6 +1603,11 @@
         if (lblDisaster) lblDisaster.innerText = 'Disaster & Metric Analysis';
         if (lblRescue) lblRescue.innerText = 'Tactical Rescue & NDRF AI';
 
+        const btnMeasure = document.getElementById('btnMeasure');
+        if (btnMeasure) btnMeasure.innerHTML = '📐 Profile & Gain';
+        const btnClearSOS = document.querySelector('#left-dock button[onclick="clearAllSOSBeacons()"]');
+        if (btnClearSOS) btnClearSOS.innerText = 'Clear SOS Beacons';
+
         if (btnFlood) btnFlood.innerHTML = '🌊 Flood Sim';
         if (btnTriage) btnTriage.innerHTML = '🚨 Rescue Triage';
         if (btnHelipad) btnHelipad.innerHTML = '🚁 Helipads';
@@ -1587,6 +1620,17 @@
         if (hudTitle) hudTitle.innerText = 'Terrain Telemetry';
         if (lblRiskSlope) lblRiskSlope.innerText = 'Landslide Risk';
 
+        const mH4 = document.querySelector('#measure-card h4 span');
+        if (mH4) mH4.innerText = '📐 Cross-Section Profile & Gain';
+        const mStatus = document.getElementById('measure-status');
+        if (mStatus) mStatus.innerHTML = '💡 Click any 2 points on 3D terrain or rooftops to measure custom profile';
+        const mDistLbl = document.querySelector('#measure-card .m-row:nth-child(3) span:first-child');
+        if (mDistLbl) mDistLbl.innerText = 'Ground Distance:';
+        const mHeadLbl = document.querySelector('#measure-card .m-row:nth-child(4) span:first-child');
+        if (mHeadLbl) mHeadLbl.innerText = 'Elevation Gain (ΔH):';
+        const mGradeLbl = document.querySelector('#measure-card .m-row:nth-child(5) span:first-child');
+        if (mGradeLbl) mGradeLbl.innerText = 'Slope Grade:';
+
         const trH4 = document.querySelector('#triage-card h4 span');
         if (trH4) trH4.innerText = '🚨 NDRF EVACUATION SITREP';
         const trSafeLbl = document.querySelector('#triage-card .m-row:nth-child(3) span:first-child');
@@ -1597,6 +1641,15 @@
         if (trPopLbl) trPopLbl.innerText = 'Estimated At-Risk Pop:';
         const trBtn = document.querySelector('#triage-card button[onclick="dispatchEvacuationOrder()"]');
         if (trBtn) trBtn.innerText = '📢 Dispatch NDRF Evacuation Order';
+
+        const trPopEl = document.getElementById('trPop');
+        if (trPopEl && trPopEl.innerText.includes('Cattle')) {
+          trPopEl.innerText = trPopEl.innerText.replace('Cattle & Herd Head', 'citizens');
+        }
+        const trSafeEl = document.getElementById('trSafe');
+        if (trSafeEl && trSafeEl.innerText.includes('Silos')) {
+          trSafeEl.innerText = trSafeEl.innerText.replace('Silos/Barns', 'Shelters');
+        }
 
         showTacticalToast('🚨 SWITCHED TO CIVIL DEFENSE & FLOOD RESCUE MODE');
       }
@@ -2954,24 +3007,84 @@
       waterMesh.position.z = currentWaterZ;
     };
 
+    let ndviTexture = null;
+    function generateNDVITexture() {
+      if (!satTexture || !satTexture.image) return null;
+      try {
+        const src = satTexture.image;
+        const canvas = document.createElement('canvas');
+        const w = src.width || 512, h = src.height || 512;
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(src, 0, 0, w, h);
+        const idata = ctx.getImageData(0, 0, w, h);
+        const data = idata.data;
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i], g = data[i+1], b = data[i+2];
+          // Calibrated NDVI formula from multispectral RGB bands
+          const ndvi = (g * 1.6 - r) / (g * 1.6 + r + 1e-4);
+          if (ndvi > 0.32) {
+            data[i] = 16; data[i+1] = 185; data[i+2] = 129; // Dense high biomass crop
+          } else if (ndvi > 0.12) {
+            data[i] = 132; data[i+1] = 204; data[i+2] = 22; // Moderate growth canopy
+          } else if (ndvi > -0.05) {
+            data[i] = 234; data[i+1] = 179; data[i+2] = 8; // Stressed canopy / dry parcel
+          } else {
+            data[i] = 180; data[i+1] = 83; data[i+2] = 9; // Fallow / barren / waterlogged
+          }
+        }
+        ctx.putImageData(idata, 0, 0);
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.flipY = false;
+        return tex;
+      } catch (e) {
+        console.warn("NDVI texture generation error:", e);
+        return null;
+      }
+    }
+
     window.setLayer = (type) => {
       if (!terrainMesh) return;
       const btnSat = document.getElementById('btnSat');
       const btnHaz = document.getElementById('btnHazard');
+      const btnNdvi = document.getElementById('btnNDVI');
       const legend = document.getElementById('legend-card');
+      const lTitle = document.getElementById('legendTitle');
+      const lBar = document.getElementById('legendBar');
+      const lLabels = document.getElementById('legendLabels');
 
-      if (type === 'hazard' && hazardTexture) {
+      if (btnSat) btnSat.classList.remove('active');
+      if (btnHaz) btnHaz.classList.remove('active');
+      if (btnNdvi) btnNdvi.classList.remove('active');
+
+      if (type === 'ndvi') {
+        if (!ndviTexture) ndviTexture = generateNDVITexture();
+        if (ndviTexture) {
+          terrainMesh.material.map = ndviTexture;
+          terrainMesh.material.needsUpdate = true;
+          if (btnNdvi) btnNdvi.classList.add('active');
+          if (legend) {
+            legend.style.display = 'block';
+            if (lTitle) lTitle.innerText = '🌱 NDVI Crop Health Canopy Index';
+            if (lBar) lBar.style.background = 'linear-gradient(to right, #b45309 0%, #eab308 30%, #84cc16 65%, #10b981 100%)';
+            if (lLabels) lLabels.innerHTML = '<span>Fallow (<0.2)</span><span>Stressed (0.3)</span><span>Vigorous (>0.7)</span>';
+          }
+        }
+      } else if (type === 'hazard' && hazardTexture) {
         terrainMesh.material.map = hazardTexture;
         terrainMesh.material.needsUpdate = true;
-        btnHaz.classList.add('active');
-        btnSat.classList.remove('active');
-        legend.style.display = 'block';
+        if (btnHaz) btnHaz.classList.add('active');
+        if (legend) {
+          legend.style.display = 'block';
+          if (lTitle) lTitle.innerText = (typeof appMode !== 'undefined' && appMode === 'agro') ? '🌱 Universal Soil Loss (USLE Runoff)' : 'Slope Hazard Risk (NDRF Protocol)';
+          if (lBar) lBar.style.background = 'linear-gradient(to right, #22c55e 0%, #eab308 50%, #ef4444 100%)';
+          if (lLabels) lLabels.innerHTML = '<span>Stable (<15°)</span><span>Moderate</span><span>Critical (>35°)</span>';
+        }
       } else if (type === 'sat' && satTexture) {
         terrainMesh.material.map = satTexture;
         terrainMesh.material.needsUpdate = true;
-        btnSat.classList.add('active');
-        btnHaz.classList.remove('active');
-        legend.style.display = 'none';
+        if (btnSat) btnSat.classList.add('active');
+        if (legend) legend.style.display = 'none';
       }
     };
 
@@ -3507,6 +3620,97 @@
       const heli = new THREE.Group();
       heli.name = "rescueChopper";
 
+      if (typeof appMode !== 'undefined' && appMode === 'agro') {
+        // 🌾 Kisan Autonomous Agro-Drone (Hexacopter Twin)
+        const droneMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.25, metalness: 0.1 });
+        const carbonMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.8 });
+        const greenMat = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.3, emissive: 0x059669, emissiveIntensity: 0.4 });
+        const tankMat = new THREE.MeshStandardMaterial({ color: 0x34d399, transparent: true, opacity: 0.65, roughness: 0.1 });
+
+        // Central Avionics Hub
+        const hubMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1.1, 0.55, 6), droneMat);
+        hubMesh.position.set(0, 0, 0);
+        heli.add(hubMesh);
+
+        // Top GPS RTK Mast
+        const rtk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.35, 12), greenMat);
+        rtk.position.set(0, 0.45, 0);
+        heli.add(rtk);
+
+        // Center Nano-Urea / Sensor Tank
+        const tank = new THREE.Mesh(new THREE.SphereGeometry(0.55, 16, 16), tankMat);
+        tank.scale.set(1.2, 0.7, 1.2);
+        tank.position.set(0, -0.2, 0);
+        heli.add(tank);
+
+        // 6 Radial Rotor Arms & Motors
+        chopperMainRotor = new THREE.Group();
+        chopperMainRotor.position.set(0, 0.35, 0);
+
+        for (let i = 0; i < 6; i++) {
+          const angle = (i * Math.PI) / 3;
+          const armLen = 2.4;
+          const armX = Math.cos(angle) * (armLen / 2);
+          const armZ = Math.sin(angle) * (armLen / 2);
+
+          const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, armLen, 8), carbonMat);
+          arm.rotation.z = Math.PI / 2;
+          arm.rotation.y = -angle;
+          arm.position.set(armX, 0.05, armZ);
+          heli.add(arm);
+
+          // Motor Housing at tip
+          const mX = Math.cos(angle) * armLen;
+          const mZ = Math.sin(angle) * armLen;
+          const motor = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.25, 12), carbonMat);
+          motor.position.set(mX, 0.15, mZ);
+          heli.add(motor);
+
+          // Propeller attached to rotating group
+          const propGroup = new THREE.Group();
+          propGroup.position.set(mX, 0, mZ);
+          const blade = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.02, 1.3), carbonMat);
+          const tipA = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.025, 0.2), greenMat);
+          tipA.position.set(0, 0, 0.55);
+          const tipB = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.025, 0.2), greenMat);
+          tipB.position.set(0, 0, -0.55);
+          propGroup.add(blade);
+          propGroup.add(tipA);
+          propGroup.add(tipB);
+          chopperMainRotor.add(propGroup);
+        }
+        heli.add(chopperMainRotor);
+
+        // Downward Conical Multispectral / Crop Laser Scanning Beam
+        const coneGeo = new THREE.ConeGeometry(size * 0.10, size * 0.28, 32);
+        const coneMat = new THREE.MeshBasicMaterial({
+          color: 0x10b981,
+          transparent: true,
+          opacity: 0.28,
+          side: THREE.DoubleSide
+        });
+        const scanCone = new THREE.Mesh(coneGeo, coneMat);
+        scanCone.rotation.x = Math.PI;
+        scanCone.position.set(0, -size * 0.14, 0);
+        heli.add(scanCone);
+
+        // Dynamic Spotlight in Emerald Green
+        const droneLight = new THREE.SpotLight(0x10b981, 3.2, 50, Math.PI / 4, 0.4, 1.2);
+        droneLight.position.set(0, -0.3, 0);
+        droneLight.target.position.set(0, -30, 0);
+        heli.add(droneLight);
+        heli.add(droneLight.target);
+
+        // Dummy tail rotor so animate loop doesn't error
+        chopperTailRotor = new THREE.Group();
+        heli.add(chopperTailRotor);
+
+        heli.scale.set(3.5, 3.5, 3.5);
+        rescueHelicopter = heli;
+        scene.add(rescueHelicopter);
+        return rescueHelicopter;
+      }
+
       // Tactical Coast Guard Orange / Navy Livery
       const orangeMat = new THREE.MeshStandardMaterial({
         color: 0xf97316,
@@ -3738,41 +3942,56 @@
         const bSize = bBox.getSize(new THREE.Vector3());
         const padRadius = Math.max(2.2, Math.min(Math.min(bSize.x, bSize.y) * 0.38, 6.0));
 
-        // 1. Golden Circular Landing Ring flat on rooftop
+        const isAgro = typeof appMode !== 'undefined' && appMode === 'agro';
+
+        // 1. Landing Ring flat on rooftop / plinth
         const ringGeo = new THREE.RingGeometry(padRadius * 0.78, padRadius, 32);
-        const ringMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24, side: THREE.DoubleSide });
+        const ringMat = new THREE.MeshBasicMaterial({ color: isAgro ? 0x10b981 : 0xfbbf24, side: THREE.DoubleSide });
         const ring = new THREE.Mesh(ringGeo, ringMat);
         ring.position.set(bCenter.x, bCenter.y, topZ);
 
-        // 2. Crisp White 'H' Decal
-        const hMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+        // 2. Center Decal: 'H' for Rescue, or Grain Silo / Drone Dock for Agro
+        const hMat = new THREE.MeshBasicMaterial({ color: isAgro ? 0x34d399 : 0xffffff, side: THREE.DoubleSide });
         const barW = padRadius * 0.16;
         const barL = padRadius * 0.90;
-        const lBar = new THREE.Mesh(new THREE.PlaneGeometry(barW, barL), hMat);
-        lBar.position.set(bCenter.x - padRadius * 0.32, bCenter.y, topZ + 0.05);
 
-        const rBar = new THREE.Mesh(new THREE.PlaneGeometry(barW, barL), hMat);
-        rBar.position.set(bCenter.x + padRadius * 0.32, bCenter.y, topZ + 0.05);
+        if (isAgro) {
+          // Quad-Point Precision Target Cross for Drone Landing / Silo Port
+          const vBar = new THREE.Mesh(new THREE.PlaneGeometry(barW, barL), hMat);
+          vBar.position.set(bCenter.x, bCenter.y, topZ + 0.05);
+          const hBar = new THREE.Mesh(new THREE.PlaneGeometry(barL, barW), hMat);
+          hBar.position.set(bCenter.x, bCenter.y, topZ + 0.05);
+          const dot = new THREE.Mesh(new THREE.CircleGeometry(barW * 1.2, 16), new THREE.MeshBasicMaterial({ color: 0xfbbf24, side: THREE.DoubleSide }));
+          dot.position.set(bCenter.x, bCenter.y, topZ + 0.06);
+          helipadGroup.add(vBar);
+          helipadGroup.add(hBar);
+          helipadGroup.add(dot);
+        } else {
+          // Standard Helipad 'H' Decal
+          const lBar = new THREE.Mesh(new THREE.PlaneGeometry(barW, barL), hMat);
+          lBar.position.set(bCenter.x - padRadius * 0.32, bCenter.y, topZ + 0.05);
+          const rBar = new THREE.Mesh(new THREE.PlaneGeometry(barW, barL), hMat);
+          rBar.position.set(bCenter.x + padRadius * 0.32, bCenter.y, topZ + 0.05);
+          const cBar = new THREE.Mesh(new THREE.PlaneGeometry(padRadius * 0.65, barW), hMat);
+          cBar.position.set(bCenter.x, bCenter.y, topZ + 0.05);
+          helipadGroup.add(lBar);
+          helipadGroup.add(rBar);
+          helipadGroup.add(cBar);
+        }
 
-        const cBar = new THREE.Mesh(new THREE.PlaneGeometry(padRadius * 0.65, barW), hMat);
-        cBar.position.set(bCenter.x, bCenter.y, topZ + 0.05);
-
-        // 3. Vertical Searchlight Extraction Beacon shooting straight UP into the sky
+        // 3. Vertical Guidance Beacon shooting straight UP into the sky
         const beaconH = size * 0.28;
         const beaconGeo = new THREE.CylinderGeometry(0.12, 0.55, beaconH, 16);
-        const beaconMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.6 });
+        const beaconMat = new THREE.MeshBasicMaterial({ color: isAgro ? 0x10b981 : 0x38bdf8, transparent: true, opacity: 0.65 });
         const beacon = new THREE.Mesh(beaconGeo, beaconMat);
         beacon.rotation.x = Math.PI / 2;
         beacon.position.set(bCenter.x, bCenter.y, topZ + beaconH / 2);
 
         helipadGroup.add(ring);
-        helipadGroup.add(lBar);
-        helipadGroup.add(rBar);
-        helipadGroup.add(cBar);
         helipadGroup.add(beacon);
       });
 
-      // 🚁 Spawn 3D Coast Guard Rescue Helicopter flying in towards #1 Helipad
+      // 🚁 Spawn 3D Aircraft / Drone flying in towards #1 Target
       const primaryHub = topHelipads[0];
       const hCenter = primaryHub.userData.center || new THREE.Vector3();
       chopperTargetPos.set(hCenter.x, hCenter.y, hCenter.z + 11.0);
@@ -3785,7 +4004,7 @@
       rescueHelicopter.up.set(0, 0, 1);
       rescueHelicopter.lookAt(chopperTargetPos);
 
-      // Smoothly swing the camera to view the incoming rescue sortie!
+      // Smoothly swing the camera to view the incoming flight sortie!
       controls.target.copy(hCenter);
       camera.position.set(hCenter.x + size * 0.32, hCenter.y - size * 0.38, hCenter.z + size * 0.22);
       controls.update();
@@ -3796,10 +4015,34 @@
       // Close Evac HUD if active so they don't overlap
       closeEvacHUD();
 
-      // Show Cinematic HUD Banner
+      // Show Cinematic HUD Banner (adapted for Agro Drone or Coast Guard Chopper)
       const hud = document.getElementById('chopper-hud');
       const hudHubs = document.getElementById('hudHubs');
-      if (hudHubs) hudHubs.innerText = `${topHelipads.length} Rooftops`;
+      const hSprite = document.getElementById('chopperSprite');
+      const hBadge = document.querySelector('#chopper-hud .chopper-badge');
+      const hTitle = document.querySelector('#chopper-hud .chopper-title');
+      const hClear = document.querySelector('#chopper-hud .c-cell:nth-child(2) .c-v');
+      const hSquad = document.querySelector('#chopper-hud .c-cell:nth-child(3) .c-v');
+      const hCap = document.querySelector('#chopper-hud .c-cell:nth-child(4) .c-v');
+
+      if (typeof appMode !== 'undefined' && appMode === 'agro') {
+        if (hSprite) hSprite.innerText = '🛸';
+        if (hBadge) hBadge.innerHTML = '<span class="pulse-dot" style="background:#10b981;"></span> ICAR / PMKSY KISAN AUTONOMOUS DRONE SURVEY · AGRI-04';
+        if (hTitle) hTitle.innerText = 'CROP CANOPY & SILO LOGISTICS CORRIDOR VERIFIED';
+        if (hudHubs) hudHubs.innerText = `${topHelipads.length} Silos & Cold Hubs`;
+        if (hClear) { hClear.innerText = 'PASS (Elevated Plinth)'; hClear.style.color = '#34d399'; }
+        if (hSquad) { hSquad.innerText = 'Kisan Hexacopter AG-16'; hSquad.style.color = '#10b981'; }
+        if (hCap) { hCap.innerText = '18.4 Ha / hr Scan'; hCap.style.color = '#fbbf24'; }
+      } else {
+        if (hSprite) hSprite.innerText = '🚁';
+        if (hBadge) hBadge.innerHTML = '<span class="pulse-dot"></span> IAF AIR-SEA RESCUE DISPATCH · ALH DHRUV UNIT #07';
+        if (hTitle) hTitle.innerText = 'ROOFTOP EXTRACTION CORRIDOR VERIFIED';
+        if (hudHubs) hudHubs.innerText = `${topHelipads.length} Rooftops`;
+        if (hClear) { hClear.innerText = 'PASS (< 3° Slope)'; hClear.style.color = '#34d399'; }
+        if (hSquad) { hSquad.innerText = 'ALH Dhruv Mk-III'; hSquad.style.color = '#38bdf8'; }
+        if (hCap) { hCap.innerText = '48 pers / sortie'; hCap.style.color = '#fbbf24'; }
+      }
+
       if (hud) {
         hud.classList.add('active');
         if (window.chopperTimer) clearTimeout(window.chopperTimer);
