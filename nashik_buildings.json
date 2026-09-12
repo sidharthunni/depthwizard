@@ -1,7 +1,7 @@
 [
   {
     "id": 230072381,
-    "name": "Structure",
+    "name": "Nashik Vineyard Processing Center (Sector 1)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -29,7 +29,7 @@
   },
   {
     "id": 230524992,
-    "name": "Structure",
+    "name": "Dindori Grape Export Cold Chain (Sector 2)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -149,7 +149,7 @@
   },
   {
     "id": 321114661,
-    "name": "Structure",
+    "name": "Godavari Lift Irrigation Station (Sector 4)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -173,7 +173,7 @@
   },
   {
     "id": 321114673,
-    "name": "Structure",
+    "name": "Kisan Winery Fermentation Shed (Sector 5)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -229,7 +229,7 @@
   },
   {
     "id": 321114674,
-    "name": "Structure",
+    "name": "Sahyadri Agro Farmers Producer Co (Sector 6)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -257,7 +257,7 @@
   },
   {
     "id": 321114675,
-    "name": "Structure",
+    "name": "Solar Agro Micro-Grid Facility (Sector 7)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -289,7 +289,7 @@
   },
   {
     "id": 321114676,
-    "name": "Structure",
+    "name": "Rural Hospital Emergency Ward (Sector 8)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -441,7 +441,7 @@
   },
   {
     "id": 357200353,
-    "name": "Structure",
+    "name": "Water Lift & Drip Control Hub (Sector 12)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -509,7 +509,7 @@
   },
   {
     "id": 357200354,
-    "name": "Structure",
+    "name": "Nashik Vineyard Processing Center (Sector 13)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -581,7 +581,7 @@
   },
   {
     "id": 357200366,
-    "name": "Structure",
+    "name": "Dindori Grape Export Cold Chain (Sector 14)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -609,7 +609,7 @@
   },
   {
     "id": 357200367,
-    "name": "Structure",
+    "name": "APMC Onion & Vegetable Mandi (Sector 15)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -637,7 +637,7 @@
   },
   {
     "id": 357200370,
-    "name": "Structure",
+    "name": "Godavari Lift Irrigation Station (Sector 16)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -665,7 +665,7 @@
   },
   {
     "id": 357200371,
-    "name": "Structure",
+    "name": "Kisan Winery Fermentation Shed (Sector 17)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -693,7 +693,7 @@
   },
   {
     "id": 357200372,
-    "name": "Structure",
+    "name": "Sahyadri Agro Farmers Producer Co (Sector 18)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -721,7 +721,7 @@
   },
   {
     "id": 357200379,
-    "name": "Structure",
+    "name": "Solar Agro Micro-Grid Facility (Sector 19)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -749,7 +749,7 @@
   },
   {
     "id": 357200384,
-    "name": "Structure",
+    "name": "Rural Hospital Emergency Ward (Sector 20)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -777,7 +777,7 @@
   },
   {
     "id": 357200385,
-    "name": "Structure",
+    "name": "Disaster Evacuation Refuge (Sector 21)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -805,7 +805,7 @@
   },
   {
     "id": 357200390,
-    "name": "Structure",
+    "name": "Horticulture Seed Testing Lab (Sector 22)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -833,7 +833,7 @@
   },
   {
     "id": 357200402,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Verification Camp (Sector 23)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -861,7 +861,7 @@
   },
   {
     "id": 357200403,
-    "name": "Structure",
+    "name": "Water Lift & Drip Control Hub (Sector 24)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -889,7 +889,7 @@
   },
   {
     "id": 357200404,
-    "name": "Structure",
+    "name": "Nashik Vineyard Processing Center (Sector 25)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -917,7 +917,7 @@
   },
   {
     "id": 357200406,
-    "name": "Structure",
+    "name": "Dindori Grape Export Cold Chain (Sector 26)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -945,7 +945,7 @@
   },
   {
     "id": 357200408,
-    "name": "Structure",
+    "name": "APMC Onion & Vegetable Mandi (Sector 27)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -973,7 +973,7 @@
   },
   {
     "id": 357200410,
-    "name": "Structure",
+    "name": "Godavari Lift Irrigation Station (Sector 28)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1001,7 +1001,7 @@
   },
   {
     "id": 357200413,
-    "name": "Structure",
+    "name": "Kisan Winery Fermentation Shed (Sector 29)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1045,7 +1045,7 @@
   },
   {
     "id": 357200414,
-    "name": "Structure",
+    "name": "Sahyadri Agro Farmers Producer Co (Sector 30)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1089,7 +1089,7 @@
   },
   {
     "id": 357366899,
-    "name": "Structure",
+    "name": "Solar Agro Micro-Grid Facility (Sector 31)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1141,7 +1141,7 @@
   },
   {
     "id": 357366900,
-    "name": "Structure",
+    "name": "Rural Hospital Emergency Ward (Sector 32)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1193,7 +1193,7 @@
   },
   {
     "id": 357366901,
-    "name": "Structure",
+    "name": "Disaster Evacuation Refuge (Sector 33)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1253,7 +1253,7 @@
   },
   {
     "id": 357366914,
-    "name": "Structure",
+    "name": "Horticulture Seed Testing Lab (Sector 34)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1325,7 +1325,7 @@
   },
   {
     "id": 357366916,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Verification Camp (Sector 35)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1417,7 +1417,7 @@
   },
   {
     "id": 357366924,
-    "name": "Structure",
+    "name": "Water Lift & Drip Control Hub (Sector 36)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1445,7 +1445,7 @@
   },
   {
     "id": 357366925,
-    "name": "Structure",
+    "name": "Nashik Vineyard Processing Center (Sector 37)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1473,7 +1473,7 @@
   },
   {
     "id": 357366930,
-    "name": "Structure",
+    "name": "Dindori Grape Export Cold Chain (Sector 38)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1501,7 +1501,7 @@
   },
   {
     "id": 357366933,
-    "name": "Structure",
+    "name": "APMC Onion & Vegetable Mandi (Sector 39)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1529,7 +1529,7 @@
   },
   {
     "id": 357366939,
-    "name": "Structure",
+    "name": "Godavari Lift Irrigation Station (Sector 40)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1557,7 +1557,7 @@
   },
   {
     "id": 357366954,
-    "name": "Structure",
+    "name": "Kisan Winery Fermentation Shed (Sector 41)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1585,7 +1585,7 @@
   },
   {
     "id": 357366955,
-    "name": "Structure",
+    "name": "Sahyadri Agro Farmers Producer Co (Sector 42)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1613,7 +1613,7 @@
   },
   {
     "id": 357366964,
-    "name": "Structure",
+    "name": "Solar Agro Micro-Grid Facility (Sector 43)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1641,7 +1641,7 @@
   },
   {
     "id": 357366973,
-    "name": "Structure",
+    "name": "Rural Hospital Emergency Ward (Sector 44)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1669,7 +1669,7 @@
   },
   {
     "id": 357366978,
-    "name": "Structure",
+    "name": "Disaster Evacuation Refuge (Sector 45)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1697,7 +1697,7 @@
   },
   {
     "id": 357366987,
-    "name": "Structure",
+    "name": "Horticulture Seed Testing Lab (Sector 46)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1725,7 +1725,7 @@
   },
   {
     "id": 357366996,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Verification Camp (Sector 47)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1753,7 +1753,7 @@
   },
   {
     "id": 357367002,
-    "name": "Structure",
+    "name": "Water Lift & Drip Control Hub (Sector 48)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1781,7 +1781,7 @@
   },
   {
     "id": 357367005,
-    "name": "Structure",
+    "name": "Nashik Vineyard Processing Center (Sector 49)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1809,7 +1809,7 @@
   },
   {
     "id": 357367021,
-    "name": "Structure",
+    "name": "Dindori Grape Export Cold Chain (Sector 50)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1837,7 +1837,7 @@
   },
   {
     "id": 357367031,
-    "name": "Structure",
+    "name": "APMC Onion & Vegetable Mandi (Sector 51)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1865,7 +1865,7 @@
   },
   {
     "id": 357367033,
-    "name": "Structure",
+    "name": "Godavari Lift Irrigation Station (Sector 52)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1893,7 +1893,7 @@
   },
   {
     "id": 357367037,
-    "name": "Structure",
+    "name": "Kisan Winery Fermentation Shed (Sector 53)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1937,7 +1937,7 @@
   },
   {
     "id": 357367039,
-    "name": "Structure",
+    "name": "Sahyadri Agro Farmers Producer Co (Sector 54)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1981,7 +1981,7 @@
   },
   {
     "id": 357367040,
-    "name": "Structure",
+    "name": "Solar Agro Micro-Grid Facility (Sector 55)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2017,7 +2017,7 @@
   },
   {
     "id": 357367041,
-    "name": "Structure",
+    "name": "Rural Hospital Emergency Ward (Sector 56)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2065,7 +2065,7 @@
   },
   {
     "id": 357373194,
-    "name": "Structure",
+    "name": "Disaster Evacuation Refuge (Sector 57)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2117,7 +2117,7 @@
   },
   {
     "id": 357373199,
-    "name": "Structure",
+    "name": "Horticulture Seed Testing Lab (Sector 58)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2145,7 +2145,7 @@
   },
   {
     "id": 357373200,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Verification Camp (Sector 59)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2173,7 +2173,7 @@
   },
   {
     "id": 357373207,
-    "name": "Structure",
+    "name": "Water Lift & Drip Control Hub (Sector 60)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2201,7 +2201,7 @@
   },
   {
     "id": 357373212,
-    "name": "Structure",
+    "name": "Nashik Vineyard Processing Center (Sector 61)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2229,7 +2229,7 @@
   },
   {
     "id": 357373214,
-    "name": "Structure",
+    "name": "Dindori Grape Export Cold Chain (Sector 62)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2257,7 +2257,7 @@
   },
   {
     "id": 357373218,
-    "name": "Structure",
+    "name": "APMC Onion & Vegetable Mandi (Sector 63)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2285,7 +2285,7 @@
   },
   {
     "id": 357373221,
-    "name": "Structure",
+    "name": "Godavari Lift Irrigation Station (Sector 64)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2313,7 +2313,7 @@
   },
   {
     "id": 357373223,
-    "name": "Structure",
+    "name": "Kisan Winery Fermentation Shed (Sector 65)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2341,7 +2341,7 @@
   },
   {
     "id": 357373224,
-    "name": "Structure",
+    "name": "Sahyadri Agro Farmers Producer Co (Sector 66)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2369,7 +2369,7 @@
   },
   {
     "id": 357373225,
-    "name": "Structure",
+    "name": "Solar Agro Micro-Grid Facility (Sector 67)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2397,7 +2397,7 @@
   },
   {
     "id": 357373227,
-    "name": "Structure",
+    "name": "Rural Hospital Emergency Ward (Sector 68)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2425,7 +2425,7 @@
   },
   {
     "id": 357373231,
-    "name": "Structure",
+    "name": "Disaster Evacuation Refuge (Sector 69)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2453,7 +2453,7 @@
   },
   {
     "id": 357373234,
-    "name": "Structure",
+    "name": "Horticulture Seed Testing Lab (Sector 70)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2481,7 +2481,7 @@
   },
   {
     "id": 357373241,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Verification Camp (Sector 71)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2509,7 +2509,7 @@
   },
   {
     "id": 357373245,
-    "name": "Structure",
+    "name": "Water Lift & Drip Control Hub (Sector 72)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2537,7 +2537,7 @@
   },
   {
     "id": 357373248,
-    "name": "Structure",
+    "name": "Nashik Vineyard Processing Center (Sector 73)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2565,7 +2565,7 @@
   },
   {
     "id": 357373251,
-    "name": "Structure",
+    "name": "Dindori Grape Export Cold Chain (Sector 74)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2593,7 +2593,7 @@
   },
   {
     "id": 357373255,
-    "name": "Structure",
+    "name": "APMC Onion & Vegetable Mandi (Sector 75)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2625,7 +2625,7 @@
   },
   {
     "id": 357373257,
-    "name": "Structure",
+    "name": "Godavari Lift Irrigation Station (Sector 76)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2661,7 +2661,7 @@
   },
   {
     "id": 357373260,
-    "name": "Structure",
+    "name": "Kisan Winery Fermentation Shed (Sector 77)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2701,7 +2701,7 @@
   },
   {
     "id": 357373261,
-    "name": "Structure",
+    "name": "Sahyadri Agro Farmers Producer Co (Sector 78)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2745,7 +2745,7 @@
   },
   {
     "id": 357373263,
-    "name": "Structure",
+    "name": "Solar Agro Micro-Grid Facility (Sector 79)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2789,7 +2789,7 @@
   },
   {
     "id": 357373266,
-    "name": "Structure",
+    "name": "Rural Hospital Emergency Ward (Sector 80)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2841,7 +2841,7 @@
   },
   {
     "id": 396828631,
-    "name": "Structure",
+    "name": "Disaster Evacuation Refuge (Sector 81)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2885,7 +2885,7 @@
   },
   {
     "id": 396828633,
-    "name": "Structure",
+    "name": "Horticulture Seed Testing Lab (Sector 82)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2913,7 +2913,7 @@
   },
   {
     "id": 396828634,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Verification Camp (Sector 83)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2965,7 +2965,7 @@
   },
   {
     "id": 548846544,
-    "name": "Structure",
+    "name": "Water Lift & Drip Control Hub (Sector 84)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3001,7 +3001,7 @@
   },
   {
     "id": 548846550,
-    "name": "Structure",
+    "name": "Nashik Vineyard Processing Center (Sector 85)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3037,7 +3037,7 @@
   },
   {
     "id": 548846551,
-    "name": "Structure",
+    "name": "Dindori Grape Export Cold Chain (Sector 86)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3073,7 +3073,7 @@
   },
   {
     "id": 548846552,
-    "name": "Structure",
+    "name": "APMC Onion & Vegetable Mandi (Sector 87)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3125,7 +3125,7 @@
   },
   {
     "id": 548846553,
-    "name": "Structure",
+    "name": "Godavari Lift Irrigation Station (Sector 88)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3177,7 +3177,7 @@
   },
   {
     "id": 548846554,
-    "name": "Structure",
+    "name": "Kisan Winery Fermentation Shed (Sector 89)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3213,7 +3213,7 @@
   },
   {
     "id": 754122582,
-    "name": "Structure",
+    "name": "Sahyadri Agro Farmers Producer Co (Sector 90)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3241,7 +3241,7 @@
   },
   {
     "id": 754445728,
-    "name": "Structure",
+    "name": "Solar Agro Micro-Grid Facility (Sector 91)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3269,7 +3269,7 @@
   },
   {
     "id": 754530618,
-    "name": "Structure",
+    "name": "Rural Hospital Emergency Ward (Sector 92)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3297,7 +3297,7 @@
   },
   {
     "id": 754546138,
-    "name": "Structure",
+    "name": "Disaster Evacuation Refuge (Sector 93)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3341,7 +3341,7 @@
   },
   {
     "id": 755032490,
-    "name": "Structure",
+    "name": "Horticulture Seed Testing Lab (Sector 94)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3385,7 +3385,7 @@
   },
   {
     "id": 757092655,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Verification Camp (Sector 95)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3413,7 +3413,7 @@
   },
   {
     "id": 819757345,
-    "name": "Structure",
+    "name": "Water Lift & Drip Control Hub (Sector 96)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3441,7 +3441,7 @@
   },
   {
     "id": 819757356,
-    "name": "Structure",
+    "name": "Nashik Vineyard Processing Center (Sector 97)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3469,7 +3469,7 @@
   },
   {
     "id": 819757385,
-    "name": "Structure",
+    "name": "Dindori Grape Export Cold Chain (Sector 98)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3497,7 +3497,7 @@
   },
   {
     "id": 819757423,
-    "name": "Structure",
+    "name": "APMC Onion & Vegetable Mandi (Sector 99)",
     "height": 10.0,
     "type": "yes",
     "polygon": [

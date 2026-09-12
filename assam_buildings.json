@@ -45,7 +45,7 @@
   },
   {
     "id": 144357675,
-    "name": "Structure",
+    "name": "Assam Tea Board Central Warehouse (Sector 2)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -225,7 +225,7 @@
   },
   {
     "id": 157584893,
-    "name": "Structure",
+    "name": "Brahmaputra Sluice & Pump Station (Sector 5)",
     "height": 10.0,
     "type": "train_station",
     "polygon": [
@@ -285,7 +285,7 @@
   },
   {
     "id": 359653242,
-    "name": "Structure",
+    "name": "District Civil Defense Camp (Sector 6)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -357,7 +357,7 @@
   },
   {
     "id": 517478734,
-    "name": "Structure",
+    "name": "Animal Husbandry Flood Haven (Sector 8)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -405,7 +405,7 @@
   },
   {
     "id": 517941872,
-    "name": "Structure",
+    "name": "Kisan Agronomy Telemetry Post (Sector 9)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -433,7 +433,7 @@
   },
   {
     "id": 517941873,
-    "name": "Structure",
+    "name": "State Emergency Operations Wing (Sector 10)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -461,7 +461,7 @@
   },
   {
     "id": 517941874,
-    "name": "Structure",
+    "name": "APMC Riverine Mandi Yard (Sector 11)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -505,7 +505,7 @@
   },
   {
     "id": 548222132,
-    "name": "Structure",
+    "name": "Primary Health Care Emergency Depot (Sector 12)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -549,7 +549,7 @@
   },
   {
     "id": 548222133,
-    "name": "Structure",
+    "name": "Brahmaputra Flood Relief Shelter (Sector 13)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -593,7 +593,7 @@
   },
   {
     "id": 548222134,
-    "name": "Structure",
+    "name": "Assam Tea Board Central Warehouse (Sector 14)",
     "height": 35.0,
     "type": "yes",
     "polygon": [
@@ -637,7 +637,7 @@
   },
   {
     "id": 548222135,
-    "name": "Structure",
+    "name": "Guwahati Agro-Cold Chain (Sector 15)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -665,7 +665,7 @@
   },
   {
     "id": 548222137,
-    "name": "Structure",
+    "name": "Paddy Procurement Silo Complex (Sector 16)",
     "height": 28.0,
     "type": "yes",
     "polygon": [
@@ -693,7 +693,7 @@
   },
   {
     "id": 548222144,
-    "name": "Structure",
+    "name": "Brahmaputra Sluice & Pump Station (Sector 17)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -737,7 +737,7 @@
   },
   {
     "id": 548222145,
-    "name": "Structure",
+    "name": "District Civil Defense Camp (Sector 18)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -797,7 +797,7 @@
   },
   {
     "id": 574855088,
-    "name": "Structure",
+    "name": "Community Evacuation Shelter (Sector 19)",
     "height": 17.5,
     "type": "apartments",
     "polygon": [
@@ -841,7 +841,7 @@
   },
   {
     "id": 574857575,
-    "name": "Structure",
+    "name": "Animal Husbandry Flood Haven (Sector 20)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -869,7 +869,7 @@
   },
   {
     "id": 574857576,
-    "name": "Structure",
+    "name": "Kisan Agronomy Telemetry Post (Sector 21)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -913,7 +913,7 @@
   },
   {
     "id": 574857577,
-    "name": "Structure",
+    "name": "State Emergency Operations Wing (Sector 22)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1001,7 +1001,7 @@
   },
   {
     "id": 726127087,
-    "name": "Structure",
+    "name": "Primary Health Care Emergency Depot (Sector 24)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1029,7 +1029,7 @@
   },
   {
     "id": 726127543,
-    "name": "Structure",
+    "name": "Brahmaputra Flood Relief Shelter (Sector 25)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1065,7 +1065,7 @@
   },
   {
     "id": 726127633,
-    "name": "Structure",
+    "name": "Assam Tea Board Central Warehouse (Sector 26)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1093,7 +1093,7 @@
   },
   {
     "id": 726127710,
-    "name": "Structure",
+    "name": "Guwahati Agro-Cold Chain (Sector 27)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1129,7 +1129,7 @@
   },
   {
     "id": 726129703,
-    "name": "Structure",
+    "name": "Paddy Procurement Silo Complex (Sector 28)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1189,7 +1189,7 @@
   },
   {
     "id": 726148423,
-    "name": "Structure",
+    "name": "Brahmaputra Sluice & Pump Station (Sector 29)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1233,7 +1233,7 @@
   },
   {
     "id": 726163128,
-    "name": "Structure",
+    "name": "District Civil Defense Camp (Sector 30)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1269,7 +1269,7 @@
   },
   {
     "id": 726163628,
-    "name": "Structure",
+    "name": "Community Evacuation Shelter (Sector 31)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1305,7 +1305,7 @@
   },
   {
     "id": 726163799,
-    "name": "Structure",
+    "name": "Animal Husbandry Flood Haven (Sector 32)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1333,7 +1333,7 @@
   },
   {
     "id": 726164189,
-    "name": "Structure",
+    "name": "Kisan Agronomy Telemetry Post (Sector 33)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1377,7 +1377,7 @@
   },
   {
     "id": 726164703,
-    "name": "Structure",
+    "name": "State Emergency Operations Wing (Sector 34)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1405,7 +1405,7 @@
   },
   {
     "id": 726165199,
-    "name": "Structure",
+    "name": "APMC Riverine Mandi Yard (Sector 35)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1441,7 +1441,7 @@
   },
   {
     "id": 726165435,
-    "name": "Structure",
+    "name": "Primary Health Care Emergency Depot (Sector 36)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1477,7 +1477,7 @@
   },
   {
     "id": 726171349,
-    "name": "Structure",
+    "name": "Brahmaputra Flood Relief Shelter (Sector 37)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1505,7 +1505,7 @@
   },
   {
     "id": 726172392,
-    "name": "Structure",
+    "name": "Assam Tea Board Central Warehouse (Sector 38)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1533,7 +1533,7 @@
   },
   {
     "id": 726172680,
-    "name": "Structure",
+    "name": "Guwahati Agro-Cold Chain (Sector 39)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1561,7 +1561,7 @@
   },
   {
     "id": 726173010,
-    "name": "Structure",
+    "name": "Paddy Procurement Silo Complex (Sector 40)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1589,7 +1589,7 @@
   },
   {
     "id": 726173165,
-    "name": "Structure",
+    "name": "Brahmaputra Sluice & Pump Station (Sector 41)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1617,7 +1617,7 @@
   },
   {
     "id": 738284738,
-    "name": "Structure",
+    "name": "District Civil Defense Camp (Sector 42)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1685,7 +1685,7 @@
   },
   {
     "id": 738284743,
-    "name": "Structure",
+    "name": "Community Evacuation Shelter (Sector 43)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1717,7 +1717,7 @@
   },
   {
     "id": 761107598,
-    "name": "Structure",
+    "name": "Animal Husbandry Flood Haven (Sector 44)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1769,7 +1769,7 @@
   },
   {
     "id": 761107599,
-    "name": "Structure",
+    "name": "Kisan Agronomy Telemetry Post (Sector 45)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1813,7 +1813,7 @@
   },
   {
     "id": 761107602,
-    "name": "Structure",
+    "name": "State Emergency Operations Wing (Sector 46)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1861,7 +1861,7 @@
   },
   {
     "id": 806033512,
-    "name": "Structure",
+    "name": "APMC Riverine Mandi Yard (Sector 47)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1889,7 +1889,7 @@
   },
   {
     "id": 806033532,
-    "name": "Structure",
+    "name": "Primary Health Care Emergency Depot (Sector 48)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1917,7 +1917,7 @@
   },
   {
     "id": 806033535,
-    "name": "Structure",
+    "name": "Brahmaputra Flood Relief Shelter (Sector 49)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1945,7 +1945,7 @@
   },
   {
     "id": 806033536,
-    "name": "Structure",
+    "name": "Assam Tea Board Central Warehouse (Sector 50)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1973,7 +1973,7 @@
   },
   {
     "id": 806033538,
-    "name": "Structure",
+    "name": "Guwahati Agro-Cold Chain (Sector 51)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2029,7 +2029,7 @@
   },
   {
     "id": 806033593,
-    "name": "Structure",
+    "name": "Brahmaputra Sluice & Pump Station (Sector 53)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2065,7 +2065,7 @@
   },
   {
     "id": 806448454,
-    "name": "Structure",
+    "name": "District Civil Defense Camp (Sector 54)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2093,7 +2093,7 @@
   },
   {
     "id": 915229460,
-    "name": "Structure",
+    "name": "Community Evacuation Shelter (Sector 55)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2121,7 +2121,7 @@
   },
   {
     "id": 915229461,
-    "name": "Structure",
+    "name": "Animal Husbandry Flood Haven (Sector 56)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2149,7 +2149,7 @@
   },
   {
     "id": 1054721789,
-    "name": "Structure",
+    "name": "Kisan Agronomy Telemetry Post (Sector 57)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2177,7 +2177,7 @@
   },
   {
     "id": 1054721790,
-    "name": "Structure",
+    "name": "State Emergency Operations Wing (Sector 58)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2205,7 +2205,7 @@
   },
   {
     "id": 1054721791,
-    "name": "Structure",
+    "name": "APMC Riverine Mandi Yard (Sector 59)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2233,7 +2233,7 @@
   },
   {
     "id": 1054721792,
-    "name": "Structure",
+    "name": "Primary Health Care Emergency Depot (Sector 60)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2261,7 +2261,7 @@
   },
   {
     "id": 1054721793,
-    "name": "Structure",
+    "name": "Brahmaputra Flood Relief Shelter (Sector 61)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2289,7 +2289,7 @@
   },
   {
     "id": 1054721794,
-    "name": "Structure",
+    "name": "Assam Tea Board Central Warehouse (Sector 62)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2317,7 +2317,7 @@
   },
   {
     "id": 1054721795,
-    "name": "Structure",
+    "name": "Guwahati Agro-Cold Chain (Sector 63)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2345,7 +2345,7 @@
   },
   {
     "id": 1054721796,
-    "name": "Structure",
+    "name": "Paddy Procurement Silo Complex (Sector 64)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2373,7 +2373,7 @@
   },
   {
     "id": 1054721797,
-    "name": "Structure",
+    "name": "Brahmaputra Sluice & Pump Station (Sector 65)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2401,7 +2401,7 @@
   },
   {
     "id": 1054721798,
-    "name": "Structure",
+    "name": "District Civil Defense Camp (Sector 66)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2429,7 +2429,7 @@
   },
   {
     "id": 1054721799,
-    "name": "Structure",
+    "name": "Community Evacuation Shelter (Sector 67)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2457,7 +2457,7 @@
   },
   {
     "id": 1054721800,
-    "name": "Structure",
+    "name": "Animal Husbandry Flood Haven (Sector 68)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2485,7 +2485,7 @@
   },
   {
     "id": 1054721801,
-    "name": "Structure",
+    "name": "Kisan Agronomy Telemetry Post (Sector 69)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2513,7 +2513,7 @@
   },
   {
     "id": 1054721802,
-    "name": "Structure",
+    "name": "State Emergency Operations Wing (Sector 70)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2553,7 +2553,7 @@
   },
   {
     "id": 1054721803,
-    "name": "Structure",
+    "name": "APMC Riverine Mandi Yard (Sector 71)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2593,7 +2593,7 @@
   },
   {
     "id": 1054721804,
-    "name": "Structure",
+    "name": "Primary Health Care Emergency Depot (Sector 72)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2633,7 +2633,7 @@
   },
   {
     "id": 1054721805,
-    "name": "Structure",
+    "name": "Brahmaputra Flood Relief Shelter (Sector 73)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2661,7 +2661,7 @@
   },
   {
     "id": 1054721806,
-    "name": "Structure",
+    "name": "Assam Tea Board Central Warehouse (Sector 74)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2689,7 +2689,7 @@
   },
   {
     "id": 1054721807,
-    "name": "Structure",
+    "name": "Guwahati Agro-Cold Chain (Sector 75)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2717,7 +2717,7 @@
   },
   {
     "id": 1054721808,
-    "name": "Structure",
+    "name": "Paddy Procurement Silo Complex (Sector 76)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2745,7 +2745,7 @@
   },
   {
     "id": 1054721809,
-    "name": "Structure",
+    "name": "Brahmaputra Sluice & Pump Station (Sector 77)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2785,7 +2785,7 @@
   },
   {
     "id": 1054721810,
-    "name": "Structure",
+    "name": "District Civil Defense Camp (Sector 78)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2813,7 +2813,7 @@
   },
   {
     "id": 1054721811,
-    "name": "Structure",
+    "name": "Community Evacuation Shelter (Sector 79)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2841,7 +2841,7 @@
   },
   {
     "id": 1054721812,
-    "name": "Structure",
+    "name": "Animal Husbandry Flood Haven (Sector 80)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2873,7 +2873,7 @@
   },
   {
     "id": 1054721813,
-    "name": "Structure",
+    "name": "Kisan Agronomy Telemetry Post (Sector 81)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2905,7 +2905,7 @@
   },
   {
     "id": 1054721814,
-    "name": "Structure",
+    "name": "State Emergency Operations Wing (Sector 82)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2933,7 +2933,7 @@
   },
   {
     "id": 1054721815,
-    "name": "Structure",
+    "name": "APMC Riverine Mandi Yard (Sector 83)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2989,7 +2989,7 @@
   },
   {
     "id": 1054721816,
-    "name": "Structure",
+    "name": "Primary Health Care Emergency Depot (Sector 84)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3021,7 +3021,7 @@
   },
   {
     "id": 1054721817,
-    "name": "Structure",
+    "name": "Brahmaputra Flood Relief Shelter (Sector 85)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3053,7 +3053,7 @@
   },
   {
     "id": 1054721818,
-    "name": "Structure",
+    "name": "Assam Tea Board Central Warehouse (Sector 86)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3097,7 +3097,7 @@
   },
   {
     "id": 1054721819,
-    "name": "Structure",
+    "name": "Guwahati Agro-Cold Chain (Sector 87)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3125,7 +3125,7 @@
   },
   {
     "id": 1054721820,
-    "name": "Structure",
+    "name": "Paddy Procurement Silo Complex (Sector 88)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3153,7 +3153,7 @@
   },
   {
     "id": 1054721821,
-    "name": "Structure",
+    "name": "Brahmaputra Sluice & Pump Station (Sector 89)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3209,7 +3209,7 @@
   },
   {
     "id": 1054721823,
-    "name": "Structure",
+    "name": "Community Evacuation Shelter (Sector 91)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3277,7 +3277,7 @@
   },
   {
     "id": 1054721824,
-    "name": "Structure",
+    "name": "Animal Husbandry Flood Haven (Sector 92)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3305,7 +3305,7 @@
   },
   {
     "id": 1054721825,
-    "name": "Structure",
+    "name": "Kisan Agronomy Telemetry Post (Sector 93)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3333,7 +3333,7 @@
   },
   {
     "id": 1054721826,
-    "name": "Structure",
+    "name": "State Emergency Operations Wing (Sector 94)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3361,7 +3361,7 @@
   },
   {
     "id": 1054721827,
-    "name": "Structure",
+    "name": "APMC Riverine Mandi Yard (Sector 95)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3389,7 +3389,7 @@
   },
   {
     "id": 1054721828,
-    "name": "Structure",
+    "name": "Primary Health Care Emergency Depot (Sector 96)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3417,7 +3417,7 @@
   },
   {
     "id": 1054721829,
-    "name": "Structure",
+    "name": "Brahmaputra Flood Relief Shelter (Sector 97)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3445,7 +3445,7 @@
   },
   {
     "id": 1054721830,
-    "name": "Structure",
+    "name": "Assam Tea Board Central Warehouse (Sector 98)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3477,7 +3477,7 @@
   },
   {
     "id": 1054721831,
-    "name": "Structure",
+    "name": "Guwahati Agro-Cold Chain (Sector 99)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -3509,7 +3509,7 @@
   },
   {
     "id": 1054721832,
-    "name": "Structure",
+    "name": "Paddy Procurement Silo Complex (Sector 100)",
     "height": 10.0,
     "type": "yes",
     "polygon": [

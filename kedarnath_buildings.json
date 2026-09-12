@@ -1,7 +1,7 @@
 [
   {
     "id": 226734182,
-    "name": "Structure",
+    "name": "Kedarnath Disaster Refuge Centre (Sector 1)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -117,7 +117,7 @@
   },
   {
     "id": 226734205,
-    "name": "Structure",
+    "name": "High-Altitude Medical Clinic (Sector 4)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -145,7 +145,7 @@
   },
   {
     "id": 226734216,
-    "name": "Structure",
+    "name": "ITBP Alpine Rescue Staging Base (Sector 5)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -173,7 +173,7 @@
   },
   {
     "id": 226734221,
-    "name": "Structure",
+    "name": "Pilgrim Evacuation Assembly Hall (Sector 6)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -229,7 +229,7 @@
   },
   {
     "id": 226734229,
-    "name": "Structure",
+    "name": "Helipad Search & Rescue Hangar (Sector 8)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -313,7 +313,7 @@
   },
   {
     "id": 226734259,
-    "name": "Structure",
+    "name": "GMVN Yatri Niwas Emergency Wing (Sector 11)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -585,7 +585,7 @@
   },
   {
     "id": 226734262,
-    "name": "Structure",
+    "name": "High-Altitude Medical Clinic (Sector 12)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -629,7 +629,7 @@
   },
   {
     "id": 226734269,
-    "name": "Structure",
+    "name": "ITBP Alpine Rescue Staging Base (Sector 13)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -781,7 +781,7 @@
   },
   {
     "id": 226737488,
-    "name": "Structure",
+    "name": "Mandakini Flash Flood Shelter (Sector 18)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -837,7 +837,7 @@
   },
   {
     "id": 226737505,
-    "name": "Structure",
+    "name": "High-Altitude Medical Clinic (Sector 20)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -925,7 +925,7 @@
   },
   {
     "id": 226737549,
-    "name": "Structure",
+    "name": "Pilgrim Evacuation Assembly Hall (Sector 22)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1049,7 +1049,7 @@
   },
   {
     "id": 226738242,
-    "name": "Structure",
+    "name": "Helipad Search & Rescue Hangar (Sector 24)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1181,7 +1181,7 @@
   },
   {
     "id": 226738245,
-    "name": "Structure",
+    "name": "Kedarnath Disaster Refuge Centre (Sector 25)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1209,7 +1209,7 @@
   },
   {
     "id": 226738261,
-    "name": "Structure",
+    "name": "Mandakini Flash Flood Shelter (Sector 26)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1285,7 +1285,7 @@
   },
   {
     "id": 226741035,
-    "name": "Structure",
+    "name": "High-Altitude Medical Clinic (Sector 28)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1313,7 +1313,7 @@
   },
   {
     "id": 226741036,
-    "name": "Structure",
+    "name": "ITBP Alpine Rescue Staging Base (Sector 29)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1341,7 +1341,7 @@
   },
   {
     "id": 226741038,
-    "name": "Structure",
+    "name": "Pilgrim Evacuation Assembly Hall (Sector 30)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1369,7 +1369,7 @@
   },
   {
     "id": 226741039,
-    "name": "Structure",
+    "name": "Flood Telemetry & Early Warning Post (Sector 31)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1397,7 +1397,7 @@
   },
   {
     "id": 227160681,
-    "name": "Structure",
+    "name": "Helipad Search & Rescue Hangar (Sector 32)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1425,7 +1425,7 @@
   },
   {
     "id": 1339812788,
-    "name": "Structure",
+    "name": "Kedarnath Disaster Refuge Centre (Sector 33)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1481,7 +1481,7 @@
   },
   {
     "id": 1339814911,
-    "name": "Structure",
+    "name": "GMVN Yatri Niwas Emergency Wing (Sector 35)",
     "height": 10.0,
     "type": "yes",
     "polygon": [

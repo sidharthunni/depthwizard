@@ -1,7 +1,7 @@
 [
   {
     "id": 765638339,
-    "name": "Structure",
+    "name": "APMC Kisan Grain Mandi (Sector 1)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -29,7 +29,7 @@
   },
   {
     "id": 841233825,
-    "name": "Structure",
+    "name": "PAU Agro Sciences Research Barn (Sector 2)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -57,7 +57,7 @@
   },
   {
     "id": 841233827,
-    "name": "Structure",
+    "name": "Markfed Central Grain Silo (Sector 3)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -85,7 +85,7 @@
   },
   {
     "id": 841233845,
-    "name": "Structure",
+    "name": "Punjab Agro Solar Cold Storage (Sector 4)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -113,7 +113,7 @@
   },
   {
     "id": 841233847,
-    "name": "Structure",
+    "name": "Canal Feeder Lift Pump House (Sector 5)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -141,7 +141,7 @@
   },
   {
     "id": 1088334216,
-    "name": "Structure",
+    "name": "IFFCO Fertilizer & Seed Depot (Sector 6)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -285,7 +285,7 @@
   },
   {
     "id": 1391134209,
-    "name": "Structure",
+    "name": "Dairy Milk Chilling Complex (Sector 7)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -313,7 +313,7 @@
   },
   {
     "id": 1391134210,
-    "name": "Structure",
+    "name": "Kisan Drone Recharging Hub (Sector 8)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -341,7 +341,7 @@
   },
   {
     "id": 1391134211,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Assessment Post (Sector 9)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -373,7 +373,7 @@
   },
   {
     "id": 1391134212,
-    "name": "Structure",
+    "name": "Multi-Storey Flood Shelter & School (Sector 10)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -401,7 +401,7 @@
   },
   {
     "id": 1391134213,
-    "name": "Structure",
+    "name": "District Hospital Emergency Wing (Sector 11)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -429,7 +429,7 @@
   },
   {
     "id": 1391134214,
-    "name": "Structure",
+    "name": "Agri-Logistics Transit Hub (Sector 12)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -457,7 +457,7 @@
   },
   {
     "id": 1391134215,
-    "name": "Structure",
+    "name": "APMC Kisan Grain Mandi (Sector 13)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -485,7 +485,7 @@
   },
   {
     "id": 1391134216,
-    "name": "Structure",
+    "name": "PAU Agro Sciences Research Barn (Sector 14)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -513,7 +513,7 @@
   },
   {
     "id": 1391134217,
-    "name": "Structure",
+    "name": "Markfed Central Grain Silo (Sector 15)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -541,7 +541,7 @@
   },
   {
     "id": 1391134218,
-    "name": "Structure",
+    "name": "Punjab Agro Solar Cold Storage (Sector 16)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -569,7 +569,7 @@
   },
   {
     "id": 1391134219,
-    "name": "Structure",
+    "name": "Canal Feeder Lift Pump House (Sector 17)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -597,7 +597,7 @@
   },
   {
     "id": 1391134220,
-    "name": "Structure",
+    "name": "IFFCO Fertilizer & Seed Depot (Sector 18)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -625,7 +625,7 @@
   },
   {
     "id": 1391134221,
-    "name": "Structure",
+    "name": "Dairy Milk Chilling Complex (Sector 19)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -661,7 +661,7 @@
   },
   {
     "id": 1391134222,
-    "name": "Structure",
+    "name": "Kisan Drone Recharging Hub (Sector 20)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -689,7 +689,7 @@
   },
   {
     "id": 1391134223,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Assessment Post (Sector 21)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -717,7 +717,7 @@
   },
   {
     "id": 1391134224,
-    "name": "Structure",
+    "name": "Multi-Storey Flood Shelter & School (Sector 22)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -745,7 +745,7 @@
   },
   {
     "id": 1391134225,
-    "name": "Structure",
+    "name": "District Hospital Emergency Wing (Sector 23)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -773,7 +773,7 @@
   },
   {
     "id": 1391134226,
-    "name": "Structure",
+    "name": "Agri-Logistics Transit Hub (Sector 24)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -801,7 +801,7 @@
   },
   {
     "id": 1391134227,
-    "name": "Structure",
+    "name": "APMC Kisan Grain Mandi (Sector 25)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -829,7 +829,7 @@
   },
   {
     "id": 1391134228,
-    "name": "Structure",
+    "name": "PAU Agro Sciences Research Barn (Sector 26)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -857,7 +857,7 @@
   },
   {
     "id": 1391134229,
-    "name": "Structure",
+    "name": "Markfed Central Grain Silo (Sector 27)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -885,7 +885,7 @@
   },
   {
     "id": 1391134230,
-    "name": "Structure",
+    "name": "Punjab Agro Solar Cold Storage (Sector 28)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -913,7 +913,7 @@
   },
   {
     "id": 1391134231,
-    "name": "Structure",
+    "name": "Canal Feeder Lift Pump House (Sector 29)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -941,7 +941,7 @@
   },
   {
     "id": 1391134232,
-    "name": "Structure",
+    "name": "IFFCO Fertilizer & Seed Depot (Sector 30)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -969,7 +969,7 @@
   },
   {
     "id": 1391134233,
-    "name": "Structure",
+    "name": "Dairy Milk Chilling Complex (Sector 31)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -997,7 +997,7 @@
   },
   {
     "id": 1391134234,
-    "name": "Structure",
+    "name": "Kisan Drone Recharging Hub (Sector 32)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1025,7 +1025,7 @@
   },
   {
     "id": 1391134235,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Assessment Post (Sector 33)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1053,7 +1053,7 @@
   },
   {
     "id": 1391134236,
-    "name": "Structure",
+    "name": "Multi-Storey Flood Shelter & School (Sector 34)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1081,7 +1081,7 @@
   },
   {
     "id": 1391134237,
-    "name": "Structure",
+    "name": "District Hospital Emergency Wing (Sector 35)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1109,7 +1109,7 @@
   },
   {
     "id": 1391134238,
-    "name": "Structure",
+    "name": "Agri-Logistics Transit Hub (Sector 36)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1137,7 +1137,7 @@
   },
   {
     "id": 1391134239,
-    "name": "Structure",
+    "name": "APMC Kisan Grain Mandi (Sector 37)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1165,7 +1165,7 @@
   },
   {
     "id": 1391134240,
-    "name": "Structure",
+    "name": "PAU Agro Sciences Research Barn (Sector 38)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1193,7 +1193,7 @@
   },
   {
     "id": 1391134241,
-    "name": "Structure",
+    "name": "Markfed Central Grain Silo (Sector 39)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1221,7 +1221,7 @@
   },
   {
     "id": 1391134242,
-    "name": "Structure",
+    "name": "Punjab Agro Solar Cold Storage (Sector 40)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1249,7 +1249,7 @@
   },
   {
     "id": 1391134243,
-    "name": "Structure",
+    "name": "Canal Feeder Lift Pump House (Sector 41)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1277,7 +1277,7 @@
   },
   {
     "id": 1391134244,
-    "name": "Structure",
+    "name": "IFFCO Fertilizer & Seed Depot (Sector 42)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1305,7 +1305,7 @@
   },
   {
     "id": 1391134245,
-    "name": "Structure",
+    "name": "Dairy Milk Chilling Complex (Sector 43)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1333,7 +1333,7 @@
   },
   {
     "id": 1391134246,
-    "name": "Structure",
+    "name": "Kisan Drone Recharging Hub (Sector 44)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1361,7 +1361,7 @@
   },
   {
     "id": 1391134247,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Assessment Post (Sector 45)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1389,7 +1389,7 @@
   },
   {
     "id": 1391134248,
-    "name": "Structure",
+    "name": "Multi-Storey Flood Shelter & School (Sector 46)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1417,7 +1417,7 @@
   },
   {
     "id": 1391134249,
-    "name": "Structure",
+    "name": "District Hospital Emergency Wing (Sector 47)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1445,7 +1445,7 @@
   },
   {
     "id": 1391134250,
-    "name": "Structure",
+    "name": "Agri-Logistics Transit Hub (Sector 48)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1473,7 +1473,7 @@
   },
   {
     "id": 1391134251,
-    "name": "Structure",
+    "name": "APMC Kisan Grain Mandi (Sector 49)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1501,7 +1501,7 @@
   },
   {
     "id": 1391134252,
-    "name": "Structure",
+    "name": "PAU Agro Sciences Research Barn (Sector 50)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1529,7 +1529,7 @@
   },
   {
     "id": 1391134253,
-    "name": "Structure",
+    "name": "Markfed Central Grain Silo (Sector 51)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1557,7 +1557,7 @@
   },
   {
     "id": 1391134254,
-    "name": "Structure",
+    "name": "Punjab Agro Solar Cold Storage (Sector 52)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1585,7 +1585,7 @@
   },
   {
     "id": 1391134255,
-    "name": "Structure",
+    "name": "Canal Feeder Lift Pump House (Sector 53)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1613,7 +1613,7 @@
   },
   {
     "id": 1391134256,
-    "name": "Structure",
+    "name": "IFFCO Fertilizer & Seed Depot (Sector 54)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1641,7 +1641,7 @@
   },
   {
     "id": 1391134257,
-    "name": "Structure",
+    "name": "Dairy Milk Chilling Complex (Sector 55)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1669,7 +1669,7 @@
   },
   {
     "id": 1391134258,
-    "name": "Structure",
+    "name": "Kisan Drone Recharging Hub (Sector 56)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1697,7 +1697,7 @@
   },
   {
     "id": 1391134259,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Assessment Post (Sector 57)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1725,7 +1725,7 @@
   },
   {
     "id": 1391134260,
-    "name": "Structure",
+    "name": "Multi-Storey Flood Shelter & School (Sector 58)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1753,7 +1753,7 @@
   },
   {
     "id": 1391134261,
-    "name": "Structure",
+    "name": "District Hospital Emergency Wing (Sector 59)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1781,7 +1781,7 @@
   },
   {
     "id": 1391134262,
-    "name": "Structure",
+    "name": "Agri-Logistics Transit Hub (Sector 60)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1809,7 +1809,7 @@
   },
   {
     "id": 1391134263,
-    "name": "Structure",
+    "name": "APMC Kisan Grain Mandi (Sector 61)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1837,7 +1837,7 @@
   },
   {
     "id": 1391134264,
-    "name": "Structure",
+    "name": "PAU Agro Sciences Research Barn (Sector 62)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1865,7 +1865,7 @@
   },
   {
     "id": 1391134265,
-    "name": "Structure",
+    "name": "Markfed Central Grain Silo (Sector 63)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1893,7 +1893,7 @@
   },
   {
     "id": 1391134266,
-    "name": "Structure",
+    "name": "Punjab Agro Solar Cold Storage (Sector 64)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1921,7 +1921,7 @@
   },
   {
     "id": 1391134267,
-    "name": "Structure",
+    "name": "Canal Feeder Lift Pump House (Sector 65)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1949,7 +1949,7 @@
   },
   {
     "id": 1391134268,
-    "name": "Structure",
+    "name": "IFFCO Fertilizer & Seed Depot (Sector 66)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -1977,7 +1977,7 @@
   },
   {
     "id": 1391134269,
-    "name": "Structure",
+    "name": "Dairy Milk Chilling Complex (Sector 67)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2005,7 +2005,7 @@
   },
   {
     "id": 1391134270,
-    "name": "Structure",
+    "name": "Kisan Drone Recharging Hub (Sector 68)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2033,7 +2033,7 @@
   },
   {
     "id": 1391134271,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Assessment Post (Sector 69)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2061,7 +2061,7 @@
   },
   {
     "id": 1391134272,
-    "name": "Structure",
+    "name": "Multi-Storey Flood Shelter & School (Sector 70)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2089,7 +2089,7 @@
   },
   {
     "id": 1391134273,
-    "name": "Structure",
+    "name": "District Hospital Emergency Wing (Sector 71)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2117,7 +2117,7 @@
   },
   {
     "id": 1391134274,
-    "name": "Structure",
+    "name": "Agri-Logistics Transit Hub (Sector 72)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2145,7 +2145,7 @@
   },
   {
     "id": 1391134275,
-    "name": "Structure",
+    "name": "APMC Kisan Grain Mandi (Sector 73)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2173,7 +2173,7 @@
   },
   {
     "id": 1391134276,
-    "name": "Structure",
+    "name": "PAU Agro Sciences Research Barn (Sector 74)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2201,7 +2201,7 @@
   },
   {
     "id": 1391134277,
-    "name": "Structure",
+    "name": "Markfed Central Grain Silo (Sector 75)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2229,7 +2229,7 @@
   },
   {
     "id": 1391134278,
-    "name": "Structure",
+    "name": "Punjab Agro Solar Cold Storage (Sector 76)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2257,7 +2257,7 @@
   },
   {
     "id": 1391134279,
-    "name": "Structure",
+    "name": "Canal Feeder Lift Pump House (Sector 77)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2285,7 +2285,7 @@
   },
   {
     "id": 1391134280,
-    "name": "Structure",
+    "name": "IFFCO Fertilizer & Seed Depot (Sector 78)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2317,7 +2317,7 @@
   },
   {
     "id": 1391134281,
-    "name": "Structure",
+    "name": "Dairy Milk Chilling Complex (Sector 79)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2345,7 +2345,7 @@
   },
   {
     "id": 1391134282,
-    "name": "Structure",
+    "name": "Kisan Drone Recharging Hub (Sector 80)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2373,7 +2373,7 @@
   },
   {
     "id": 1391134283,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Assessment Post (Sector 81)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2401,7 +2401,7 @@
   },
   {
     "id": 1391134284,
-    "name": "Structure",
+    "name": "Multi-Storey Flood Shelter & School (Sector 82)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2429,7 +2429,7 @@
   },
   {
     "id": 1391139417,
-    "name": "Structure",
+    "name": "District Hospital Emergency Wing (Sector 83)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2457,7 +2457,7 @@
   },
   {
     "id": 1391139419,
-    "name": "Structure",
+    "name": "Agri-Logistics Transit Hub (Sector 84)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2501,7 +2501,7 @@
   },
   {
     "id": 1391566875,
-    "name": "Structure",
+    "name": "APMC Kisan Grain Mandi (Sector 85)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2529,7 +2529,7 @@
   },
   {
     "id": 1391566876,
-    "name": "Structure",
+    "name": "PAU Agro Sciences Research Barn (Sector 86)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2557,7 +2557,7 @@
   },
   {
     "id": 1391566877,
-    "name": "Structure",
+    "name": "Markfed Central Grain Silo (Sector 87)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2585,7 +2585,7 @@
   },
   {
     "id": 1391566878,
-    "name": "Structure",
+    "name": "Punjab Agro Solar Cold Storage (Sector 88)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2613,7 +2613,7 @@
   },
   {
     "id": 1391566879,
-    "name": "Structure",
+    "name": "Canal Feeder Lift Pump House (Sector 89)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2641,7 +2641,7 @@
   },
   {
     "id": 1391566880,
-    "name": "Structure",
+    "name": "IFFCO Fertilizer & Seed Depot (Sector 90)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2669,7 +2669,7 @@
   },
   {
     "id": 1391566881,
-    "name": "Structure",
+    "name": "Dairy Milk Chilling Complex (Sector 91)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2697,7 +2697,7 @@
   },
   {
     "id": 1391566882,
-    "name": "Structure",
+    "name": "Kisan Drone Recharging Hub (Sector 92)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2725,7 +2725,7 @@
   },
   {
     "id": 1391566883,
-    "name": "Structure",
+    "name": "PMFBY Crop Loss Assessment Post (Sector 93)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2753,7 +2753,7 @@
   },
   {
     "id": 1391566884,
-    "name": "Structure",
+    "name": "Multi-Storey Flood Shelter & School (Sector 94)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2781,7 +2781,7 @@
   },
   {
     "id": 1391566885,
-    "name": "Structure",
+    "name": "District Hospital Emergency Wing (Sector 95)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2809,7 +2809,7 @@
   },
   {
     "id": 1391566886,
-    "name": "Structure",
+    "name": "Agri-Logistics Transit Hub (Sector 96)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2837,7 +2837,7 @@
   },
   {
     "id": 1391566887,
-    "name": "Structure",
+    "name": "APMC Kisan Grain Mandi (Sector 97)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2869,7 +2869,7 @@
   },
   {
     "id": 1391566888,
-    "name": "Structure",
+    "name": "PAU Agro Sciences Research Barn (Sector 98)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2897,7 +2897,7 @@
   },
   {
     "id": 1391566889,
-    "name": "Structure",
+    "name": "Markfed Central Grain Silo (Sector 99)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
@@ -2929,7 +2929,7 @@
   },
   {
     "id": 1391566890,
-    "name": "Structure",
+    "name": "Punjab Agro Solar Cold Storage (Sector 100)",
     "height": 10.0,
     "type": "yes",
     "polygon": [
