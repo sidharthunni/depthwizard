@@ -138,7 +138,7 @@
     #right-column {
       position: absolute; top: 86px; right: 20px; z-index: 92;
       display: flex; flex-direction: column; gap: 12px;
-      pointer-events: none; width: 230px;
+      pointer-events: none; width: 250px;
     }
     #right-hud {
       pointer-events: auto; width: 100%; box-sizing: border-box;
@@ -280,34 +280,125 @@
     }
     .btn-reconstruct:hover { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(37,99,235,0.65); }
 
-    /* 2D/3D Split Screen Picture-in-Picture (Auto-Docked under Telemetry) */
+    /* 🗺️ 2D vs 3D Ortho-Terrain Spatial Comparison Panel */
     #split-pip {
       pointer-events: auto; width: 100%; box-sizing: border-box;
       background: var(--panel-glass); backdrop-filter: blur(28px) saturate(180%);
       padding: 12px 14px; border-radius: 18px;
-      border: 1px solid var(--panel-border);
-      box-shadow: var(--panel-shadow); display: none; text-align: left;
-      user-select: none;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 20px rgba(56, 189, 248, 0.15);
+      display: none; text-align: left; user-select: none;
+      transition: box-shadow 0.2s ease;
     }
-    #split-pip img {
-      width: 100%; height: 140px; object-fit: cover; border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.12); display: block;
-      pointer-events: none;
-    }
+    #split-pip.active { display: block; }
+    
     .pip-header {
       display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
       cursor: grab;
     }
     .pip-header:active { cursor: grabbing; }
     .pip-tag {
-      font-size: 10px; font-weight: 800; color: var(--accent);
+      font-size: 10px; font-weight: 800; color: #38bdf8;
       text-transform: uppercase; letter-spacing: 0.6px;
     }
+    .btn-pip-tool {
+      background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #38bdf8; font-size: 10px; font-weight: 700; padding: 3px 6px;
+      border-radius: 6px; cursor: pointer; transition: 0.2s;
+    }
+    .btn-pip-tool:hover { background: rgba(56, 189, 248, 0.3); color: #fff; }
+    .btn-pip-tool.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
+
     .btn-pip-close {
       background: transparent; border: none; color: #94a3b8;
       cursor: pointer; font-size: 13px; padding: 0 4px; line-height: 1;
     }
     .btn-pip-close:hover { color: #f43f5e; }
+
+    .pip-tabs {
+      display: flex; gap: 4px; margin-bottom: 8px; background: rgba(0,0,0,0.35);
+      padding: 3px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);
+    }
+    .pip-tab {
+      flex: 1; background: transparent; border: none; color: #94a3b8;
+      font-size: 9px; font-weight: 700; padding: 4px 0; border-radius: 6px;
+      cursor: pointer; transition: 0.15s; text-align: center;
+    }
+    .pip-tab:hover { color: #f8fafc; background: rgba(255,255,255,0.06); }
+    .pip-tab.active { background: rgba(56, 189, 248, 0.25); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+
+    .pip-viewport {
+      position: relative; width: 100%; height: 155px; overflow: hidden;
+      border-radius: 10px; border: 1px solid rgba(255,255,255,0.12);
+      background: #020617; cursor: crosshair;
+    }
+    .pip-viewport img,
+    .pip-viewport canvas {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform 0.25s ease;
+    }
+    .pip-crosshair {
+      position: absolute; width: 14px; height: 14px; border: 1.5px solid #38bdf8;
+      border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%);
+      display: none; box-shadow: 0 0 8px rgba(56, 189, 248, 0.8); z-index: 5;
+    }
+    .pip-crosshair::after {
+      content: ''; position: absolute; top: 4px; left: 4px; width: 4px; height: 4px;
+      background: #f43f5e; border-radius: 50%;
+    }
+    .pip-coords-badge {
+      position: absolute; bottom: 5px; left: 5px;
+      background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(8px);
+      color: #38bdf8; font-family: 'JetBrains Mono', monospace;
+      font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+      border: 1px solid rgba(56, 189, 248, 0.3); pointer-events: none; z-index: 4;
+    }
+    .pip-loc-watermark {
+      position: absolute; top: 5px; right: 5px;
+      background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px);
+      color: #e2e8f0; font-size: 8px; font-weight: 800; padding: 2px 6px; border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.1); pointer-events: none; letter-spacing: 0.5px; z-index: 4;
+    }
+
+    .pip-metrics-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
+      margin-top: 8px; padding-top: 7px; border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .pip-m-cell { display: flex; flex-direction: column; text-align: center; }
+    .pip-m-k { font-size: 8px; color: #64748b; font-weight: 700; text-transform: uppercase; }
+    .pip-m-v { font-size: 10px; color: #f8fafc; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-top: 1px; }
+
+    .pip-footer-sync {
+      display: flex; align-items: center; justify-content: space-between; margin-top: 6px;
+      font-size: 8px; color: #34d399; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.4px;
+    }
+
+    /* ⬌ Side-by-Side 50/50 Dual Screen Comparison Workspace */
+    body.side-by-side-mode canvas {
+      width: 50vw !important;
+    }
+    body.side-by-side-mode #right-column {
+      pointer-events: auto !important;
+    }
+    body.side-by-side-mode #split-pip {
+      position: fixed !important; right: 0 !important; top: 68px !important;
+      bottom: 0 !important; width: 50vw !important; height: calc(100vh - 68px) !important;
+      z-index: 95 !important; border-radius: 0 !important;
+      border-left: 2px solid #38bdf8 !important; border-top: none !important;
+      border-bottom: none !important; border-right: none !important;
+      display: flex !important; flex-direction: column !important;
+      box-shadow: -12px 0 40px rgba(0,0,0,0.85) !important;
+      background: rgba(11, 17, 32, 0.95) !important;
+    }
+    body.side-by-side-mode #split-pip .pip-viewport {
+      flex: 1 !important; height: auto !important; min-height: 280px !important;
+    }
+    body.side-by-side-mode #right-hud,
+    body.side-by-side-mode #agro-hud,
+    body.side-by-side-mode #temporal-hud {
+      display: none !important;
+    }
 
     /* 🪟 Interactive Digital Twin Split Wipe Divider (Ref: media_1788490030733.jpg) */
     #split-divider {
@@ -736,6 +827,7 @@
 
     <div class="top-right">
       <button class="btn-top" id="btnAudioToggle" onclick="toggleAudioSound()" title="Tactile Sound Feedback">🔊 Sound: ON</button>
+      <button class="btn-top" id="btnTop2DCompare" onclick="toggleSplitPIP()" title="2D vs 3D Ortho-Terrain Comparison" style="color:#38bdf8; border-color:rgba(56,189,248,0.45); font-weight:700;">🗺️ 2D vs 3D</button>
       <button class="btn-top" onclick="togglePrecautionAdvisor()">🛡️ Precautions</button>
       <button class="btn-top" onclick="toggleDrawer()">🗺️ Map & Targets</button>
       <button class="btn-top" onclick="downloadGLB()">💾 .GLB</button>
@@ -754,6 +846,7 @@
       <button id="btnDeltaNDVI" class="btn-dock" onclick="setLayer('delta_ndvi')" style="color:#fb923c; border-color:rgba(251,146,60,0.35);">📉 ΔNDVI Loss</button>
       <button id="btnContour" class="btn-dock" onclick="toggleContourLines()">🗺️ Contour Bunding</button>
       <button id="btnSplitLens" class="btn-dock" onclick="toggleSplitLens()">🪟 Pre/Post Wipe</button>
+      <button id="btnSplitPIP" class="btn-dock" onclick="toggleSplitPIP()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4); grid-column: span 2; font-weight:700;">🗺️ 2D vs 3D Comparison Panel</button>
     </div>
 
     <!-- 🏢 3D Realism, Diorama & Extrusions (Images 1-5) -->
@@ -941,16 +1034,70 @@
       </div>
     </div>
 
-    <!-- 2D / 3D Split Screen Picture-in-Picture (Auto-Docked under HUD) -->
+    <!-- 🗺️ 2D vs 3D Ortho-Terrain Spatial Comparison Viewer -->
     <div id="split-pip">
       <div class="pip-header" id="pipHeader" title="Drag by header to reposition anywhere">
-        <span class="pip-tag">🗺️ 2D Optical Texture</span>
-        <div style="display: flex; align-items: center; gap: 6px;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span style="font-size:13px;">🗺️</span>
+          <div>
+            <div class="pip-tag" id="pipTitle">2D ORTHO-TERRAIN TWIN</div>
+            <div style="font-size:8px; color:#64748b; font-weight:700; font-family:'JetBrains Mono',monospace;" id="pipSubTitle">SUB-METER OPTICAL RESOLUTION</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <button class="btn-pip-tool" id="btnPipSplit" onclick="toggleSideBySideSplit()" title="Toggle 50/50 Dual Screen Comparison">⬌ 50/50</button>
+          <button class="btn-pip-tool" id="btnPipZoom" onclick="cyclePipZoom()" title="Cycle 2D Zoom (1x, 1.5x, 2.2x)">🔍 1x</button>
           <button class="btn-pip-close" id="btnPipDock" onclick="resetPIPDock()" title="Snap back to Right Column" style="display:none; font-size:11px;">📌</button>
-          <button class="btn-pip-close" onclick="toggleSplitPIP()" title="Close 2D View">✕</button>
+          <button class="btn-pip-close" onclick="toggleSplitPIP()" title="Close 2D Comparison">✕</button>
         </div>
       </div>
-      <img src="current.jpg" id="pip-img" alt="2D Satellite Texture">
+
+      <!-- Multispectral 2D Layer Switcher Tabs -->
+      <div class="pip-tabs">
+        <button class="pip-tab active" id="pipTabRGB" onclick="setPipLayer('rgb')">🛰️ RGB</button>
+        <button class="pip-tab" id="pipTabNDVI" onclick="setPipLayer('ndvi')">🌱 NDVI</button>
+        <button class="pip-tab" id="pipTabHazard" onclick="setPipLayer('hazard')">⚠️ Hazard</button>
+        <button class="pip-tab" id="pipTabDelta" onclick="setPipLayer('delta')">📉 ΔNDVI</button>
+      </div>
+
+      <!-- 2D Viewport Container with Crosshair Hover Probe -->
+      <div class="pip-viewport" id="pipViewport" onmousemove="handlePipMouseMove(event)" onmouseleave="handlePipMouseLeave()" onclick="handlePipClick(event)" title="Click anywhere on 2D map to focus 3D camera there">
+        <img src="current.jpg" id="pip-img" alt="2D Satellite Texture">
+        <canvas id="pip-canvas" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:10px;"></canvas>
+        
+        <!-- Crosshair & Coordinate Overlay -->
+        <div class="pip-crosshair" id="pipCrosshair"></div>
+        <div class="pip-coords-badge" id="pipProbeBadge">📍 Lat: 11.5277° | Lon: 76.1950°</div>
+        <div class="pip-loc-watermark" id="pipLocWatermark">WAYANAD HIGHLANDS</div>
+      </div>
+
+      <!-- Comparison Metrics Footer -->
+      <div class="pip-metrics-grid">
+        <div class="pip-m-cell">
+          <span class="pip-m-k">2D GSD</span>
+          <span class="pip-m-v" id="pipGsdText">0.5 m</span>
+        </div>
+        <div class="pip-m-cell">
+          <span class="pip-m-k">3D Mesh</span>
+          <span class="pip-m-v" id="pipGridText">120 × 120</span>
+        </div>
+        <div class="pip-m-cell">
+          <span class="pip-m-k">Relief</span>
+          <span class="pip-m-v" id="pipReliefText">550 m</span>
+        </div>
+        <div class="pip-m-cell">
+          <span class="pip-m-k">Validation</span>
+          <span class="pip-m-v" id="pipValText" style="color:#34d399;">91.2%</span>
+        </div>
+      </div>
+
+      <div class="pip-footer-sync">
+        <div style="display:flex; align-items:center; gap:5px;">
+          <span class="pulse-dot-green" style="width:6px; height:6px;"></span>
+          <span id="pipSyncStatus">2D/3D SYNCHRONIZED</span>
+        </div>
+        <span style="font-size:8px; color:#38bdf8; cursor:pointer;" onclick="toggleSideBySideSplit()">⬌ Expand Split</span>
+      </div>
     </div>
   </div>
 
@@ -1929,6 +2076,8 @@
 
       const baseName = modelFile.replace('.glb', '');
       const defaultJpg = textureFile || (baseName + '.jpg');
+      currentSatJpg = defaultJpg;
+      currentHazardPng = hazardFile;
       const pipImg = document.getElementById('pip-img');
       if (pipImg) pipImg.src = defaultJpg + '?t=' + Date.now();
 
@@ -2002,6 +2151,10 @@
           }
 
           updatePrecautionText();
+          if (typeof syncPipMetrics === 'function') syncPipMetrics();
+          if (typeof setPipLayer === 'function' && typeof currentPipLayer !== 'undefined' && currentPipLayer) {
+            setPipLayer(currentPipLayer);
+          }
         })
         .catch(() => {});
     };
@@ -3718,15 +3871,204 @@
       });
     }
 
-    window.toggleSplitPIP = () => {
+    let currentPipLayer = 'rgb';
+    let currentPipZoom = 1.0;
+    let isSideBySide = false;
+    let currentSatJpg = 'current.jpg';
+    let currentHazardPng = 'current_hazard.png';
+
+    window.toggleSplitPIP = function() {
       isSplitPIP = !isSplitPIP;
       const pip = document.getElementById('split-pip');
-      if (pip) pip.style.display = isSplitPIP ? 'block' : 'none';
-      const btn = document.getElementById('btnSplitPIP');
-      if (btn) btn.classList.toggle('active', isSplitPIP);
+      if (pip) {
+        pip.style.display = isSplitPIP ? 'block' : 'none';
+        pip.classList.toggle('active', isSplitPIP);
+      }
+      const btnDock = document.getElementById('btnSplitPIP');
+      if (btnDock) btnDock.classList.toggle('active', isSplitPIP);
+      const btnTop = document.getElementById('btnTop2DCompare');
+      if (btnTop) btnTop.classList.toggle('btn-accent', isSplitPIP);
+
+      if (isSplitPIP) {
+        if (typeof playTone === 'function') playTone('mode');
+        showTacticalToast('🗺️ 2D ORTHO-TERRAIN COMPARISON ACTIVE');
+        syncPipMetrics();
+        setPipLayer(currentPipLayer || 'rgb');
+      } else {
+        if (isSideBySide) toggleSideBySideSplit();
+      }
     };
 
-    // 🪟 Interactive Drag-and-Drop for 2D Picture-in-Picture window
+    window.toggleSideBySideSplit = function() {
+      isSideBySide = !isSideBySide;
+      document.body.classList.toggle('side-by-side-mode', isSideBySide);
+      const btnSplit = document.getElementById('btnPipSplit');
+      if (btnSplit) {
+        btnSplit.classList.toggle('active', isSideBySide);
+        btnSplit.innerText = isSideBySide ? '✕ Dock' : '⬌ 50/50';
+      }
+      const pip = document.getElementById('split-pip');
+      if (pip && !isSplitPIP) {
+        isSplitPIP = true;
+        pip.style.display = 'block';
+        pip.classList.add('active');
+        const btnDock = document.getElementById('btnSplitPIP');
+        if (btnDock) btnDock.classList.add('active');
+      }
+      updateRendererSize();
+      if (typeof playTone === 'function') playTone('blip');
+      showTacticalToast(isSideBySide ? '⬌ DUAL 50/50 2D vs 3D SPLIT WORKSPACE' : '📌 2D COMPARISON DOCKED');
+    };
+
+    window.updateRendererSize = function() {
+      if (!renderer || !camera) return;
+      const isSplit = document.body.classList.contains('side-by-side-mode');
+      const w = isSplit ? Math.floor(window.innerWidth * 0.5) : window.innerWidth;
+      const h = window.innerHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+
+    window.cyclePipZoom = function() {
+      const zooms = [1.0, 1.5, 2.2];
+      const idx = zooms.indexOf(currentPipZoom);
+      currentPipZoom = zooms[(idx + 1) % zooms.length];
+      const btn = document.getElementById('btnPipZoom');
+      if (btn) btn.innerText = `🔍 ${currentPipZoom}x`;
+      const img = document.getElementById('pip-img');
+      const canvas = document.getElementById('pip-canvas');
+      if (img) img.style.transform = `scale(${currentPipZoom})`;
+      if (canvas) canvas.style.transform = `scale(${currentPipZoom})`;
+    };
+
+    window.setPipLayer = function(layer) {
+      currentPipLayer = layer;
+      const tabs = ['pipTabRGB', 'pipTabNDVI', 'pipTabHazard', 'pipTabDelta'];
+      tabs.forEach(t => {
+        const el = document.getElementById(t);
+        if (el) el.classList.remove('active');
+      });
+
+      const img = document.getElementById('pip-img');
+      const canvas = document.getElementById('pip-canvas');
+      if (!img || !canvas) return;
+
+      if (layer === 'rgb') {
+        const t = document.getElementById('pipTabRGB'); if (t) t.classList.add('active');
+        img.src = currentSatJpg + '?t=' + Date.now();
+        img.style.display = 'block';
+        canvas.style.display = 'none';
+      } else if (layer === 'hazard') {
+        const t = document.getElementById('pipTabHazard'); if (t) t.classList.add('active');
+        img.src = currentHazardPng + '?t=' + Date.now();
+        img.style.display = 'block';
+        canvas.style.display = 'none';
+      } else if (layer === 'ndvi') {
+        const t = document.getElementById('pipTabNDVI'); if (t) t.classList.add('active');
+        if (!ndviTexture) ndviTexture = generateNDVITexture();
+        if (ndviTexture && ndviTexture.image) {
+          renderCanvasToPip(ndviTexture.image);
+          img.style.display = 'none';
+          canvas.style.display = 'block';
+        }
+      } else if (layer === 'delta') {
+        const t = document.getElementById('pipTabDelta'); if (t) t.classList.add('active');
+        if (!deltaNdviTexture) deltaNdviTexture = generateDeltaNDVITexture();
+        if (deltaNdviTexture && deltaNdviTexture.image) {
+          renderCanvasToPip(deltaNdviTexture.image);
+          img.style.display = 'none';
+          canvas.style.display = 'block';
+        }
+      }
+      if (typeof playTone === 'function') playTone('blip');
+    };
+
+    function renderCanvasToPip(sourceCanvas) {
+      const pipCanvas = document.getElementById('pip-canvas');
+      if (!pipCanvas || !sourceCanvas) return;
+      pipCanvas.width = sourceCanvas.width;
+      pipCanvas.height = sourceCanvas.height;
+      const ctx = pipCanvas.getContext('2d');
+      ctx.drawImage(sourceCanvas, 0, 0);
+    }
+
+    function syncPipMetrics() {
+      const gsd = document.getElementById('pipGsdText');
+      if (gsd) gsd.innerText = stats.grid_spacing_m ? `${stats.grid_spacing_m}m` : '0.5m';
+      const grid = document.getElementById('pipGridText');
+      if (grid) grid.innerText = (stats.grid_w || 120) + ' × ' + (stats.grid_h || 120);
+      const relief = document.getElementById('pipReliefText');
+      if (relief) relief.innerText = Math.round(stats.relief_m || 550) + ' m';
+      const val = document.getElementById('pipValText');
+      if (val) val.innerText = stats.correlation || '91.2%';
+      const locWatermark = document.getElementById('pipLocWatermark');
+      if (locWatermark && stats.location_name) {
+        locWatermark.innerText = stats.location_name.toUpperCase().split('(')[0].trim();
+      }
+      const badge = document.getElementById('pipProbeBadge');
+      if (badge && stats.lat && stats.lon) {
+        badge.innerText = `📍 Lat: ${parseFloat(stats.lat).toFixed(4)}° | Lon: ${parseFloat(stats.lon).toFixed(4)}°`;
+      }
+    }
+
+    window.handlePipMouseMove = function(e) {
+      const vp = document.getElementById('pipViewport');
+      const crosshair = document.getElementById('pipCrosshair');
+      const badge = document.getElementById('pipProbeBadge');
+      if (!vp || !crosshair || !badge) return;
+
+      const rect = vp.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      crosshair.style.display = 'block';
+      crosshair.style.left = x + 'px';
+      crosshair.style.top = y + 'px';
+
+      const u = Math.max(0, Math.min(1, x / rect.width));
+      const v = Math.max(0, Math.min(1, y / rect.height));
+
+      const curLat = parseFloat(stats.lat) || 11.5277;
+      const curLon = parseFloat(stats.lon) || 76.1950;
+      const boxKm = parseFloat(stats.box_size_km) || 3.0;
+
+      const latDeg = curLat + (0.5 - v) * (boxKm / 111.0);
+      const lonDeg = curLon + (u - 0.5) * (boxKm / (111.0 * Math.cos(curLat * Math.PI / 180)));
+
+      badge.innerText = `📍 ${latDeg.toFixed(4)}° N, ${lonDeg.toFixed(4)}° E`;
+    };
+
+    window.handlePipMouseLeave = function() {
+      const crosshair = document.getElementById('pipCrosshair');
+      if (crosshair) crosshair.style.display = 'none';
+      const badge = document.getElementById('pipProbeBadge');
+      if (badge && stats.lat && stats.lon) {
+        badge.innerText = `📍 Lat: ${parseFloat(stats.lat).toFixed(4)}° | Lon: ${parseFloat(stats.lon).toFixed(4)}°`;
+      }
+    };
+
+    window.handlePipClick = function(e) {
+      const vp = document.getElementById('pipViewport');
+      if (!vp || !currentModel || !controls) return;
+      const rect = vp.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const u = Math.max(0, Math.min(1, x / rect.width));
+      const v = Math.max(0, Math.min(1, y / rect.height));
+
+      const box = new THREE.Box3().setFromObject(currentModel);
+      const targetX = box.min.x + u * (box.max.x - box.min.x);
+      const targetY = box.max.y - v * (box.max.y - box.min.y);
+
+      controls.target.set(targetX, targetY, center.z);
+      controls.update();
+      if (typeof playTone === 'function') playTone('blip');
+      showTacticalToast('🎯 3D CAMERA SYNCHRONIZED TO 2D PINPOINT');
+    };
+
+    // 🪟 Interactive Drag-and-Drop for 2D Comparison Window
     (function initDraggablePIP() {
       const pip = document.getElementById('split-pip');
       const header = document.getElementById('pipHeader');
@@ -3737,7 +4079,7 @@
       if (!header || !pip) return;
 
       header.addEventListener('mousedown', (e) => {
-        if (e.target.closest('button')) return;
+        if (e.target.closest('button') || isSideBySide) return;
         isDragging = true;
         startX = e.clientX;
         startY = e.clientY;
@@ -3757,10 +4099,10 @@
       });
 
       window.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
+        if (!isDragging || isSideBySide) return;
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
-        pip.style.left = Math.max(10, Math.min(window.innerWidth - 240, origLeft + dx)) + 'px';
+        pip.style.left = Math.max(10, Math.min(window.innerWidth - 260, origLeft + dx)) + 'px';
         pip.style.top = Math.max(10, Math.min(window.innerHeight - 200, origTop + dy)) + 'px';
       });
 
@@ -4988,9 +5330,13 @@
     animate();
 
     window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      if (typeof updateRendererSize === 'function') {
+        updateRendererSize();
+      } else {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
       if (splitLensActive) updateSplitDivider();
     });
   </script>
