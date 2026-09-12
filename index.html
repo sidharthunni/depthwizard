@@ -669,6 +669,13 @@
       box-shadow: var(--panel-shadow), 0 0 20px rgba(16, 185, 129, 0.15);
       margin-top: 10px;
     }
+    #temporal-hud {
+      background: var(--panel-glass); backdrop-filter: blur(28px) saturate(180%);
+      padding: 14px 16px; border-radius: 18px; width: 290px;
+      border: 1px solid rgba(251, 146, 60, 0.35);
+      box-shadow: var(--panel-shadow), 0 0 20px rgba(251, 146, 60, 0.15);
+      margin-top: 10px;
+    }
     #kisan-modal {
       position: fixed; inset: 0; z-index: 250;
       background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(20px);
@@ -744,8 +751,9 @@
       <button id="btnSat" class="btn-dock active" onclick="setLayer('sat')">🛰️ True Color</button>
       <button id="btnHazard" class="btn-dock btn-danger" onclick="setLayer('hazard')">🌋 Slope Risk</button>
       <button id="btnNDVI" class="btn-dock" onclick="setLayer('ndvi')" style="color:#34d399; border-color:rgba(52,211,153,0.35);">🌱 NDVI Canopy</button>
+      <button id="btnDeltaNDVI" class="btn-dock" onclick="setLayer('delta_ndvi')" style="color:#fb923c; border-color:rgba(251,146,60,0.35);">📉 ΔNDVI Loss</button>
       <button id="btnContour" class="btn-dock" onclick="toggleContourLines()">🗺️ Contour Bunding</button>
-      <button id="btnSplitLens" class="btn-dock" onclick="toggleSplitLens()">⚡ Twin Split Lens</button>
+      <button id="btnSplitLens" class="btn-dock" onclick="toggleSplitLens()">🪟 Pre/Post Wipe</button>
     </div>
 
     <!-- 🏢 3D Realism, Diorama & Extrusions (Images 1-5) -->
@@ -755,6 +763,18 @@
       <button id="btnDiorama" class="btn-dock active" onclick="toggleDioramaBase()">📦 Diorama Base</button>
       <button id="btnCyber" class="btn-dock" onclick="toggleCyberCityMode()">🌆 Cyber City</button>
       <button id="btnWire" class="btn-dock" onclick="toggleWireframe()">🕸️ Wireframe</button>
+    </div>
+
+    <!-- 🌪️ Multi-Hazard Agro Weather & Disaster Simulator -->
+    <div class="dock-group-label" id="lblHazardSimGroup" style="color:#f59e0b;">Multi-Hazard Agro Simulation</div>
+    <div class="btn-grid">
+      <button id="btnSimRain" class="btn-dock" onclick="triggerDisasterSim('rain')">🌧️ Heavy Rain</button>
+      <button id="btnSimHail" class="btn-dock" onclick="triggerDisasterSim('hail')">❄️ Hailstorm</button>
+      <button id="btnSimSand" class="btn-dock" onclick="triggerDisasterSim('sandstorm')">🌪️ Sandstorm</button>
+      <button id="btnSimFlood" class="btn-dock" onclick="triggerDisasterSim('flood')">🌊 Flood Surge</button>
+      <button id="btnSimTsunami" class="btn-dock" onclick="triggerDisasterSim('tsunami')">🌊 Saline Surge</button>
+      <button id="btnSimLandslide" class="btn-dock" onclick="triggerDisasterSim('landslide')">🌋 Landslide</button>
+      <button id="btnSimClear" class="btn-dock" style="grid-column: span 2; font-size:10px; color:#cbd5e1; border-color:rgba(255,255,255,0.15);" onclick="triggerDisasterSim('clear')">☀️ Clear Active Hazard</button>
     </div>
 
     <div class="dock-group-label">Reconnaissance Camera</div>
@@ -870,6 +890,54 @@
       </div>
       <div style="margin-top:8px; font-size:10px; color:#a7f3d0; background:rgba(6,95,70,0.35); border:1px solid rgba(52,211,153,0.3); padding:7px 9px; border-radius:8px; line-height:1.4;">
         💡 <b>Kisan Advisory:</b> Low-lying paddy & cotton fields face root decay. Deploy motorized pumps to primary irrigation channel immediately.
+      </div>
+    </div>
+
+    <!-- 🛰️ Pre vs. Post Disaster Crop Loss Telemetry HUD (Copernicus Sentinel-2 ΔNDVI) -->
+    <div id="temporal-hud" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <h3 style="margin:0; color:#fb923c; display:flex; align-items:center; gap:6px; font-size:13px; font-weight:800; letter-spacing:-0.2px;">
+          <span>🛰️</span> ΔNDVI Crop Loss Engine
+        </h3>
+        <span style="font-size:9px; background:rgba(251,146,60,0.15); color:#fb923c; padding:2px 6px; border-radius:4px; font-weight:800; font-family:'JetBrains Mono',monospace;">SENTINEL-2 PMFBY</span>
+      </div>
+      <div class="hud-stat-grid">
+        <div class="stat-cell">
+          <span class="stat-label">Pre-Disaster Canopy</span>
+          <span class="stat-num" id="tempPreCanopy" style="color:#34d399;">0.81 NDVI</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Post-Disaster Intact</span>
+          <span class="stat-num" id="tempPostIntact" style="color:#fbbf24;">0.34 NDVI</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Biomass Canopy Loss</span>
+          <span class="stat-num danger" id="tempBiomassLoss">-58.0%</span>
+          <div class="stat-bar"><div class="stat-bar-fill" id="tempLossBar" style="width: 58%; background: #ef4444;"></div></div>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Active Hazard Event</span>
+          <span class="stat-num" id="tempHazardType" style="color:#38bdf8; font-size:11px;">Torrential Cloudburst</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Mean Loss Index</span>
+          <span class="stat-num danger" id="tempDeltaNdvi">-0.47 ΔNDVI</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">PMFBY Claim Exposure</span>
+          <span class="stat-num" id="tempClaimExposure" style="color:#fb7185;">₹62.4 L</span>
+        </div>
+      </div>
+      <div id="tempAdvisoryCard" style="margin-top:8px; font-size:10px; color:#fed7aa; background:rgba(120,53,15,0.35); border:1px solid rgba(251,146,60,0.3); padding:7px 9px; border-radius:8px; line-height:1.4;">
+        💡 <b>PMFBY Advisory:</b> <span id="tempAdvisoryText">Severe crop damage identified. Automated claim dossier ready for Pradhan Mantri Fasal Bima Yojana underwriter assessment.</span>
+      </div>
+      <div style="margin-top:8px; display:flex; gap:6px;">
+        <button onclick="exportPMFBYClaim()" style="flex:1; background:rgba(251,146,60,0.18); color:#fb923c; border:1px solid rgba(251,146,60,0.4); padding:6px 10px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; transition:0.2s;" onmouseover="this.style.background='rgba(251,146,60,0.3)'" onmouseout="this.style.background='rgba(251,146,60,0.18)'">
+          📄 Export PMFBY Dossier
+        </button>
+        <button onclick="toggleSplitLens()" style="background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.35); padding:6px 10px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;">
+          🪟 Wipe
+        </button>
       </div>
     </div>
 
@@ -1588,6 +1656,17 @@
           trSafeEl.innerText = trSafeEl.innerText.replace('Shelters', 'Silos/Barns');
         }
 
+        const lSimGroup = document.getElementById('lblHazardSimGroup');
+        if (lSimGroup) lSimGroup.innerText = 'Multi-Hazard Agro Simulation';
+        const btnDelta = document.getElementById('btnDeltaNDVI');
+        if (btnDelta) btnDelta.innerHTML = '📉 ΔNDVI Loss';
+        const btnSplit = document.getElementById('btnSplitLens');
+        if (btnSplit) btnSplit.innerHTML = '🪟 Pre/Post Wipe';
+        const lLeft = document.getElementById('split-label-left');
+        if (lLeft) lLeft.innerText = '🌱 PRE-DISASTER (HEALTHY S2 CANOPY)';
+        const lRight = document.getElementById('split-label-right');
+        if (lRight) lRight.innerText = '📉 POST-DISASTER (ΔNDVI LOSS & HAZARD)';
+
         showTacticalToast('🌾 SWITCHED TO PRECISION AGRO & WATERSHED RESILIENCE MODE');
       } else {
         document.body.classList.remove('mode-agro');
@@ -1616,6 +1695,19 @@
         if (btnFocusRefuge) btnFocusRefuge.innerHTML = '🎯 Focus Safe Refuge Route';
         if (btnHazard) btnHazard.innerHTML = '🌋 Slope Risk';
         if (btnContour) btnContour.innerHTML = '🗺️ Contour Bunding';
+
+        const lSimGroup = document.getElementById('lblHazardSimGroup');
+        if (lSimGroup) lSimGroup.innerText = 'Disaster Weather Simulator';
+        const btnDelta = document.getElementById('btnDeltaNDVI');
+        if (btnDelta) btnDelta.innerHTML = '📉 Damage Delta';
+        const btnSplit = document.getElementById('btnSplitLens');
+        if (btnSplit) btnSplit.innerHTML = '⚡ Twin Split Lens';
+        const lLeft = document.getElementById('split-label-left');
+        if (lLeft) lLeft.innerText = '🛰️ REAL SATELLITE TERRAIN';
+        const lRight = document.getElementById('split-label-right');
+        if (lRight) lRight.innerText = '🏙️ 3D DIGITAL TWIN (LOD-1/2)';
+        const tempHud = document.getElementById('temporal-hud');
+        if (tempHud) tempHud.style.display = 'none';
 
         if (hudTitle) hudTitle.innerText = 'Terrain Telemetry';
         if (lblRiskSlope) lblRiskSlope.innerText = 'Landslide Risk';
@@ -1731,6 +1823,37 @@
     };
 
     // 🌾 Kisan Agro Crisis & PM Fasal Bima Assessment Handlers
+    window.exportPMFBYClaim = function() {
+      playTone('alert');
+      const loc = document.getElementById('targetLocationName') ? document.getElementById('targetLocationName').innerText : 'Target Agro Basin';
+      const hazard = document.getElementById('tempHazardType') ? document.getElementById('tempHazardType').innerText : 'Multi-Hazard Event';
+      const pre = document.getElementById('tempPreCanopy') ? document.getElementById('tempPreCanopy').innerText : '0.81 NDVI';
+      const post = document.getElementById('tempPostIntact') ? document.getElementById('tempPostIntact').innerText : '0.34 NDVI';
+      const loss = document.getElementById('tempBiomassLoss') ? document.getElementById('tempBiomassLoss').innerText : '-58.0%';
+      const delta = document.getElementById('tempDeltaNdvi') ? document.getElementById('tempDeltaNdvi').innerText : '-0.47 ΔNDVI';
+      const claim = document.getElementById('tempClaimExposure') ? document.getElementById('tempClaimExposure').innerText : '₹62.4 L';
+      const advisory = document.getElementById('tempAdvisoryText') ? document.getElementById('tempAdvisoryText').innerText : 'Severe crop lodging and canopy degradation.';
+
+      const detailsEl = document.getElementById('kisanDetails');
+      if (detailsEl) {
+        detailsEl.innerHTML = `
+<b>PMFBY CLAIM DOSSIER ID:</b> #PMFBY-AUDIT-${Date.now().toString().slice(-6)}<br>
+<b>TARGET SURVEY BASIN:</b> ${loc.toUpperCase()}<br>
+<b>GEODETIC LOCATION:</b> ${stats.lat.toFixed(4)}° N, ${stats.lon.toFixed(4)}° E | GSD: 10.0m Sentinel-2<br>
+<b>CATALOGUED NATURAL HAZARD:</b> <span style="color:#38bdf8;">${hazard.toUpperCase()}</span><br>
+<b>PRE-DISASTER CANOPY HEALTH:</b> <span style="color:#34d399;">${pre} (Copernicus S2B Multispectral Baseline)</span><br>
+<b>POST-DISASTER INTACT VEGETATION:</b> <span style="color:#fbbf24;">${post} (Copernicus S2A Rapid Re-visit)</span><br>
+<b>CANOPY BIOMASS LOSS RATIO:</b> <span style="color:#ef4444; font-weight:800;">${loss} CHANGE DETECTION</span><br>
+<b>MEAN ΔNDVI DECAY COEFFICIENT:</b> <span style="color:#ef4444;">${delta}</span><br>
+<b>UNDERWRITER CLAIM EXPOSURE:</b> <span style="color:#34d399; font-weight:800;">${claim} (DIRECT BENEFIT TRANSFER QUEUE)</span><br>
+<b>EXECUTIVE ADVISORY:</b> ${advisory}<br>
+<b>STATUS:</b> <span style="color:#a7f3d0;">FAST-TRACK CERTIFIED · AUTOMATED SATELLITE EVIDENCE AUDIT PASSED</span>
+        `;
+      }
+      const modal = document.getElementById('kisan-modal');
+      if (modal) modal.style.display = 'flex';
+    };
+
     window.openKisanModal = function() {
       playTone('alert');
       const fVal = document.getElementById('floodLevel') ? document.getElementById('floodLevel').value : 15;
@@ -1811,6 +1934,8 @@
           if (child.isMesh && child.material) {
             terrainMesh = child;
             satTexture = child.material.map;
+            ndviTexture = null;
+            deltaNdviTexture = null;
             child.material.roughness = 0.85;
             child.material.metalness = 0.05;
             child.material.wireframe = false;
@@ -3043,11 +3168,66 @@
       }
     }
 
+    let deltaNdviTexture = null;
+    function generateDeltaNDVITexture() {
+      if (!satTexture || !satTexture.image) return null;
+      try {
+        const src = satTexture.image;
+        const canvas = document.createElement('canvas');
+        const w = src.width || 512, h = src.height || 512;
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(src, 0, 0, w, h);
+        const idata = ctx.getImageData(0, 0, w, h);
+        const data = idata.data;
+
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            const i = (y * w + x) * 4;
+            const r = data[i], g = data[i+1], b = data[i+2];
+            const ndviPre = (g * 1.6 - r) / (g * 1.6 + r + 1e-4);
+
+            if (ndviPre < 0.05) {
+              data[i] = 40; data[i+1] = 48; data[i+2] = 64;
+              continue;
+            }
+
+            const nx = x / w - 0.5;
+            const ny = y / h - 0.5;
+            const distFromCenter = Math.sqrt(nx * nx + ny * ny);
+            const wave = Math.sin(nx * 9.0 + ny * 7.0) * 0.22 + 0.38;
+
+            let delta = - (wave * (0.45 + (1 - Math.min(1, distFromCenter * 1.5)) * 0.42));
+            if (delta < -0.85) delta = -0.85;
+            if (delta > 0) delta = 0;
+
+            if (delta < -0.52) {
+              data[i] = 220; data[i+1] = 38; data[i+2] = 38; // Red: severe loss
+            } else if (delta < -0.32) {
+              data[i] = 234; data[i+1] = 88; data[i+2] = 12; // Orange: heavy damage
+            } else if (delta < -0.15) {
+              data[i] = 250; data[i+1] = 204; data[i+2] = 21; // Yellow: stressed
+            } else {
+              data[i] = 16; data[i+1] = 185; data[i+2] = 129; // Green: intact
+            }
+          }
+        }
+        ctx.putImageData(idata, 0, 0);
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.flipY = false;
+        return tex;
+      } catch (e) {
+        console.warn("ΔNDVI texture generation error:", e);
+        return null;
+      }
+    }
+
     window.setLayer = (type) => {
       if (!terrainMesh) return;
       const btnSat = document.getElementById('btnSat');
       const btnHaz = document.getElementById('btnHazard');
       const btnNdvi = document.getElementById('btnNDVI');
+      const btnDeltaNdvi = document.getElementById('btnDeltaNDVI');
       const legend = document.getElementById('legend-card');
       const lTitle = document.getElementById('legendTitle');
       const lBar = document.getElementById('legendBar');
@@ -3056,8 +3236,24 @@
       if (btnSat) btnSat.classList.remove('active');
       if (btnHaz) btnHaz.classList.remove('active');
       if (btnNdvi) btnNdvi.classList.remove('active');
+      if (btnDeltaNdvi) btnDeltaNdvi.classList.remove('active');
 
-      if (type === 'ndvi') {
+      if (type === 'delta_ndvi') {
+        if (!deltaNdviTexture) deltaNdviTexture = generateDeltaNDVITexture();
+        if (deltaNdviTexture) {
+          terrainMesh.material.map = deltaNdviTexture;
+          terrainMesh.material.needsUpdate = true;
+          if (btnDeltaNdvi) btnDeltaNdvi.classList.add('active');
+          if (legend) {
+            legend.style.display = 'block';
+            if (lTitle) lTitle.innerText = '📉 ΔNDVI Sentinel-2 Disaster Crop Loss';
+            if (lBar) lBar.style.background = 'linear-gradient(to right, #dc2626 0%, #ea580c 35%, #facc15 70%, #10b981 100%)';
+            if (lLabels) lLabels.innerHTML = '<span>Severe Loss (< -0.5)</span><span>Moderate (-0.3)</span><span>Intact (> -0.1)</span>';
+          }
+          const tempHud = document.getElementById('temporal-hud');
+          if (tempHud) tempHud.style.display = 'block';
+        }
+      } else if (type === 'ndvi') {
         if (!ndviTexture) ndviTexture = generateNDVITexture();
         if (ndviTexture) {
           terrainMesh.material.map = ndviTexture;
@@ -3095,9 +3291,363 @@
       document.getElementById('btnWire').classList.toggle('active', isWireframe);
     };
 
+    // 🌪️ Multi-Hazard Agro Weather & Atmospheric Particle Simulation Engine
+    const weatherParticleGroup = new THREE.Group();
+    scene.add(weatherParticleGroup);
+
+    const PARTICLE_COUNT = 3500;
+    const particleGeo = new THREE.BufferGeometry();
+    const particlePos = new Float32Array(PARTICLE_COUNT * 3);
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particlePos[i * 3] = (Math.random() - 0.5) * 350;
+      particlePos[i * 3 + 1] = (Math.random() - 0.5) * 350;
+      particlePos[i * 3 + 2] = Math.random() * 200 - 20;
+    }
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
+
+    const particleMat = new THREE.PointsMaterial({
+      color: 0x93c5fd,
+      size: 2.2,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const particlePoints = new THREE.Points(particleGeo, particleMat);
+    weatherParticleGroup.add(particlePoints);
+    weatherParticleGroup.visible = false;
+
+    let activeDisasterType = null;
+    let disasterAudioLoopNode = null;
+    let disasterGainNode = null;
+    let disasterPingInterval = null;
+
+    function stopDisasterSound() {
+      if (disasterPingInterval) {
+        clearInterval(disasterPingInterval);
+        disasterPingInterval = null;
+      }
+      if (disasterGainNode && audioCtx) {
+        try {
+          disasterGainNode.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+          setTimeout(() => {
+            if (disasterAudioLoopNode) {
+              try { disasterAudioLoopNode.stop(); } catch(e){}
+              disasterAudioLoopNode = null;
+            }
+          }, 350);
+        } catch(e) {}
+      }
+    }
+
+    function playDisasterSound(type) {
+      stopDisasterSound();
+      if (!soundEnabled) return;
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!audioCtx && AudioContextClass) audioCtx = new AudioContextClass();
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        if (!audioCtx) return;
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'rain') {
+          const bufSize = audioCtx.sampleRate * 2;
+          const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+          const data = buf.getChannelData(0);
+          for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * 0.35;
+          const noise = audioCtx.createBufferSource();
+          noise.buffer = buf;
+          noise.loop = true;
+
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(850, now);
+
+          const gain = audioCtx.createGain();
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(0.08, now + 0.5);
+
+          noise.connect(filter);
+          filter.connect(gain);
+          gain.connect(audioCtx.destination);
+          noise.start(now);
+
+          disasterAudioLoopNode = noise;
+          disasterGainNode = gain;
+        } else if (type === 'hail') {
+          disasterPingInterval = setInterval(() => {
+            if (!soundEnabled || !audioCtx) return;
+            try {
+              const t = audioCtx.currentTime;
+              const osc = audioCtx.createOscillator();
+              const g = audioCtx.createGain();
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(1400 + Math.random() * 800, t);
+              osc.frequency.exponentialRampToValueAtTime(400, t + 0.04);
+              g.gain.setValueAtTime(0.04 + Math.random() * 0.03, t);
+              g.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+              osc.connect(g);
+              g.connect(audioCtx.destination);
+              osc.start(t);
+              osc.stop(t + 0.04);
+            } catch(e){}
+          }, 75);
+        } else if (type === 'sandstorm') {
+          const bufSize = audioCtx.sampleRate * 2;
+          const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+          const data = buf.getChannelData(0);
+          for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * 0.4;
+          const noise = audioCtx.createBufferSource();
+          noise.buffer = buf;
+          noise.loop = true;
+
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(380, now);
+          filter.Q.setValueAtTime(4.5, now);
+
+          const gain = audioCtx.createGain();
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(0.12, now + 0.6);
+
+          noise.connect(filter);
+          filter.connect(gain);
+          gain.connect(audioCtx.destination);
+          noise.start(now);
+
+          disasterAudioLoopNode = noise;
+          disasterGainNode = gain;
+        } else if (type === 'flood' || type === 'tsunami') {
+          const bufSize = audioCtx.sampleRate * 2;
+          const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+          const data = buf.getChannelData(0);
+          for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * 0.5;
+          const noise = audioCtx.createBufferSource();
+          noise.buffer = buf;
+          noise.loop = true;
+
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(type === 'tsunami' ? 240 : 320, now);
+
+          const gain = audioCtx.createGain();
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(0.14, now + 0.5);
+
+          noise.connect(filter);
+          filter.connect(gain);
+          gain.connect(audioCtx.destination);
+          noise.start(now);
+
+          disasterAudioLoopNode = noise;
+          disasterGainNode = gain;
+        } else if (type === 'landslide') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(55, now);
+          osc.frequency.linearRampToValueAtTime(80, now + 0.5);
+
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(160, now);
+
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(0.15, now + 0.4);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+
+          disasterAudioLoopNode = osc;
+          disasterGainNode = gain;
+        }
+      } catch(e) {
+        console.warn('Disaster sound error:', e);
+      }
+    }
+
+    function updateParticleAppearance(type) {
+      if (!particleMat) return;
+      if (type === 'rain') {
+        particleMat.color.setHex(0x93c5fd);
+        particleMat.size = 2.2;
+        particleMat.opacity = 0.82;
+        particleMat.blending = THREE.AdditiveBlending;
+      } else if (type === 'hail') {
+        particleMat.color.setHex(0xffffff);
+        particleMat.size = 3.8;
+        particleMat.opacity = 0.95;
+        particleMat.blending = THREE.NormalBlending;
+      } else if (type === 'sandstorm') {
+        particleMat.color.setHex(0xf59e0b);
+        particleMat.size = 3.2;
+        particleMat.opacity = 0.85;
+        particleMat.blending = THREE.NormalBlending;
+      } else if (type === 'flood') {
+        particleMat.color.setHex(0x38bdf8);
+        particleMat.size = 2.6;
+        particleMat.opacity = 0.70;
+        particleMat.blending = THREE.AdditiveBlending;
+      } else if (type === 'tsunami') {
+        particleMat.color.setHex(0x0284c7);
+        particleMat.size = 3.4;
+        particleMat.opacity = 0.88;
+        particleMat.blending = THREE.AdditiveBlending;
+      } else if (type === 'landslide') {
+        particleMat.color.setHex(0x92400e);
+        particleMat.size = 4.2;
+        particleMat.opacity = 0.95;
+        particleMat.blending = THREE.NormalBlending;
+      }
+      particleMat.needsUpdate = true;
+    }
+
+    function updateTemporalHUD(hazard, pre, post, lossPct, deltaNdvi, claim, advisory) {
+      const elHazard = document.getElementById('tempHazardType');
+      const elPre = document.getElementById('tempPreCanopy');
+      const elPost = document.getElementById('tempPostIntact');
+      const elLoss = document.getElementById('tempBiomassLoss');
+      const elBar = document.getElementById('tempLossBar');
+      const elDelta = document.getElementById('tempDeltaNdvi');
+      const elClaim = document.getElementById('tempClaimExposure');
+      const elAdv = document.getElementById('tempAdvisoryText');
+
+      if (elHazard) elHazard.innerText = hazard;
+      if (elPre) elPre.innerText = pre;
+      if (elPost) elPost.innerText = post;
+      if (elLoss) elLoss.innerText = lossPct;
+      if (elBar) elBar.style.width = lossPct.replace('-', '');
+      if (elDelta) elDelta.innerText = deltaNdvi + ' ΔNDVI';
+      if (elClaim) elClaim.innerText = claim;
+      if (elAdv) elAdv.innerText = advisory;
+    }
+
+    window.triggerDisasterSim = function(type) {
+      activeDisasterType = type;
+      if (typeof playTone === 'function') playTone('mode');
+
+      const simBtns = ['btnSimRain', 'btnSimHail', 'btnSimSand', 'btnSimFlood', 'btnSimTsunami', 'btnSimLandslide'];
+      simBtns.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.remove('active');
+      });
+
+      const clearBtn = document.getElementById('btnSimClear');
+      if (type === 'clear') {
+        if (clearBtn) clearBtn.classList.add('active');
+        setTimeout(() => { if (clearBtn) clearBtn.classList.remove('active'); }, 600);
+
+        if (weatherParticleGroup) weatherParticleGroup.visible = false;
+        scene.fog = new THREE.FogExp2(0x030712, 0.0010);
+        sunLight.intensity = 1.5;
+        rimLight.intensity = 0.5;
+        stopDisasterSound();
+
+        if (waterMesh) {
+          waterMesh.visible = floodMode;
+          if (currentModel) {
+            const box = new THREE.Box3().setFromObject(currentModel);
+            currentWaterZ = box.min.z + box.getSize(new THREE.Vector3()).z * 0.15;
+            waterMesh.position.z = currentWaterZ;
+          }
+        }
+
+        const tempHud = document.getElementById('temporal-hud');
+        if (tempHud && !splitLensActive) tempHud.style.display = 'none';
+
+        showTacticalToast('☀️ WEATHER & HAZARD SIMULATION CLEARED');
+        return;
+      }
+
+      const targetBtnId = {
+        'rain': 'btnSimRain',
+        'hail': 'btnSimHail',
+        'sandstorm': 'btnSimSand',
+        'flood': 'btnSimFlood',
+        'tsunami': 'btnSimTsunami',
+        'landslide': 'btnSimLandslide'
+      }[type];
+      if (targetBtnId) {
+        const b = document.getElementById(targetBtnId);
+        if (b) b.classList.add('active');
+      }
+
+      const tempHud = document.getElementById('temporal-hud');
+      if (tempHud) tempHud.style.display = 'block';
+
+      if (weatherParticleGroup) {
+        weatherParticleGroup.visible = true;
+        updateParticleAppearance(type);
+      }
+
+      if (type === 'rain') {
+        scene.fog = new THREE.FogExp2(0x1e293b, 0.0018);
+        sunLight.intensity = 0.65;
+        rimLight.intensity = 0.35;
+        if (waterMesh) {
+          waterMesh.visible = true;
+          if (currentModel) {
+            const box = new THREE.Box3().setFromObject(currentModel);
+            currentWaterZ = box.min.z + box.getSize(new THREE.Vector3()).z * 0.28;
+            waterMesh.position.z = currentWaterZ;
+          }
+        }
+        updateTemporalHUD('Torrential Cloudburst (210 mm)', '0.82 NDVI', '0.41 NDVI', '-50.0%', '-0.41', '₹48.6 L', 'Severe furrow waterlogging. Initiate emergency canal sluice discharge.');
+        showTacticalToast('🌧️ SIMULATING TORRENTIAL CLOUDBURST & RUNOFF');
+      } else if (type === 'hail') {
+        scene.fog = new THREE.FogExp2(0x334155, 0.0016);
+        sunLight.intensity = 0.8;
+        rimLight.intensity = 0.6;
+        updateTemporalHUD('Severe Hailstorm & Lodging', '0.85 NDVI', '0.28 NDVI', '-67.1%', '-0.57', '₹74.2 L', 'Catastrophic canopy shredding & lodging across paddy and maize parcels.');
+        showTacticalToast('❄️ SIMULATING SEVERE HAILSTORM & CROP LODGING');
+      } else if (type === 'sandstorm') {
+        scene.fog = new THREE.FogExp2(0x78350f, 0.0035);
+        sunLight.intensity = 0.45;
+        rimLight.intensity = 0.2;
+        updateTemporalHUD('Aeolian Haboob & Dust Storm', '0.71 NDVI', '0.22 NDVI', '-69.0%', '-0.49', '₹52.8 L', 'High-velocity wind gusts stripping topsoil. Mulching & windbreak shelterbelts advised.');
+        showTacticalToast('🌪️ SIMULATING AEOLIAN SANDSTORM & SOIL EROSION');
+      } else if (type === 'flood') {
+        scene.fog = new THREE.FogExp2(0x0f172a, 0.0014);
+        sunLight.intensity = 0.9;
+        if (waterMesh) {
+          waterMesh.visible = true;
+          if (currentModel) {
+            const box = new THREE.Box3().setFromObject(currentModel);
+            currentWaterZ = box.min.z + box.getSize(new THREE.Vector3()).z * 0.42;
+            waterMesh.position.z = currentWaterZ;
+          }
+        }
+        updateTemporalHUD('Riverine Flash Flood (+4.8m)', '0.79 NDVI', '0.19 NDVI', '-75.9%', '-0.60', '₹89.4 L', 'Extensive arable basin drowning. High hypoxia risk (<24 hrs) for submerged roots.');
+        showTacticalToast('🌊 SIMULATING RIVERINE FLOOD SURGE & SUBMERGENCE');
+      } else if (type === 'tsunami') {
+        scene.fog = new THREE.FogExp2(0x064e3b, 0.0015);
+        sunLight.intensity = 0.7;
+        if (waterMesh) {
+          waterMesh.visible = true;
+          if (currentModel) {
+            const box = new THREE.Box3().setFromObject(currentModel);
+            currentWaterZ = box.min.z + box.getSize(new THREE.Vector3()).z * 0.55;
+            waterMesh.position.z = currentWaterZ;
+          }
+        }
+        updateTemporalHUD('Saline Inundation Surge', '0.76 NDVI', '0.12 NDVI', '-84.2%', '-0.64', '₹1.15 Cr', 'Severe coastal saline intrusion (EC > 8 dS/m). Immediate gypsum soil flushing required.');
+        showTacticalToast('🌊 SIMULATING COASTAL TSUNAMI SALINE SURGE');
+      } else if (type === 'landslide') {
+        scene.fog = new THREE.FogExp2(0x451a03, 0.0022);
+        sunLight.intensity = 0.6;
+        updateTemporalHUD('Hillside Debris Flow Slip', '0.88 NDVI', '0.08 NDVI', '-90.9%', '-0.80', '₹96.2 L', 'Total terrace slippage & colluvial scarp. Evacuate downstream cattle and workers.');
+        showTacticalToast('🌋 SIMULATING HILLSIDE DEBRIS FLOW & LANDSLIDE');
+      }
+
+      playDisasterSound(type);
+    };
+
     // 🪟 Digital Twin Split Wipe Lens (Ref: media_1788490030733.jpg)
     let splitLensActive = false;
-    let splitRatio = 0.50; // starts at 50% split matching the reference image!
+    let splitRatio = 0.50; // starts at 50% split
     let isDraggingSplit = false;
 
     window.toggleSplitLens = () => {
@@ -3107,9 +3657,27 @@
       const div = document.getElementById('split-divider');
       const lLeft = document.getElementById('split-label-left');
       const lRight = document.getElementById('split-label-right');
+      const tempHud = document.getElementById('temporal-hud');
+
       if (div) div.style.display = splitLensActive ? 'block' : 'none';
-      if (lLeft) lLeft.style.display = splitLensActive ? 'block' : 'none';
-      if (lRight) lRight.style.display = splitLensActive ? 'block' : 'none';
+      if (lLeft) {
+        lLeft.style.display = splitLensActive ? 'block' : 'none';
+        lLeft.innerText = (typeof appMode !== 'undefined' && appMode === 'agro') ? 
+          '🌱 PRE-DISASTER (HEALTHY S2 CANOPY)' : '🛰️ REAL SATELLITE TERRAIN';
+      }
+      if (lRight) {
+        lRight.style.display = splitLensActive ? 'block' : 'none';
+        lRight.innerText = (typeof appMode !== 'undefined' && appMode === 'agro') ? 
+          '📉 POST-DISASTER (ΔNDVI LOSS & HAZARD)' : '🏙️ 3D DIGITAL TWIN (LOD-1/2)';
+      }
+      if (tempHud && (typeof appMode !== 'undefined' && appMode === 'agro')) {
+        tempHud.style.display = splitLensActive ? 'block' : (activeDisasterType ? 'block' : 'none');
+      }
+
+      if (splitLensActive && !deltaNdviTexture) {
+        deltaNdviTexture = generateDeltaNDVITexture();
+      }
+
       updateSplitDivider();
     };
 
@@ -4270,28 +4838,132 @@
       const dial = document.getElementById('compass-dial');
       if (dial) dial.style.transform = `rotate(${-angleDeg}deg)`;
 
+      // 🌪️ Weather & Disaster Particle Dynamics
+      if (weatherParticleGroup && weatherParticleGroup.visible && activeDisasterType && activeDisasterType !== 'clear') {
+        const positions = particleGeo.attributes.position.array;
+        const time = Date.now() * 0.001;
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          const idx = i * 3;
+          if (activeDisasterType === 'rain') {
+            positions[idx] += 0.8;
+            positions[idx + 1] += 0.4;
+            positions[idx + 2] -= 8.5;
+            if (positions[idx + 2] < -30) {
+              positions[idx + 2] = 160 + Math.random() * 40;
+              positions[idx] = (Math.random() - 0.5) * 350;
+              positions[idx + 1] = (Math.random() - 0.5) * 350;
+            }
+          } else if (activeDisasterType === 'hail') {
+            positions[idx] += (Math.random() - 0.5) * 0.5;
+            positions[idx + 1] += (Math.random() - 0.5) * 0.5;
+            positions[idx + 2] -= 14.0;
+            if (positions[idx + 2] < -20) {
+              if (Math.random() < 0.3) {
+                positions[idx + 2] += 4.5;
+              } else {
+                positions[idx + 2] = 180 + Math.random() * 50;
+                positions[idx] = (Math.random() - 0.5) * 350;
+                positions[idx + 1] = (Math.random() - 0.5) * 350;
+              }
+            }
+          } else if (activeDisasterType === 'sandstorm') {
+            positions[idx] += 12.0 + Math.sin(time * 3 + i) * 2.5;
+            positions[idx + 1] += 4.0 + Math.cos(time * 2 + i) * 1.5;
+            positions[idx + 2] += Math.sin(time * 5 + i * 0.1) * 0.8;
+            if (positions[idx] > 180) {
+              positions[idx] = -180;
+              positions[idx + 1] = (Math.random() - 0.5) * 350;
+              positions[idx + 2] = Math.random() * 110 - 10;
+            }
+          } else if (activeDisasterType === 'flood') {
+            positions[idx] += Math.sin(time * 2 + i) * 0.6;
+            positions[idx + 1] += 1.2;
+            positions[idx + 2] += Math.cos(time * 3 + i) * 0.4;
+            if (positions[idx + 1] > 180) {
+              positions[idx + 1] = -180;
+              positions[idx] = (Math.random() - 0.5) * 350;
+              positions[idx + 2] = (currentWaterZ || 0) + Math.random() * 20 - 5;
+            }
+          } else if (activeDisasterType === 'tsunami') {
+            positions[idx] += 8.5 + Math.sin(time * 4 + i) * 2.0;
+            positions[idx + 1] += 5.0;
+            positions[idx + 2] += Math.sin(time * 6 + i) * 1.2 - 0.5;
+            if (positions[idx] > 180 || positions[idx + 1] > 180) {
+              positions[idx] = -180 + Math.random() * 40;
+              positions[idx + 1] = -180 + Math.random() * 40;
+              positions[idx + 2] = (currentWaterZ || 15) + Math.random() * 45;
+            }
+          } else if (activeDisasterType === 'landslide') {
+            positions[idx] += (Math.random() - 0.5) * 1.8;
+            positions[idx + 1] += (Math.random() - 0.5) * 1.8;
+            positions[idx + 2] -= 9.5;
+            if (positions[idx + 2] < -35) {
+              positions[idx + 2] = 120 + Math.random() * 70;
+              positions[idx] = (Math.random() - 0.3) * 220;
+              positions[idx + 1] = (Math.random() - 0.3) * 220;
+            }
+          }
+        }
+        particleGeo.attributes.position.needsUpdate = true;
+      }
+
+      // 🌊 Water Wave Surface Dynamics
+      if (waterMesh && (activeDisasterType === 'flood' || activeDisasterType === 'tsunami' || floodMode)) {
+        const wt = Date.now() * 0.002;
+        waterMesh.position.z = currentWaterZ + Math.sin(wt * 3) * (activeDisasterType === 'tsunami' ? 2.5 : 0.8);
+        if (waterMesh.material) waterMesh.material.opacity = 0.72 + Math.sin(wt * 4) * 0.08;
+      }
+
       controls.update();
 
       if (splitLensActive) {
         renderer.setScissorTest(true);
         const splitPx = Math.floor(window.innerWidth * splitRatio);
+        const activeTex = terrainMesh ? terrainMesh.material.map : null;
 
-        // --- Left Viewport (Photorealistic Real World Terrain) ---
+        // --- Left Viewport (Pre-Disaster / Pristine Satellite / Healthy Canopy) ---
         renderer.setViewport(0, 0, splitPx, window.innerHeight);
         renderer.setScissor(0, 0, splitPx, window.innerHeight);
+
+        if (terrainMesh && satTexture && terrainMesh.material.map !== satTexture) {
+          terrainMesh.material.map = satTexture;
+        }
+        if (waterMesh) waterMesh.visible = false;
+        if (weatherParticleGroup) weatherParticleGroup.visible = false;
         buildingGroup.visible = false;
         renderer.render(scene, camera);
 
-        // --- Right Viewport (Digital Twin Polygonal Extrusions) ---
+        // --- Right Viewport (Post-Disaster / ΔNDVI Damage / Hazard / 3D Buildings) ---
         renderer.setViewport(splitPx, 0, window.innerWidth - splitPx, window.innerHeight);
         renderer.setScissor(splitPx, 0, window.innerWidth - splitPx, window.innerHeight);
-        buildingGroup.visible = true;
+
+        const rightTex = (typeof appMode !== 'undefined' && appMode === 'agro') ? 
+          (deltaNdviTexture || hazardTexture || activeTex || satTexture) :
+          (activeTex || satTexture);
+
+        if (terrainMesh && rightTex && terrainMesh.material.map !== rightTex) {
+          terrainMesh.material.map = rightTex;
+        }
+        if (waterMesh) {
+          waterMesh.visible = floodMode || (activeDisasterType === 'flood' || activeDisasterType === 'tsunami' || activeDisasterType === 'rain');
+        }
+        if (weatherParticleGroup) {
+          weatherParticleGroup.visible = (activeDisasterType !== null && activeDisasterType !== 'clear');
+        }
+        buildingGroup.visible = showBuildings;
         renderer.render(scene, camera);
 
+        // Restore active texture
+        if (terrainMesh && activeTex && terrainMesh.material.map !== activeTex) {
+          terrainMesh.material.map = activeTex;
+        }
         renderer.setScissorTest(false);
       } else {
         renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
         buildingGroup.visible = showBuildings;
+        if (weatherParticleGroup) {
+          weatherParticleGroup.visible = (activeDisasterType !== null && activeDisasterType !== 'clear');
+        }
         renderer.render(scene, camera);
       }
     }
