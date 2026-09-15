@@ -6850,7 +6850,49 @@
       subsurfaceClippingPlane.constant = center.y + currentSliceOffset;
       buildSubsurfaceStrataSlab(box, bSize);
       const offsetM = Math.round(currentSliceOffset);
-      document.getElementById('sliceVal').innerText = `${offsetM >= 0 ? '+' : ''}${offsetM}m Offset`;
+      const sliceEl = document.getElementById('sliceVal');
+      if (sliceEl) sliceEl.innerText = `${offsetM >= 0 ? '+' : ''}${offsetM}m Offset`;
+
+      // Dynamically vary geotechnical strata telemetry across terrain gradient
+      const normVal = parseFloat(val); // -100 to +100
+      const wtDepth = Math.max(1.2, Math.min(8.5, (3.8 + (normVal / 100.0) * 2.8))).toFixed(1);
+      const saturationPct = Math.max(42, Math.min(94, Math.round(72 - (normVal / 100.0) * 26)));
+      const topsoilCm = Math.max(18, Math.min(46, Math.round(32 - (normVal / 100.0) * 14)));
+      const subsoilM = Math.max(1.2, Math.min(2.6, (1.8 + (normVal / 100.0) * 0.5))).toFixed(1);
+      const shearKPa = Math.max(12, Math.min(38, Math.round(15 + Math.abs(normVal) * 0.22)));
+
+      const elTopsoil = document.getElementById('ssTopsoil');
+      if (elTopsoil) {
+        const soilDesc = normVal < -25 ? 'Alluvial Silt / High Saturated Moisture' : normVal > 25 ? 'Gravelly Loam / Aerated Terrace' : 'Humus-Rich Loam / Active Root Zone';
+        elTopsoil.innerText = `0–${topsoilCm} cm (${soilDesc})`;
+      }
+
+      const elSubsoil = document.getElementById('ssSubsoil');
+      if (elSubsoil) {
+        elSubsoil.innerText = `${topsoilCm}cm–${subsoilM}m (Weathered Regolith / ${saturationPct}% Saturation)`;
+      }
+
+      const elWaterTable = document.getElementById('ssWaterTable');
+      if (elWaterTable) {
+        const aqDesc = normVal < -30 ? 'Perched Riverine Aquifer' : normVal > 30 ? 'Deep Unconfined Aquifer' : 'Phreatic Saturated Table';
+        elWaterTable.innerText = `${wtDepth} m Depth AMSL (${aqDesc})`;
+      }
+
+      const elBedrock = document.getElementById('ssBedrock');
+      if (elBedrock) {
+        elBedrock.innerText = normVal > 35 ? 'Fractured Gneissic Basement (-5.8m)' : 'Deccan Basaltic Hardpan (-8.5m)';
+      }
+
+      const elShearRisk = document.getElementById('ssShearRisk');
+      if (elShearRisk) {
+        if (normVal < -35) {
+          elShearRisk.innerHTML = `<span style="color:#fbbf24; font-weight:800;">Liquefaction Vulnerable (${shearKPa} kPa)</span>`;
+        } else if (normVal > 40) {
+          elShearRisk.innerHTML = `<span style="color:#f87171; font-weight:800;">Elevated Slope Shear Stress (${shearKPa} kPa)</span>`;
+        } else {
+          elShearRisk.innerHTML = `<span style="color:#34d399; font-weight:800;">Nominal Hydro-Shear Stable (${shearKPa} kPa)</span>`;
+        }
+      }
     };
 
     // Agri-Machinery Traversability & Tractor Rollover Safety
