@@ -1417,7 +1417,7 @@
         <span style="font-size:9px; background:rgba(56,189,248,0.15); padding:2px 6px; border-radius:4px; border:1px solid rgba(56,189,248,0.3);">SAFE CORRIDORS</span>
       </div>
       <div class="btn-grid">
-        <button id="btnFocusRefuge" class="btn-dock" onclick="focusEvacShelter()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4); font-weight:700;">
+        <button id="btnFocusRefuge" class="btn-dock" onclick="toggleRefugeCorridor()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4); font-weight:700;">
           <svg class="dw-ico" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
           Refuge Corridor
         </button>
@@ -1461,6 +1461,10 @@
           <svg class="dw-ico" viewBox="0 0 24 24"><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/><line x1="8" y1="19" x2="8" y2="23"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="16" y1="19" x2="16" y2="23"/></svg>
           Monsoon Rain
         </button>
+        <button id="btnSimClear" class="btn-dock" onclick="triggerDisasterSim('clear')" style="grid-column: span 2; color:#cbd5e1; border-color:rgba(255,255,255,0.22); font-size:11px; font-weight:700; margin-top:2px;">
+          <svg class="dw-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          Reset Baseline Atmosphere
+        </button>
       </div>
     </div>
 
@@ -1478,6 +1482,35 @@
         <button id="btnBuilding" class="btn-dock" onclick="toggleBuildingMode()" style="color:#fbbf24; border-color:rgba(251,191,36,0.4); font-weight:700;">
           <svg class="dw-ico" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11h6v10"/></svg>
           Inspect Structure
+        </button>
+      </div>
+    </div>
+
+    <!-- 7. ADVANCED 3D RECON & MESH (Collapsible Minus Box) -->
+    <div class="track-soln-card" id="reconMinusBox">
+      <div class="track-card-header" style="color:#a78bfa; cursor:pointer;" onclick="toggleReconMinusBox()">
+        <span style="display:flex; align-items:center; gap:5px;">
+          <svg class="dw-ico" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          3D MESH &amp; CAMERA RECON
+        </span>
+        <button id="btnToggleReconBox" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14); color:#cbd5e1; border-radius:4px; padding:1px 6px; font-size:11px; cursor:pointer;" title="Collapse / Expand Box">_</button>
+      </div>
+      <div id="reconMinusContent" class="btn-grid" style="margin-top:4px;">
+        <button id="btnWire" class="btn-dock" onclick="toggleWireframe()" style="color:#a78bfa; border-color:rgba(167,139,250,0.4); font-weight:700;">
+          <svg class="dw-ico" viewBox="0 0 24 24"><polygon points="12 2 2 22 22 22"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+          TIN Mesh Surface
+        </button>
+        <button id="btnSplitPIP" class="btn-dock" onclick="toggleSplitPIP()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4); font-weight:700;">
+          <svg class="dw-ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="12" y="12" width="7" height="7" rx="1"/></svg>
+          2D / 3D Dual
+        </button>
+        <button id="btnOrbitFly" class="btn-dock" onclick="toggleFlight('orbit')" style="color:#dedcff; border-color:rgba(222,220,255,0.35); font-weight:700;">
+          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          360° Orbit View
+        </button>
+        <button id="btnValleyFly" class="btn-dock" onclick="toggleFlight('valley')" style="color:#34d399; border-color:rgba(52,211,153,0.35); font-weight:700;">
+          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/></svg>
+          Valley Recon View
         </button>
       </div>
     </div>
@@ -1501,24 +1534,19 @@
       <button id="btnNDVI" onclick="setLayer('ndvi')"></button>
       <button id="btnDeltaNDVI" onclick="setLayer('delta_ndvi')"></button>
       <button id="btnContour" onclick="toggleContourLines()"></button>
-      <button id="btnSplitPIP" onclick="toggleSplitPIP()"></button>
-      <button id="btnExtrude" onclick="toggleExtrudedBuildings()"></button>
+            <button id="btnExtrude" onclick="toggleExtrudedBuildings()"></button>
       <button id="btnWaterways" onclick="toggleWaterways()"></button>
       <button id="btnPeaks" onclick="togglePeaksAndLandmarks()"></button>
       <button id="btnMountain" onclick="toggleMountainProfiler()"></button>
       <button id="btnTrees" onclick="toggleVegetation()"></button>
       <button id="btnDiorama" onclick="toggleDioramaBase()"></button>
       <button id="btnCyber" onclick="toggleCyberCityMode()"></button>
-      <button id="btnWire" onclick="toggleWireframe()"></button>
-      <button id="btnTractor" onclick="toggleTractorSafetyOverlay()"></button>
+            <button id="btnTractor" onclick="toggleTractorSafetyOverlay()"></button>
       <button id="btnSimHail" onclick="triggerDisasterSim('hail')"></button>
       <button id="btnSimSand" onclick="triggerDisasterSim('sandstorm')"></button>
       <button id="btnSimTsunami" onclick="triggerDisasterSim('tsunami')"></button>
       <button id="btnSimLandslide" onclick="triggerDisasterSim('landslide')"></button>
-      <button id="btnSimClear" onclick="triggerDisasterSim('clear')"></button>
-      <button id="btnOrbitFly" onclick="toggleFlight('orbit')"></button>
-      <button id="btnValleyFly" onclick="toggleFlight('valley')"></button>
-      <button id="btnTopDown" onclick="setTopDownView()"></button>
+                        <button id="btnTopDown" onclick="setTopDownView()"></button>
       <button id="btnMeasure" onclick="toggleMeasureMode()"></button>
       <button id="btnFlood" onclick="toggleFloodMode()"></button>
       <button onclick="clearAllSOSBeacons()"></button>
@@ -7680,6 +7708,13 @@
       if (!terrainMesh) return;
       const btnSat = document.getElementById('btnSat');
       const btnHaz = document.getElementById('btnHazard');
+
+      // Allow toggling Slope Hazard OFF back to True Color Satellite
+      if (type === 'hazard' && btnHaz && btnHaz.classList.contains('active')) {
+        window.setLayer('sat');
+        showTacticalToast('Slope Hazard Overlay Turned OFF (Satellite Restored)');
+        return;
+      }
       const btnNdvi = document.getElementById('btnNDVI');
       const btnDeltaNdvi = document.getElementById('btnDeltaNDVI');
       const legend = document.getElementById('legend-card');
@@ -11218,6 +11253,43 @@
         }
       }
     });
+
+
+    // Toggle Recon Minus Box Collapse / Expand
+    window.toggleReconMinusBox = function() {
+      const content = document.getElementById('reconMinusContent');
+      const btn = document.getElementById('btnToggleReconBox');
+      if (!content) return;
+      const isHidden = content.style.display === 'none';
+      content.style.display = isHidden ? 'grid' : 'none';
+      if (btn) btn.innerText = isHidden ? '_' : '+';
+    };
+
+    // Toggle Refuge Corridor ON / OFF
+    window.toggleRefugeCorridor = function() {
+      const btn = document.getElementById('btnFocusRefuge');
+      const isCurrentlyVisible = triageGroup && triageGroup.visible && triageActive;
+
+      if (isCurrentlyVisible) {
+        // Toggle OFF: hide corridor lines and target markers
+        triageGroup.visible = false;
+        if (typeof activeEvacRouteLine !== 'undefined' && activeEvacRouteLine) activeEvacRouteLine.visible = false;
+        if (typeof activeShelterTargetMarker !== 'undefined' && activeShelterTargetMarker) activeShelterTargetMarker.visible = false;
+        if (btn) btn.classList.remove('active');
+        showTacticalToast('Refuge Corridors & Vector Mesh Turned OFF');
+      } else {
+        // Toggle ON: activate and focus
+        if (!triageActive) {
+          toggleRescueTriage();
+        } else {
+          triageGroup.visible = true;
+          if (typeof activeEvacRouteLine !== 'undefined' && activeEvacRouteLine) activeEvacRouteLine.visible = true;
+          if (typeof activeShelterTargetMarker !== 'undefined' && activeShelterTargetMarker) activeShelterTargetMarker.visible = true;
+        }
+        if (btn) btn.classList.add('active');
+        focusEvacShelter();
+      }
+    };
 
 </script>
 </body>
