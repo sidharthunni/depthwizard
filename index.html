@@ -1191,6 +1191,60 @@
         grid-template-columns: 1fr !important;
       }
     }
+  
+    /* Clean Presentation & Minimize / Vanish System */
+    body.hud-vanished #left-dock,
+    body.hud-vanished #right-column,
+    body.hud-vanished #triage-card,
+    body.hud-vanished #btn-restore-dock,
+    body.hud-vanished #btn-restore-telemetry,
+    body.hud-vanished #btn-restore-sitrep {
+      display: none !important;
+    }
+    #left-dock.dock-minimized {
+      transform: translateX(-360px);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .floating-restore-pill {
+      position: absolute; z-index: 92;
+      background: var(--panel-glass); backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border: 1px solid var(--accent); color: #fff;
+      padding: 7px 15px; border-radius: 99px; font-size: 11px; font-weight: 800;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.7); cursor: pointer;
+      display: none; align-items: center; gap: 7px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .floating-restore-pill:hover {
+      background: var(--accent); transform: scale(1.05); box-shadow: 0 12px 32px var(--accent-glow);
+    }
+    #btn-restore-dock { top: 86px; left: 20px; border-color: rgba(67, 59, 255, 0.7); }
+    #btn-restore-telemetry { top: 86px; right: 20px; border-color: rgba(56, 189, 248, 0.7); color: #38bdf8; }
+    #btn-restore-sitrep { bottom: 20px; right: 20px; border-color: rgba(244, 63, 94, 0.7); color: #fb7185; }
+    #right-hud.hud-minimized {
+      display: none !important;
+    }
+    #triage-card.card-minimized {
+      display: none !important;
+    }
+    .track-soln-card {
+      margin-bottom: 11px; padding: 10px 11px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      transition: border-color 0.2s ease;
+    }
+    .track-soln-card:hover {
+      border-color: rgba(67, 59, 255, 0.35);
+      background: rgba(255, 255, 255, 0.045);
+    }
+    .track-card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.7px;
+      text-transform: uppercase; margin-bottom: 7px;
+    }
+
   </style>
 </head>
 <body>
@@ -1203,16 +1257,14 @@
         CIVICPULSE 3D <span class="badge-civic shiny-badge" id="topBadgeDomain">CIVIC TECH v4.2</span>
       </div>
 
-      <!-- Executive Dual-Domain Mode Switcher -->
-      <div class="mode-switch-box" id="modeSwitchBox">
-        <button class="mode-btn active" id="btnModeRescue" onclick="setAppMode('rescue')" title="Disaster Response, Flood Evacuation & NDRF Triage">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Civil Defense
-        </button>
-        <button class="mode-btn" id="btnModeAgro" onclick="setAppMode('agro')" title="Precision Agriculture, Watershed & Actuarial Loss">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
-          Precision Agro
-        </button>
+      <!-- Unified Track 4 Civic Governance Badge -->
+      <div class="mode-switch-box" id="modeSwitchBox" style="display:none;">
+        <button class="mode-btn active" id="btnModeRescue" onclick="setAppMode('rescue')"></button>
+        <button class="mode-btn" id="btnModeAgro" onclick="setAppMode('agro')"></button>
+      </div>
+      <div class="track-unified-badge" style="display:flex; align-items:center; gap:8px; background:rgba(67,59,255,0.18); border:1px solid rgba(67,59,255,0.45); padding:5px 12px; border-radius:99px; font-size:11px; font-weight:800; color:#dedcff;">
+        <span class="pulse-dot" style="background:#38bdf8; width:6px; height:6px;"></span>
+        <span>CIVIC TECH &amp; DISASTER GOVERNANCE // TRACK 4</span>
       </div>
 
       <div class="mission-status shiny-badge" id="topMissionStatus">
@@ -1270,6 +1322,10 @@
         <svg class="dw-ico" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         GeoTIFF
       </button>
+      <button class="btn-top" id="btnToggleAllHUD" onclick="toggleMasterHUDVisibility()" title="Vanish / Restore all interface panels (Hotkey: H)" style="border-color:rgba(56,189,248,0.5); color:#38bdf8; font-weight:700;">
+        <svg class="dw-ico" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Clean View
+      </button>
       <button class="btn-top btn-accent" onclick="toggleFullscreen()">
         <svg class="dw-ico" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
         Expand
@@ -1299,8 +1355,17 @@
 
   <!-- Left Tactical Tool Dock (Executive SDSS Floating Island) -->
   <div id="left-dock">
-    <!-- Executive Category Tabs Filter -->
-    <div class="dock-tab-bar" id="dockTabBar">
+    <!-- Dock Header with Minimize Button -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.08);">
+      <div style="font-size:11px; font-weight:800; color:#38bdf8; letter-spacing:0.8px; text-transform:uppercase; display:flex; align-items:center; gap:6px;">
+        <span class="pulse-dot" style="background:#38bdf8;"></span>
+        TRACK 4 CIVIC SOLUTIONS
+      </div>
+      <button onclick="toggleDockMinimize()" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14); color:#cbd5e1; border-radius:6px; padding:2px 8px; font-size:12px; cursor:pointer;" title="Minimize / Collapse Dock">_</button>
+    </div>
+
+    <!-- Category Tabs Hidden -->
+    <div class="dock-tab-bar" id="dockTabBar" style="display:none !important;">
       <button class="dock-tab active" data-cat="all" onclick="filterDockCategory('all')">ALL</button>
       <button class="dock-tab" data-cat="layers" onclick="filterDockCategory('layers')">LAYERS</button>
       <button class="dock-tab" data-cat="twin" onclick="filterDockCategory('twin')">3D TWIN</button>
@@ -1309,222 +1374,184 @@
       <button class="dock-tab" data-cat="c4i" onclick="filterDockCategory('c4i')">C4I</button>
     </div>
 
-    <!-- Section 1: Spectral & Topographic Layers -->
-    <div class="dock-section-group" data-cat="layers">
-      <div class="dock-group-label" id="lblLayerGroup">Spectral & Topographic Layers</div>
+    <!-- 1. PUBLIC SERVICES -->
+    <div class="track-soln-card">
+      <div class="track-card-header" style="color:#34d399;">
+        <span>1. PUBLIC SERVICES</span>
+        <span style="font-size:9px; background:rgba(52,211,153,0.15); padding:2px 6px; border-radius:4px; border:1px solid rgba(52,211,153,0.3);">RELIEF &amp; MEDICAL</span>
+      </div>
       <div class="btn-grid">
-        <button id="btnSat" class="btn-dock active" onclick="setLayer('sat')">
-          <svg class="dw-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
-          True Color (RGB)
+        <button id="btnTriage" class="btn-dock" onclick="toggleRescueTriage()" style="color:#34d399; border-color:rgba(52,211,153,0.4); font-weight:700;">
+          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Rescue Triage
         </button>
-        <button id="btnHazard" class="btn-dock btn-danger" onclick="setLayer('hazard')">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          Slope Stability (FoS)
+        <button id="btnHelipad" class="btn-dock" onclick="toggleHelipadViability()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4); font-weight:700;">
+          <svg class="dw-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 8v8M15 8v8M9 12h6"/></svg>
+          Medical Helipads
         </button>
-        <button id="btnNDVI" class="btn-dock" onclick="setLayer('ndvi')" style="color:#34d399; border-color:rgba(52,211,153,0.35);">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
-          Canopy (NDVI)
+      </div>
+    </div>
+
+    <!-- 2. TRANSPARENCY -->
+    <div class="track-soln-card">
+      <div class="track-card-header" style="color:#fbbf24;">
+        <span>2. TRANSPARENCY</span>
+        <span style="font-size:9px; background:rgba(251,191,36,0.15); padding:2px 6px; border-radius:4px; border:1px solid rgba(251,191,36,0.3);">SATELLITE AUDIT</span>
+      </div>
+      <div class="btn-grid">
+        <button id="btnPMFBY" class="btn-dock" onclick="openPMFBYClaimModal()" style="color:#fbbf24; border-color:rgba(251,191,36,0.4); font-weight:700;">
+          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Damage Dossier
         </button>
-        <button id="btnDeltaNDVI" class="btn-dock" onclick="setLayer('delta_ndvi')" style="color:#fb923c; border-color:rgba(251,146,60,0.35);">
-          <svg class="dw-ico" viewBox="0 0 24 24"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
-          Loss Index (ΔNDVI)
-        </button>
-        <button id="btnContour" class="btn-dock" onclick="toggleContourLines()">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M2 12h20M4 6h16M6 18h12"/></svg>
-          Contour Bunding
-        </button>
-        <button id="btnSplitLens" class="btn-dock" onclick="toggleSplitLens()">
+        <button id="btnSplitLens" class="btn-dock" onclick="toggleSplitLens()" style="color:#dedcff; border-color:rgba(222,220,255,0.35); font-weight:700;">
           <svg class="dw-ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><polyline points="9 8 5 12 9 16"/><polyline points="15 8 19 12 15 16"/></svg>
-          Pre/Post Wipe
-        </button>
-        <button id="btnSplitPIP" class="btn-dock" onclick="toggleSplitPIP()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4); grid-column: span 2; font-weight:700;">
-          <svg class="dw-ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="12" y="12" width="7" height="7" rx="1"/></svg>
-          2D / 3D Dual Inspector
+          Pre/Post Split
         </button>
       </div>
     </div>
 
-    <!-- Section 2: Surface Features & Digital Twin -->
-    <div class="dock-section-group" data-cat="twin">
-      <div class="dock-group-label" id="lblRealismGroup">Surface Features & Digital Twin</div>
+    <!-- 3. URBAN MOBILITY -->
+    <div class="track-soln-card">
+      <div class="track-card-header" style="color:#38bdf8;">
+        <span>3. URBAN MOBILITY</span>
+        <span style="font-size:9px; background:rgba(56,189,248,0.15); padding:2px 6px; border-radius:4px; border:1px solid rgba(56,189,248,0.3);">SAFE CORRIDORS</span>
+      </div>
       <div class="btn-grid">
-        <button id="btnExtrude" class="btn-dock active" onclick="toggleExtrudedBuildings()">
-          <svg class="dw-ico" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="15" y1="14" x2="15" y2="14.01"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
-          3D Structures
+        <button id="btnFocusRefuge" class="btn-dock" onclick="focusEvacShelter()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4); font-weight:700;">
+          <svg class="dw-ico" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          Refuge Corridor
         </button>
-        <button id="btnWaterways" class="btn-dock active" onclick="toggleWaterways()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4);">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M2 12c3-2 6-2 9 0s6 2 9 0M2 17c3-2 6-2 9 0s6 2 9 0M2 7c3-2 6-2 9 0s6 2 9 0"/></svg>
-          Hydrologic Streams
-        </button>
-        <button id="btnPeaks" class="btn-dock active" onclick="togglePeaksAndLandmarks()" style="color:#f59e0b; border-color:rgba(245,158,11,0.4);">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-          Civil Landmarks
-        </button>
-        <button id="btnMountain" class="btn-dock active" onclick="toggleMountainProfiler()" style="color:#f59e0b; border-color:rgba(245,158,11,0.4);">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>
-          Geomorphic Profiler
-        </button>
-        <button id="btnTrees" class="btn-dock active" onclick="toggleVegetation()" style="color:#34d399; border-color:rgba(52,211,153,0.4);">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M12 22v-7"/><path d="M12 2a6 6 0 0 0-6 6c0 2.2 1.2 4.1 3 5.2V15h6v-1.8c1.8-1.1 3-3 3-5.2a6 6 0 0 0-6-6z"/></svg>
-          Vegetation Canopy
-        </button>
-        <button id="btnDiorama" class="btn-dock active" onclick="toggleDioramaBase()">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-          Bathymetric Base
-        </button>
-        <button id="btnCyber" class="btn-dock" onclick="toggleCyberCityMode()">
-          <svg class="dw-ico" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          Structural Matrix
-        </button>
-        <button id="btnWire" class="btn-dock" onclick="toggleWireframe()">
-          <svg class="dw-ico" viewBox="0 0 24 24"><polygon points="12 2 2 22 22 22"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
-          TIN Mesh Surface
+        <button id="btnHazard" class="btn-dock btn-danger" onclick="setLayer('hazard')" style="color:#fb7185; border-color:rgba(251,113,133,0.4); font-weight:700;">
+          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Slope Hazard
         </button>
       </div>
     </div>
 
-    <!-- Section 3: Precision Hydrology & Actuarial Suite -->
-    <div class="dock-section-group" data-cat="agro">
-      <div class="dock-group-label" id="lblAgriSuiteGroup" style="color:#10b981;">Precision Hydrology & Actuarial</div>
+    <!-- 4. WASTE & RUNOFF DRAINAGE -->
+    <div class="track-soln-card">
+      <div class="track-card-header" style="color:#10b981;">
+        <span>4. WASTE &amp; DRAINAGE</span>
+        <span style="font-size:9px; background:rgba(16,185,129,0.15); padding:2px 6px; border-radius:4px; border:1px solid rgba(16,185,129,0.3);">STAGNATION FLUSH</span>
+      </div>
       <div class="btn-grid">
-        <button id="btnSmartDitch" class="btn-dock" onclick="toggleSmartDitchRouter()" style="color:#34d399; border-color:rgba(52,211,153,0.4); font-weight:800;">
+        <button id="btnSmartDitch" class="btn-dock" onclick="toggleSmartDitchRouter()" style="color:#34d399; border-color:rgba(52,211,153,0.4); font-weight:700;">
           <svg class="dw-ico" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           Drainage Router
         </button>
-        <button id="btnPMFBY" class="btn-dock" onclick="openPMFBYClaimModal()" style="color:#fbbf24; border-color:rgba(251,191,36,0.4); font-weight:800;">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          PMFBY Dossier
-        </button>
-        <button id="btnSubsurface" class="btn-dock" onclick="toggleSubsurfaceXRay()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4);">
+        <button id="btnSubsurface" class="btn-dock" onclick="toggleSubsurfaceXRay()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4); font-weight:700;">
           <svg class="dw-ico" viewBox="0 0 24 24"><path d="M2 17h20M2 12h20M2 7h20"/><circle cx="7" cy="12" r="1.5" fill="currentColor"/></svg>
           Subsurface X-Ray
         </button>
-        <button id="btnTractor" class="btn-dock" onclick="toggleTractorSafetyOverlay()" style="color:#f97316; border-color:rgba(249,115,22,0.4);">
-          <svg class="dw-ico" viewBox="0 0 24 24"><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 17H3v-5l7-4h5l3 4v5h-2M9 17h6M9 8v4"/></svg>
-          Tractor Rollover
-        </button>
       </div>
     </div>
 
-    <!-- Section 4: Atmospheric & Hazard Modeling -->
-    <div class="dock-section-group" data-cat="hazards">
-      <div class="dock-group-label" id="lblHazardSimGroup" style="color:#f59e0b;">Atmospheric & Hazard Modeling</div>
+    <!-- 5. DISASTER GOVERNANCE -->
+    <div class="track-soln-card">
+      <div class="track-card-header" style="color:#f59e0b;">
+        <span>5. DISASTER GOVERNANCE</span>
+        <span style="font-size:9px; background:rgba(245,158,11,0.15); padding:2px 6px; border-radius:4px; border:1px solid rgba(245,158,11,0.3);">C4I SIMULATION</span>
+      </div>
       <div class="btn-grid">
-        <button id="btnSimRain" class="btn-dock" onclick="triggerDisasterSim('rain')">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/><line x1="8" y1="19" x2="8" y2="23"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="16" y1="19" x2="16" y2="23"/></svg>
-          Precipitation
-        </button>
-        <button id="btnSimHail" class="btn-dock" onclick="triggerDisasterSim('hail')">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/><circle cx="8" cy="20" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1.5" fill="currentColor"/><circle cx="16" cy="21" r="1" fill="currentColor"/></svg>
-          Hail Dynamics
-        </button>
-        <button id="btnSimSand" class="btn-dock" onclick="triggerDisasterSim('sandstorm')">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
-          Aeolian Haboob
-        </button>
-        <button id="btnSimFlood" class="btn-dock" onclick="triggerDisasterSim('flood')">
+        <button id="btnSimFlood" class="btn-dock" onclick="triggerDisasterSim('flood')" style="color:#38bdf8; border-color:rgba(56,189,248,0.4); font-weight:700;">
           <svg class="dw-ico" viewBox="0 0 24 24"><path d="M2 12c2.5-2.5 5-2.5 7.5 0s5 2.5 7.5 0 5-2.5 7.5 0M2 17c2.5-2.5 5-2.5 7.5 0s5 2.5 7.5 0 5-2.5 7.5 0"/></svg>
           Riverine Surge
         </button>
-        <button id="btnSimTsunami" class="btn-dock" onclick="triggerDisasterSim('tsunami')">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M2 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c4-4 8-4 12 0s6 2 7 0M10 4c2 0 4 2 4 4s-2 4-4 4"/></svg>
-          Saline Surge
-        </button>
-        <button id="btnSimLandslide" class="btn-dock" onclick="triggerDisasterSim('landslide')">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M3 21l8-16 5 8 5 8H3z"/><circle cx="14" cy="12" r="1.5" fill="currentColor"/><circle cx="17" cy="16" r="2" fill="currentColor"/></svg>
-          Mass Movement
-        </button>
-        <button id="btnSimClear" class="btn-dock" style="grid-column: span 2; font-size:10px; color:#cbd5e1; border-color:rgba(255,255,255,0.15);" onclick="triggerDisasterSim('clear')">
-          <svg class="dw-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          Reset Baseline Atmosphere
+        <button id="btnSimRain" class="btn-dock" onclick="triggerDisasterSim('rain')" style="color:#60a5fa; border-color:rgba(96,165,250,0.4); font-weight:700;">
+          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/><line x1="8" y1="19" x2="8" y2="23"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="16" y1="19" x2="16" y2="23"/></svg>
+          Monsoon Rain
         </button>
       </div>
     </div>
 
-    <!-- Section 5: Civil Defense & Evacuation Triage -->
-    <div class="dock-section-group" data-cat="c4i">
-      <div class="dock-group-label" id="lblRescueGroup">Civil Defense & Emergency Triage</div>
+    <!-- 6. CITIZEN ENGAGEMENT -->
+    <div class="track-soln-card">
+      <div class="track-card-header" style="color:#f87171;">
+        <span>6. CITIZEN ENGAGEMENT</span>
+        <span style="font-size:9px; background:rgba(248,113,113,0.15); padding:2px 6px; border-radius:4px; border:1px solid rgba(248,113,113,0.3);">DIRECT SOS</span>
+      </div>
       <div class="btn-grid">
-        <button id="btnTriage" class="btn-dock" onclick="toggleRescueTriage()" style="color:#34d399; border-color:rgba(52,211,153,0.4); font-weight:800;">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-          Evacuation Triage
-        </button>
-        <button id="btnHelipad" class="btn-dock" onclick="toggleHelipadViability()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4);">
-          <svg class="dw-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 8v8M15 8v8M9 12h6"/></svg>
-          Helipad Viability
-        </button>
-        <button id="btnBuilding" class="btn-dock" onclick="toggleBuildingMode()" style="color:#fbbf24; border-color:rgba(251,191,36,0.3);">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11h6v10"/></svg>
-          Structure Inspect
-        </button>
-        <button id="btnSOS" class="btn-dock" onclick="toggleSOSMode()" style="color:#f87171; border-color:rgba(239,68,68,0.3);">
+        <button id="btnSOS" class="btn-dock" onclick="toggleSOSMode()" style="color:#f87171; border-color:rgba(239,68,68,0.4); font-weight:700;">
           <svg class="dw-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M4.93 4.93a10 10 0 0 1 14.14 0M1.39 1.39a15 15 0 0 1 21.22 0"/></svg>
-          Distress Marker
+          Mark SOS Beacon
         </button>
-        <button id="btnFocusRefuge" class="btn-dock" onclick="focusEvacShelter()" style="grid-column: span 2; color:#38bdf8; border-color:rgba(56,189,248,0.4); font-weight:800; background:rgba(56,189,248,0.08); display:flex; align-items:center; justify-content:center; gap:6px;">
-          <svg class="dw-ico" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-          Trace Refuge Corridor
+        <button id="btnBuilding" class="btn-dock" onclick="toggleBuildingMode()" style="color:#fbbf24; border-color:rgba(251,191,36,0.4); font-weight:700;">
+          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11h6v10"/></svg>
+          Inspect Structure
         </button>
-      </div>
-
-      <div style="margin-top:4px;">
-        <button class="btn-dock" style="width:100%; font-size:10px; color:#f87171;" onclick="clearAllSOSBeacons()">Purge Distress Markers</button>
       </div>
     </div>
 
-    <!-- Section 6: Tactical Observation & Sliders -->
-    <div class="dock-section-group" data-cat="recon">
-      <div class="dock-group-label">Camera Perspectives & Orbit</div>
-      <div class="btn-grid">
-        <button id="btnOrbitFly" class="btn-dock" onclick="toggleFlight('orbit')">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-          360° Orbit
-        </button>
-        <button id="btnValleyFly" class="btn-dock" onclick="toggleFlight('valley')">
-          <svg class="dw-ico" viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-          Valley Recon
-        </button>
-        <button id="btnTopDown" class="btn-dock" onclick="setTopDown()">
-          <svg class="dw-ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
-          Nadir Ortho
-        </button>
-        <button class="btn-dock" onclick="resetCamera()">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-          Reset Frame
-        </button>
-      </div>
+    <!-- Precision Physical Sliders -->
+    <div class="slider-control" style="margin-top:10px;">
+      <span id="lblReliefScale">Relief Scale:</span>
+      <input type="range" id="zScale" min="0.1" max="2.5" step="0.05" value="1.0" oninput="updateHeight(this.value)">
+      <span id="zVal" style="font-weight:700; color:var(--accent); font-family:'JetBrains Mono'; width:34px; text-align:right;">1.0x</span>
+    </div>
 
-      <div class="dock-group-label" id="lblDisasterGroup">Spatial Analysis & Calibration</div>
-      <div class="btn-grid">
-        <button id="btnMeasure" class="btn-dock" onclick="toggleMeasureMode()">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M2 22l20-20M6 14l3 3M11 9l3 3M16 4l3 3"/></svg>
-          Profile & Grade
-        </button>
-        <button id="btnFlood" class="btn-dock" onclick="toggleFloodMode()">
-          <svg class="dw-ico" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          Inundation Sim
-        </button>
-      </div>
+    <div id="flood-slider-container" style="display:none;" class="slider-control">
+      <span style="color:var(--accent);" id="lblFloodInundation">Inundation:</span>
+      <input type="range" id="floodLevel" min="0" max="100" step="1" value="15" oninput="updateFlood(this.value)">
+      <span id="floodVal" style="font-weight:700; color:var(--accent); font-family:'JetBrains Mono'; width:34px; text-align:right;">+15m</span>
+    </div>
 
-      <div class="slider-control" style="margin-top:8px;">
-        <span id="lblReliefScale">Relief Scale:</span>
-        <input type="range" id="zScale" min="0.1" max="2.5" step="0.05" value="1.0" oninput="updateHeight(this.value)">
-        <span id="zVal" style="font-weight:700; color:var(--accent); font-family:'JetBrains Mono'; width:34px; text-align:right;">1.0x</span>
-      </div>
-
-      <div id="flood-slider-container" style="display:none;" class="slider-control">
-        <span style="color:var(--accent);" id="lblFloodInundation">Inundation:</span>
-        <input type="range" id="floodLevel" min="0" max="100" step="1" value="15" oninput="updateFlood(this.value)">
-        <span id="floodVal" style="font-weight:700; color:var(--accent); font-family:'JetBrains Mono'; width:34px; text-align:right;">+15m</span>
-      </div>
+    <!-- Hidden Legacy Elements to Preserve Complete Functionality & Zero JS Errors -->
+    <div id="legacyHiddenDock" style="display:none !important;">
+      <button id="btnSat" onclick="setLayer('sat')"></button>
+      <button id="btnNDVI" onclick="setLayer('ndvi')"></button>
+      <button id="btnDeltaNDVI" onclick="setLayer('delta_ndvi')"></button>
+      <button id="btnContour" onclick="toggleContourLines()"></button>
+      <button id="btnSplitPIP" onclick="toggleSplitPIP()"></button>
+      <button id="btnExtrude" onclick="toggleExtrudedBuildings()"></button>
+      <button id="btnWaterways" onclick="toggleWaterways()"></button>
+      <button id="btnPeaks" onclick="togglePeaksAndLandmarks()"></button>
+      <button id="btnMountain" onclick="toggleMountainProfiler()"></button>
+      <button id="btnTrees" onclick="toggleVegetation()"></button>
+      <button id="btnDiorama" onclick="toggleDioramaBase()"></button>
+      <button id="btnCyber" onclick="toggleCyberCityMode()"></button>
+      <button id="btnWire" onclick="toggleWireframe()"></button>
+      <button id="btnTractor" onclick="toggleTractorSafetyOverlay()"></button>
+      <button id="btnSimHail" onclick="triggerDisasterSim('hail')"></button>
+      <button id="btnSimSand" onclick="triggerDisasterSim('sandstorm')"></button>
+      <button id="btnSimTsunami" onclick="triggerDisasterSim('tsunami')"></button>
+      <button id="btnSimLandslide" onclick="triggerDisasterSim('landslide')"></button>
+      <button id="btnSimClear" onclick="triggerDisasterSim('clear')"></button>
+      <button id="btnOrbitFly" onclick="toggleFlight('orbit')"></button>
+      <button id="btnValleyFly" onclick="toggleFlight('valley')"></button>
+      <button id="btnTopDown" onclick="setTopDownView()"></button>
+      <button id="btnMeasure" onclick="toggleMeasureMode()"></button>
+      <button id="btnFlood" onclick="toggleFloodMode()"></button>
+      <button onclick="clearAllSOSBeacons()"></button>
+      <div id="lblLayerGroup"></div>
+      <div id="lblRealismGroup"></div>
+      <div id="lblAgriSuiteGroup"></div>
+      <div id="lblHazardSimGroup"></div>
+      <div id="lblRescueGroup"></div>
     </div>
   </div>
+
+  <!-- Floating Restore Pills for Vanished / Minimized Panels -->
+  <button id="btn-restore-dock" class="floating-restore-pill" onclick="toggleDockMinimize()" title="Restore Track 4 Tool Dock">
+    <svg class="dw-ico" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+    TRACK 4 SOLUTIONS
+  </button>
+  <button id="btn-restore-telemetry" class="floating-restore-pill" onclick="toggleTelemetryMinimize()" title="Restore Telemetry HUD">
+    <svg class="dw-ico" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    TELEMETRY
+  </button>
+  <button id="btn-restore-sitrep" class="floating-restore-pill" onclick="toggleSITREPMinimize()" title="Restore Evacuation SITREP">
+    <svg class="dw-ico" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    SITREP (~6950 AT RISK)
+  </button>
 
   <!-- Right Telemetry & 2D Optical Column (Clean Auto-Flowing Column) -->
   <div id="right-column">
     <!-- Right Telemetry & Accuracy HUD (Glass Floating Island) -->
     <div id="right-hud">
-      <h3 id="hudTerrainTitle">Terrain Telemetry</h3>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <h3 id="hudTerrainTitle" style="margin:0;">Terrain Telemetry</h3>
+        <button onclick="toggleTelemetryMinimize()" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14); color:#cbd5e1; border-radius:5px; padding:2px 7px; font-size:11px; cursor:pointer;" title="Minimize Telemetry">_</button>
+      </div>
       <div class="hud-stat-grid">
         <div class="stat-cell">
           <span class="stat-label">SRTM Match</span>
@@ -1929,7 +1956,10 @@
   <div id="triage-card">
     <h4>
       <span style="display:flex; align-items:center; gap:6px;"><svg class="dw-ico" viewBox="0 0 24 24" style="stroke:#f43f5e;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> CIVIL DEFENSE EVACUATION SITREP</span>
-      <button onclick="toggleRescueTriage()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;">Close</button>
+      <div style="display:flex; gap:4px;">
+        <button onclick="toggleSITREPMinimize()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;" title="Minimize SITREP">_</button>
+        <button onclick="toggleRescueTriage()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;" title="Close SITREP">X</button>
+      </div>
     </h4>
     <div class="m-row"><span>Total Structures Mapped:</span><span class="m-val" id="trTotal">--</span></div>
     <div class="m-row"><span>Designated Safe Shelters:</span><span class="m-val" id="trSafe" style="color:#34d399;">--</span></div>
@@ -11132,6 +11162,63 @@
         showTacticalToast(`Location synchronized to (${lat.toFixed(4)}, ${lon.toFixed(4)})`);
       }
     };
-  </script>
+  
+    // Minimize / Vanish & Clean Presentation Controller
+    window.toggleDockMinimize = function() {
+      const dock = document.getElementById('left-dock');
+      const restoreBtn = document.getElementById('btn-restore-dock');
+      if (!dock) return;
+      dock.classList.toggle('dock-minimized');
+      const isMin = dock.classList.contains('dock-minimized');
+      if (restoreBtn) restoreBtn.style.display = isMin ? 'flex' : 'none';
+      if (typeof showTacticalToast === 'function') {
+        showTacticalToast(isMin ? 'Track 4 Tool Dock Minimized' : 'Track 4 Tool Dock Restored');
+      }
+    };
+
+    window.toggleTelemetryMinimize = function() {
+      const hud = document.getElementById('right-hud');
+      const restoreBtn = document.getElementById('btn-restore-telemetry');
+      if (!hud) return;
+      hud.classList.toggle('hud-minimized');
+      const isMin = hud.classList.contains('hud-minimized');
+      if (restoreBtn) restoreBtn.style.display = isMin ? 'flex' : 'none';
+      if (typeof showTacticalToast === 'function') {
+        showTacticalToast(isMin ? 'Telemetry HUD Minimized' : 'Telemetry HUD Restored');
+      }
+    };
+
+    window.toggleSITREPMinimize = function() {
+      const card = document.getElementById('triage-card');
+      const restoreBtn = document.getElementById('btn-restore-sitrep');
+      if (!card) return;
+      card.classList.toggle('card-minimized');
+      const isMin = card.classList.contains('card-minimized');
+      if (restoreBtn) restoreBtn.style.display = isMin ? 'flex' : 'none';
+      if (typeof showTacticalToast === 'function') {
+        showTacticalToast(isMin ? 'Evacuation SITREP Minimized' : 'Evacuation SITREP Restored');
+      }
+    };
+
+    window.toggleMasterHUDVisibility = function() {
+      document.body.classList.toggle('hud-vanished');
+      const isVanished = document.body.classList.contains('hud-vanished');
+      const btn = document.getElementById('btnToggleAllHUD');
+      if (btn) btn.classList.toggle('active', isVanished);
+      if (typeof showTacticalToast === 'function') {
+        showTacticalToast(isVanished ? 'Clean Presentation Mode Active (Press H or click Clean View to restore)' : 'HUD Restored');
+      }
+    };
+
+    // Keyboard shortcut: H for Clean Presentation View
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'h' || e.key === 'H') {
+        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+          toggleMasterHUDVisibility();
+        }
+      }
+    });
+
+</script>
 </body>
 </html>
