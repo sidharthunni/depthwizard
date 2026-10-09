@@ -1,6 +1,6 @@
 """
 Pair A — Depth Model Inference
-SIH26175 DepthWizard
+CivicPulse 3D Satellite Depth Engine
 """
 
 import argparse

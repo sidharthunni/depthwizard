@@ -1,7 +1,7 @@
-# DepthWizard (SIH26175)
-Single-view height estimation and 3D flythrough.
+# CivicPulse 3D Satellite Elevation & Reconnaissance Engine
+Single-view height estimation and 3D digital twin reconstruction from Copernicus satellite imagery.
 
-Pipeline: RGB image → monocular depth model → textured 3D mesh (.glb) → browser viewer (Three.js)
+Pipeline: Sentinel-2 / Landsat optical image -> monocular depth estimation -> textured 3D mesh (.glb) -> browser WebGL digital twin (Three.js)
 
 ## Run it
 1. `python3 pair_a_depth_model.py --input sample.jpg --output depth_output.npy`

@@ -70,7 +70,7 @@ def fetch_highres_building_image(lat, lon, box_size_km=0.5, output_path="current
         f"bbox={min_lon},{min_lat},{max_lon},{max_lat}&bboxSR=4326&imageSR=4326"
         f"&size=750,750&format=png&f=image"
     )
-    req = urllib.request.Request(url, headers={"User-Agent": "DepthWizard/2.0 (SIH26175)"})
+    req = urllib.request.Request(url, headers={"User-Agent": "CivicPulse/3D (DisasterGovernance)"})
     with urllib.request.urlopen(req, timeout=15) as resp:
         data = resp.read()
         with open(output_path, "wb") as f:

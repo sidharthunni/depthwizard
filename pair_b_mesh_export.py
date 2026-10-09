@@ -130,7 +130,7 @@ def build_mesh(depth_path, image_path, output_path, z_scale=50.0, downsample=4,
     mesh.export(output_path)
     print(f"Saved mesh to {output_path} (Vertices: {len(vertices)}, Faces: {len(faces)})")
 
-    # Export standard Geospatial DSM in GeoTIFF format (SIH26175 requirement)
+    # Export standard Geospatial DSM in GeoTIFF format (Disaster Governance requirement)
     try:
         import tifffile
         dsm_metric = (min_elev_m + d_norm * relief_m).astype(np.float32)

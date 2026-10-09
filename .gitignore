@@ -16,3 +16,7 @@ final_pdf_pages/
 latest_pdf_pages/
 latest_pdf_text.txt
 HBHBUB*
+
+*.pdf
+*.pptx
+*.odp

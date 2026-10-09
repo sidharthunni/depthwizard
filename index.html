@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050315">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>DepthWizard 3D — Geospatial & Structural Intelligence Command Center</title>
+  <title>CivicPulse 3D — Geospatial & Structural Intelligence Engine</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -117,7 +117,7 @@
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       display: flex; align-items: center; gap: 8px;
     }
-    .brand-title span.badge-sih {
+    .brand-title span.badge-civic {
       -webkit-text-fill-color: initial;
       font-size: 10px; font-weight: 700; background: rgba(67, 59, 255, 0.16);
       color: #dedcff; border: 1px solid rgba(67, 59, 255, 0.35);
@@ -927,7 +927,7 @@
     body.mode-agro #top-bar {
       border-color: rgba(16, 185, 129, 0.28);
     }
-    body.mode-agro .badge-sih {
+    body.mode-agro .badge-civic {
       background: rgba(16, 185, 129, 0.15) !important;
       color: #34d399 !important;
       border-color: rgba(16, 185, 129, 0.4) !important;
@@ -1200,7 +1200,7 @@
     <div class="top-left">
       <div class="brand-title">
         <svg class="dw-ico brand-ico" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-        DEPTHWIZARD PRO <span class="badge-sih shiny-badge" id="topBadgeDomain">SDSS v4.2</span>
+        CIVICPULSE 3D <span class="badge-civic shiny-badge" id="topBadgeDomain">CIVIC TECH v4.2</span>
       </div>
 
       <!-- Executive Dual-Domain Mode Switcher -->
@@ -1955,7 +1955,7 @@
     </h3>
     <div style="font-size:12px; color:#cbd5e1;">Target beacon verified. Tactical coordinates packaged for first responders:</div>
     <div class="sos-detail-box" id="sosDetails">
-      INCIDENT ID: #SIH-SOS-8821<br>
+      INCIDENT ID: #CP-SOS-8821<br>
       GPS: 11.5277° N, 76.1950° E<br>
       ALTITUDE: 780 m AMSL<br>
       FLOOD CLEARANCE: +14m (SAFE HIGH REFUGE)<br>
@@ -2038,7 +2038,7 @@
         </div>
         <div class="pmfby-cell">
           <span class="lbl">Audit Timestamp</span>
-          <span class="val" id="pmfbyTimestamp">12 Sep 2026, 17:15 IST</span>
+          <span class="val" id="pmfbyTimestamp">09 Oct 2026, 23:45 IST</span>
         </div>
         <div class="pmfby-cell">
           <span class="lbl">Registered Beneficiary</span>
@@ -2089,7 +2089,7 @@
         </div>
         <div class="pmfby-cell">
           <span class="lbl">Govt. MSP Benchmark</span>
-          <span class="val" id="pmfbyMSP">₹2,300 / Quintal (CACP Kharif 2024-25)</span>
+          <span class="val" id="pmfbyMSP">₹2,425 / Quintal (CACP Kharif 2026-27)</span>
         </div>
         <div class="pmfby-cell">
           <span class="lbl">Gross Agricultural Value Loss</span>
@@ -2802,7 +2802,7 @@
         document.body.classList.remove('mode-agro');
         if (btnRescue) btnRescue.classList.add('active');
         if (btnAgro) btnAgro.classList.remove('active');
-        if (topBadge) topBadge.innerText = 'SIH26175';
+        if (topBadge) topBadge.innerText = 'TRACK 4';
         if (statusText) statusText.innerText = 'SENTINEL-2 & SUB-METER AERIAL';
         if (agroHud) agroHud.style.display = 'none';
 
@@ -3038,7 +3038,7 @@
         atRiskSilosUnits: document.getElementById('agroSilosRisk')?.innerText || "2",
         rootHypoxiaCriticalDuration: "< 36 hours",
         insuranceScheme: "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
-        geospatialPlatform: "DepthWizard 3D Digital Twin",
+        geospatialPlatform: "CivicPulse 3D Digital Twin",
         satelliteDataSource: "Copernicus Sentinel-2 & SRTM Elevation Grid"
       };
 
@@ -6495,7 +6495,7 @@
         arableAcres = 25.0;
         damagedAcres = 16.8;
         mspRate = 2300;
-        mspLabel = '₹2,300 / Qtl (CACP Kharif 2024-25)';
+        mspLabel = '₹2,425 / Qtl (CACP Kharif 2026-27)';
       } else if (pKey === 'cauvery') {
         farmerName = 'Muthukumar Swaminathan (PM-KISAN: #TN-55102)';
         khasra = 'Survey #214/1C & 214/2, Patta #3301';
@@ -6504,7 +6504,7 @@
         arableAcres = 15.0;
         damagedAcres = 11.2;
         mspRate = 2300;
-        mspLabel = '₹2,300 / Qtl (Govt MSP Kharif 2024-25)';
+        mspLabel = '₹2,425 / Qtl (Govt MSP Kharif 2026-27)';
       } else if (pKey === 'wayanad') {
         farmerName = 'George Mathew (PM-KISAN: #KL-33019)';
         khasra = 'Re-Survey #402/1 & 402/3, Thandapper #1209';
@@ -7271,7 +7271,7 @@
       const clickedLat = stats.lat + ((p.y - center.y) / bSize.y) * degSpan;
       const clickedLon = stats.lon + ((p.x - center.x) / bSize.x) * degSpan;
 
-      const incId = "SIH-SOS-" + Math.floor(1000 + Math.random() * 9000);
+      const incId = "CP-SOS-" + Math.floor(1000 + Math.random() * 9000);
       activeSOSData = {
         id: incId,
         lat: clickedLat.toFixed(4),
@@ -7283,7 +7283,7 @@
       const sosDetailsEl = document.getElementById('sosDetails');
       if (sosDetailsEl) sosDetailsEl.innerText = detailText;
 
-      const waMsg = encodeURIComponent(`[CIVIL DEFENSE SITREP] Emergency Dispatch Beacon Active!\nLocation: Lat ${activeSOSData.lat}, Lon ${activeSOSData.lon}\nElevation: ${activeSOSData.elev}m AMSL\nEvacuation Point: DepthWizard 3D Command Center.\nGoogle Maps: https://www.google.com/maps?q=${activeSOSData.lat},${activeSOSData.lon}`);
+      const waMsg = encodeURIComponent(`[CIVIL DEFENSE SITREP] Emergency Dispatch Beacon Active!\nLocation: Lat ${activeSOSData.lat}, Lon ${activeSOSData.lon}\nElevation: ${activeSOSData.elev}m AMSL\nEvacuation Point: CivicPulse 3D Command Center.\nGoogle Maps: https://www.google.com/maps?q=${activeSOSData.lat},${activeSOSData.lon}`);
       document.getElementById('btnSosWhatsapp').href = `https://wa.me/?text=${waMsg}`;
 
       document.getElementById('sos-modal').style.display = 'block';
@@ -7325,7 +7325,7 @@
 
     window.downloadSOSReport = () => {
       if (!activeSOSData) return;
-      const report = `=========================================================\nSMART INDIA HACKATHON 2026 — RESCUE SITUATION REPORT\n=========================================================\nIncident ID: ${activeSOSData.id}\nStatus: ACTIVE RESCUE BEACON\nCoordinates: ${activeSOSData.lat}° N, ${activeSOSData.lon}° E\nAltitude: ${activeSOSData.elev} m AMSL\nTimestamp: ${new Date().toISOString()}\nTarget Area: ${document.getElementById('targetLocationName').innerText}\nRecommended Evac: Aerial Helicopter / Drone Extraction\n=========================================================`;
+      const report = `=========================================================\nTATHACK '26 // TRACK 4 — DISASTER RESCUE SITUATION REPORT\n=========================================================\nIncident ID: ${activeSOSData.id}\nStatus: ACTIVE RESCUE BEACON\nCoordinates: ${activeSOSData.lat}° N, ${activeSOSData.lon}° E\nAltitude: ${activeSOSData.elev} m AMSL\nTimestamp: ${new Date().toISOString()}\nTarget Area: ${document.getElementById('targetLocationName').innerText}\nRecommended Evac: Aerial Helicopter / Drone Extraction\n=========================================================`;
       const blob = new Blob([report], { type: 'text/plain' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
@@ -9999,14 +9999,14 @@
     window.downloadGLB = () => {
       const a = document.createElement('a');
       a.href = (typeof activeGlbFile !== 'undefined' && activeGlbFile) ? activeGlbFile : 'current.glb';
-      a.download = (typeof activeGlbFile !== 'undefined' && activeGlbFile) ? activeGlbFile : 'DepthWizard_Terrain.glb';
+      a.download = (typeof activeGlbFile !== 'undefined' && activeGlbFile) ? activeGlbFile : 'CivicPulse_Terrain.glb';
       a.click();
     };
 
     window.downloadGeoTIFF = () => {
       const a = document.createElement('a');
       a.href = 'current_dsm.tif';
-      a.download = 'DepthWizard_DSM_Geospatial.tif';
+      a.download = 'CivicPulse_DSM_Geospatial.tif';
       a.click();
     };
 

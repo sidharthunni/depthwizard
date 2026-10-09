@@ -35,7 +35,7 @@ def geocode_place(q: str):
     # 1. Try OSM Nominatim
     try:
         url = f"https://nominatim.openstreetmap.org/search?format=json&q={urllib.parse.quote(q)}"
-        req = urllib.request.Request(url, headers={"User-Agent": "DepthWizard/2.0 (SIH26175)"})
+        req = urllib.request.Request(url, headers={"User-Agent": "CivicPulse/3D (DisasterGovernance)"})
         with urllib.request.urlopen(req, timeout=6) as r:
             data = json.loads(r.read())
             if data and len(data) > 0:
@@ -87,7 +87,7 @@ def fetch_osm_buildings(lat: float, lon: float, box_size_km: float = 1.0, output
 
     q = f'[out:json][timeout:12];(way["building"]({min_lat},{min_lon},{max_lat},{max_lon});relation["building"]({min_lat},{min_lon},{max_lat},{max_lon}););out geom;'
     url = "https://overpass-api.de/api/interpreter?data=" + urllib.parse.quote(q)
-    req = urllib.request.Request(url, headers={"User-Agent": "DepthWizard/2.0 (SIH26175)"})
+    req = urllib.request.Request(url, headers={"User-Agent": "CivicPulse/3D (DisasterGovernance)"})
 
     buildings = []
     try:
