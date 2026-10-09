@@ -1441,7 +1441,7 @@
         </button>
         <button id="btnSubsurface" class="btn-dock" onclick="toggleSubsurfaceXRay()" style="color:#38bdf8; border-color:rgba(56,189,248,0.4); font-weight:700;">
           <svg class="dw-ico" viewBox="0 0 24 24"><path d="M2 17h20M2 12h20M2 7h20"/><circle cx="7" cy="12" r="1.5" fill="currentColor"/></svg>
-          Subsurface X-Ray
+          Subsurface & GPR
         </button>
       </div>
     </div>
@@ -1939,7 +1939,7 @@
   <!-- 3D Subsurface Geotech & Strata Slicer Card -->
   <div id="subsurface-card">
     <h4>
-      <span>Subterranean Strata X-Ray</span>
+      <span>Subterranean Strata & GPR Radar</span>
       <button onclick="toggleSubsurfaceXRay()" style="background:rgba(30,41,59,0.8); color:#cbd5e1; border:none; padding:2px 7px; border-radius:4px; cursor:pointer;">✕</button>
     </h4>
     <div style="margin-bottom:8px;">
@@ -1949,11 +1949,26 @@
       </div>
       <input type="range" id="subsurfaceSliceRange" min="-100" max="100" value="0" step="2" style="width:100%; cursor:pointer;" oninput="updateSubsurfaceSlice(this.value)">
     </div>
-    <div class="m-row"><span>Topsoil Horizon (A):</span><span class="m-val" id="ssTopsoil" style="color:#a3e635;">0–30 cm (Crop Root Zone)</span></div>
-    <div class="m-row"><span>Vadose Subsoil (B):</span><span class="m-val" id="ssSubsoil" style="color:#fbbf24;">30cm–1.8m (Percolation)</span></div>
+    <div class="m-row"><span>Topsoil / Asphalt Layer:</span><span class="m-val" id="ssTopsoil" style="color:#a3e635;">0–30 cm (Pavement Subgrade)</span></div>
+    <div class="m-row"><span>Vadose Subsoil (B):</span><span class="m-val" id="ssSubsoil" style="color:#fbbf24;">30cm–1.8m (Utility Conduit Zone)</span></div>
     <div class="m-row"><span>Phreatic Water Table:</span><span class="m-val" id="ssWaterTable" style="color:#38bdf8; font-weight:800;">3.8 m Depth AMSL</span></div>
     <div class="m-row"><span>Basement Bedrock:</span><span class="m-val" id="ssBedrock" style="color:#cbd5e1;">Deccan Basaltic Hardpan</span></div>
     <div class="m-row"><span>Slip-Plane Shear Hazard:</span><span class="m-val" id="ssShearRisk" style="color:#34d399; font-weight:700;">Nominal (Low Liquefaction)</span></div>
+
+    <!-- GPR Pre-Paving Radar Telemetry -->
+    <div style="margin-top:8px; padding:7px 9px; background:rgba(15,23,42,0.7); border:1px solid rgba(56,189,248,0.3); border-radius:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <span style="font-size:10px; font-weight:800; color:#38bdf8; letter-spacing:0.5px;">GPR RADAR PIPE DIAGNOSTIC (400 MHz)</span>
+        <span style="font-size:9px; background:rgba(239,68,68,0.25); color:#ef4444; border:1px solid rgba(239,68,68,0.4); padding:1px 5px; border-radius:4px; font-weight:700;">ANOMALY DETECTED</span>
+      </div>
+      <div class="m-row" style="font-size:10.5px; margin-bottom:2px;"><span>Pipe Depth & Type:</span><span class="m-val" style="color:#f59e0b;">-1.4m · KWA 350mm Main Conduit</span></div>
+      <div class="m-row" style="font-size:10.5px; margin-bottom:2px;"><span>Radar Permittivity (εr):</span><span class="m-val" style="color:#38bdf8; font-weight:700;">24.2 (Water plume / Void)</span></div>
+      <div class="m-row" style="font-size:10.5px; margin-bottom:2px;"><span>Sub-Pavement Void:</span><span class="m-val" style="color:#ef4444; font-weight:700;">1.2m Diameter Washout Cavity</span></div>
+      <div class="m-row" style="font-size:10.5px; margin-bottom:4px;"><span>PWD Pre-Paving Audit:</span><span class="m-val" style="color:#f43f5e; font-weight:800; background:rgba(244,63,94,0.15); padding:1px 6px; border-radius:4px;">PERMIT LOCKED</span></div>
+      <div style="font-size:9.5px; color:#94a3b8; line-height:1.3; border-top:1px dashed rgba(255,255,255,0.1); padding-top:4px;">
+        Inter-Agency Lock: PWD repaving contract held until KWA excavates & repairs subterranean breach. Eliminates road cave-in after paving.
+      </div>
+    </div>
     <div id="ssBadgeContainer" style="margin-top:6px;"></div>
   </div>
 
@@ -6749,11 +6764,11 @@
       document.getElementById('ssShearRisk').innerText = shearTxt;
 
       const badgeC = document.getElementById('ssBadgeContainer');
-      badgeC.innerHTML = `<span class="b-badge" style="background:rgba(56,189,248,0.2); border:1px solid #38bdf8; color:#38bdf8; font-weight:800;">3D MULTI-HORIZON SUBTERRANEAN X-RAY ACTIVE</span>`;
+      badgeC.innerHTML = `<span class="b-badge" style="background:rgba(56,189,248,0.2); border:1px solid #38bdf8; color:#38bdf8; font-weight:800;">3D GPR RADAR & SUBTERRANEAN STRATA ACTIVE</span>`;
 
       closeAllInspectionCards('subsurface-card');
       document.getElementById('subsurface-card').style.display = 'block';
-      showTacticalToast('3D Subsurface Geotech Peeler Active: Soil Strata & Water Table Exposed');
+      showTacticalToast('3D Subsurface & GPR Radar Active: Pipe Breach & Soil Strata Exposed');
     };
 
     function buildSubsurfaceStrataSlab(box, bSize) {
@@ -6889,6 +6904,71 @@
         aquiferParticles.push(pMesh);
       }
 
+      // 7.5 Subterranean Utility Conduit & GPR Radar Pipe Breach Anomaly
+      const pipeZ = topZ - topH - subH * 0.35; // approx -1.4m depth
+      const pipeRadius = Math.max(0.65, size * 0.012);
+      const pipeLength = widthX * 0.85;
+      const pipeGeo = new THREE.CylinderGeometry(pipeRadius, pipeRadius, pipeLength, 24);
+      pipeGeo.rotateZ(Math.PI / 2); // align along X axis
+      const pipeMat = new THREE.MeshStandardMaterial({
+        color: 0x64748b,
+        metalness: 0.85,
+        roughness: 0.25
+      });
+      const pipeMesh = new THREE.Mesh(pipeGeo, pipeMat);
+      pipeMesh.position.set(center.x, lineY + pipeRadius * 0.5, pipeZ);
+      subsurfaceGroup.add(pipeMesh);
+
+      // KWA Pipe Conduit Flange Rings
+      for (let f = -3; f <= 3; f++) {
+        const flangeGeo = new THREE.CylinderGeometry(pipeRadius * 1.25, pipeRadius * 1.25, pipeLength * 0.02, 16);
+        flangeGeo.rotateZ(Math.PI / 2);
+        const flangeMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.9, roughness: 0.2 });
+        const flangeMesh = new THREE.Mesh(flangeGeo, flangeMat);
+        flangeMesh.position.set(center.x + f * (pipeLength * 0.12), lineY + pipeRadius * 0.5, pipeZ);
+        subsurfaceGroup.add(flangeMesh);
+      }
+
+      // GPR High-Dielectric Leak Plume & Washout Cavity Sphere (er = 24.2 anomaly)
+      const ruptureX = center.x + widthX * 0.12;
+      const voidRadius = Math.max(2.2, size * 0.038);
+      const voidGeo = new THREE.SphereGeometry(voidRadius, 20, 20);
+      const voidMat = new THREE.MeshStandardMaterial({
+        color: 0xef4444,
+        emissive: 0xef4444,
+        emissiveIntensity: 0.6,
+        transparent: true,
+        opacity: 0.70,
+        roughness: 0.2
+      });
+      const gprVoidMesh = new THREE.Mesh(voidGeo, voidMat);
+      gprVoidMesh.position.set(ruptureX, lineY + pipeRadius, pipeZ);
+      subsurfaceGroup.add(gprVoidMesh);
+
+      // GPR Reflected Radar Wavefront Ripples (Hyperbolic Echoes)
+      const gprRadarRings = [];
+      for (let r = 0; r < 3; r++) {
+        const ringGeo = new THREE.RingGeometry(voidRadius * 0.8, voidRadius * 1.05, 32);
+        ringGeo.rotateX(-Math.PI / 2);
+        const ringMat = new THREE.MeshBasicMaterial({
+          color: 0x38bdf8,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.75
+        });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.position.set(ruptureX, lineY + pipeRadius + 0.3, pipeZ);
+        subsurfaceGroup.add(ringMesh);
+        gprRadarRings.push(ringMesh);
+      }
+
+      // GPR Anomaly Label Sprite
+      const gprPipeLabel = "GPR 400MHz RADAR: KWA 350mm PIPE BREACH & WASHOUT VOID (-1.4m) [PWD PAVING LOCKED]";
+      const gprSprite = makeTextSprite(gprPipeLabel, 'rgba(15, 23, 42, 0.95)', '#ef4444', '#f43f5e');
+      gprSprite.scale.set(size * 0.18, size * 0.024, 1);
+      gprSprite.position.set(ruptureX, lineY + voidRadius * 1.4, pipeZ);
+      subsurfaceGroup.add(gprSprite);
+
       // 8. Overhead Strata Dimension Title Sprite
       const strataLabel = "Geotechnical Strata Cut: Topsoil (0-32cm) · Vadose Regolith · Phreatic Aquifer (-3.8m) · Basaltic Bedrock";
       const sSprite = makeTextSprite(strataLabel, 'rgba(15, 23, 42, 0.95)', '#38bdf8', '#0284c7');
@@ -6899,6 +6979,8 @@
       subsurfaceGroup.userData = {
         scanLaserLine,
         aquiferParticles,
+        gprVoidMesh,
+        gprRadarRings,
         topZ,
         bottomZ,
         totalDepthZ,
@@ -10243,6 +10325,21 @@
             if (p.position.x > p.userData.maxX) {
               p.position.x = p.userData.minX;
             }
+          });
+        }
+        if (u.gprVoidMesh) {
+          const vScale = 1.0 + Math.sin(time * 5.0) * 0.12;
+          u.gprVoidMesh.scale.set(vScale, vScale, vScale);
+          if (u.gprVoidMesh.material) {
+            u.gprVoidMesh.material.opacity = 0.60 + Math.sin(time * 5.0) * 0.20;
+          }
+        }
+        if (u.gprRadarRings && u.gprRadarRings.length > 0) {
+          u.gprRadarRings.forEach((ring, idx) => {
+            const ringT = (time * 1.4 + idx * 0.33) % 1.0;
+            const rScale = 0.8 + ringT * 1.8;
+            ring.scale.set(rScale, rScale, rScale);
+            ring.material.opacity = Math.max(0, 0.85 * (1.0 - ringT));
           });
         }
         subsurfaceGroup.children.forEach(c => {
