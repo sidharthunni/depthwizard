@@ -2671,6 +2671,8 @@
     scene.add(subsurfaceGroup);
     const tractorSafetyGroup = new THREE.Group();
     scene.add(tractorSafetyGroup);
+    const gpsBeacon3DGroup = new THREE.Group();
+    scene.add(gpsBeacon3DGroup);
 
     let showSmartDitch = false;
     let showSubsurfaceXRay = false;
@@ -2725,13 +2727,17 @@
 
     function resetCamera() {
       flightMode = 'none';
-      updateFlightButtons();
-      if (controls && center) controls.target.copy(center);
-      if (camera && center) {
-        camera.position.copy(center).add(new THREE.Vector3(0, -size * 0.75, size * 0.55));
-        camera.far = size * 10;
+      if (typeof updateFlightButtons === 'function') updateFlightButtons();
+      if (!center || !size) return;
+      if (controls) controls.target.copy(center);
+      if (camera) {
+        camera.position.set(center.x, center.y - size * 0.75, size * 0.55);
+        camera.lookAt(center);
+        camera.far = Math.max(2000, size * 15);
+        camera.near = 0.1;
         camera.updateProjectionMatrix();
       }
+      if (controls) controls.update();
     }
     window.resetCamera = resetCamera;
 
@@ -3205,10 +3211,12 @@
         const dL = document.getElementById('dLat'); if (dL) dL.value = numLat;
         const dLo = document.getElementById('dLon'); if (dLo) dLo.value = numLon;
         const bKm = document.getElementById('boxKm'); if (bKm && customCoords.boxKm) bKm.innerText = customCoords.boxKm + ' km';
-        if (typeof drawerMap !== 'undefined' && drawerMap && typeof drawerMarker !== 'undefined' && drawerMarker) {
-          drawerMap.setView([parseFloat(numLat), parseFloat(numLon)]);
-          drawerMarker.setLatLng([parseFloat(numLat), parseFloat(numLon)]);
-        }
+        try {
+          if (window.drawerMap && window.drawerMarker && typeof window.drawerMap.setView === 'function') {
+            window.drawerMap.setView([parseFloat(numLat), parseFloat(numLon)]);
+            window.drawerMarker.setLatLng([parseFloat(numLat), parseFloat(numLon)]);
+          }
+        } catch(e) {}
       }
       if (customLocName) {
         stats.location_name = customLocName;
@@ -3249,20 +3257,25 @@
           }
         });
 
-        const box = new THREE.Box3().setFromObject(currentModel);
-        center = box.getCenter(new THREE.Vector3());
-        size = box.getSize(new THREE.Vector3()).length();
-        createWaterPlane(box);
-        try { createDioramaPedestal(box); } catch(e) { console.error('Diorama init error:', e); }
-        try { loadAndExtrudeBuildings(box, buildingsSource); } catch(e) { console.error('Building extrusion init error:', e); }
-        try { createGeospatialWaterways(box, modelFile); } catch(e) { console.error('Waterways init error:', e); }
-        try { createGeospatialLandmarks(box, modelFile); } catch(e) { console.error('Landmarks init error:', e); }
-        try { createGeospatialVegetation(box, modelFile); } catch(e) { console.error('Vegetation init error:', e); }
-        try { createGeospatialMountainRidges(box, modelFile); } catch(e) { console.error('Mountain ridges init error:', e); }
-        if (typeof contourLinesActive !== 'undefined' && contourLinesActive) {
-          try { createContourMesh(); } catch(e) { console.error('Contour init error:', e); }
+        try {
+          const box = new THREE.Box3().setFromObject(currentModel);
+          center = box.getCenter(new THREE.Vector3());
+          size = Math.max(10, box.getSize(new THREE.Vector3()).length());
+          try { createWaterPlane(box); } catch(e) { console.warn('WaterPlane error:', e); }
+          try { createDioramaPedestal(box); } catch(e) { console.warn('Diorama error:', e); }
+          try { loadAndExtrudeBuildings(box, buildingsSource); } catch(e) { console.warn('Building extrusion error:', e); }
+          try { createGeospatialWaterways(box, modelFile); } catch(e) { console.warn('Waterways error:', e); }
+          try { createGeospatialLandmarks(box, modelFile); } catch(e) { console.warn('Landmarks error:', e); }
+          try { createGeospatialVegetation(box, modelFile); } catch(e) { console.warn('Vegetation error:', e); }
+          try { createGeospatialMountainRidges(box, modelFile); } catch(e) { console.warn('Mountain ridges error:', e); }
+          if (typeof contourLinesActive !== 'undefined' && contourLinesActive) {
+            try { createContourMesh(); } catch(e) { console.warn('Contour error:', e); }
+          }
+          resetCamera();
+        } catch(procErr) {
+          console.error('Model post-processing error:', procErr);
+          resetCamera();
         }
-        resetCamera();
       }, undefined, (err) => {
         console.error('GLTF loading error:', err);
       });
@@ -3311,7 +3324,7 @@
         .catch(() => {});
     };
 
-    window.loadCurrent3DModel('current.glb', 'nitc_stats.json', 'nitc_buildings.json', 'current_hazard.png', 'current.jpg', 'NIT Calicut Main Campus & IT Complex', { lat: 11.3216, lon: 75.9336, boxKm: 2.5 });
+    // Initial loadCurrent3DModel deferred until all systems and constants are fully initialized
 
     function updatePrecautionText() {
       const floodEl = document.getElementById('precFloodText');
@@ -10533,7 +10546,8 @@
     function animate() {
       requestAnimationFrame(animate);
 
-      if (flightMode === 'orbit') {
+      try {
+        if (flightMode === 'orbit') {
         flightAngle += 0.006;
         const radius = size * 0.68;
         const height = size * 0.38 + Math.sin(flightAngle * 2) * (size * 0.06);
@@ -11084,9 +11098,12 @@
             }
           });
         });
+      } catch (animErr) {
+        // Non-fatal animation dynamics notice
       }
 
-      controls.update();
+      try {
+        if (controls) controls.update();
 
       if (splitLensActive) {
         renderer.setScissorTest(true);
@@ -11147,8 +11164,11 @@
         }
         renderer.render(scene, camera);
       }
+    } catch (renderErr) {
+      console.warn('Render loop notice:', renderErr);
     }
-    animate();
+  }
+  animate();
 
     window.addEventListener('resize', () => {
       if (typeof updateRendererSize === 'function') {
@@ -11160,12 +11180,31 @@
       }
       if (splitLensActive) updateSplitDivider();
     });
-  </script>
 
-  <!-- Leaflet Drawer Script with Dark Matter Tiles & APIs -->
-  <script>
+    // ══════════════════════════════════════════════════════════════════════════
+    // Leaflet Drawer Map & Geodetic Controllers (Unified Module Scope)
+    // ══════════════════════════════════════════════════════════════════════════
     let drawerMap = null;
     let drawerMarker = null;
+    window.drawerMap = drawerMap;
+    window.drawerMarker = drawerMarker;
+
+    // Expose helpers globally so HTML onclick handlers and external calls succeed seamlessly
+    window.showTacticalToast = showTacticalToast;
+    window.makeTextSprite = makeTextSprite;
+    window.clearLandmarkInspection = clearLandmarkInspection;
+    window.clearWaterwayInspection = clearWaterwayInspection;
+    window.initDefaultMeasurement = initDefaultMeasurement;
+    window.setTopDownView = function() {
+      if (!center || !size) return;
+      camera.position.set(center.x, center.y - 0.01, center.z + size * 1.05);
+      camera.lookAt(center);
+      if (controls) {
+        controls.target.copy(center);
+        controls.update();
+      }
+      if (typeof showTacticalToast === 'function') showTacticalToast('CAMERA // TOP-DOWN NADIR ORTHO PERSPECTIVE');
+    };
 
     function initDrawerMap() {
       if (drawerMap) return;
@@ -11212,21 +11251,25 @@
     };
 
     window.applyLocationSelection = function(lat, lon, label, boxKm = 1.0, z = 45, autoReconstruct = false) {
-      initDrawerMap();
-      const numLat = parseFloat(lat) || 11.5277;
-      const numLon = parseFloat(lon) || 76.1950;
+      try { initDrawerMap(); } catch(e) {}
+      const numLat = parseFloat(lat) || 11.3216;
+      const numLon = parseFloat(lon) || 75.9336;
       const numBox = parseFloat(boxKm) || 1.0;
       const numZ = parseFloat(z) || 45.0;
 
-      drawerMap.setView([numLat, numLon], numBox <= 0.8 ? 16 : 13);
-      drawerMarker.setLatLng([numLat, numLon]);
-      document.getElementById('dLat').value = numLat.toFixed(4);
-      document.getElementById('dLon').value = numLon.toFixed(4);
-      document.getElementById('qLat').value = numLat.toFixed(4);
-      document.getElementById('qLon').value = numLon.toFixed(4);
-      document.getElementById('dBox').value = numBox.toString();
-      document.getElementById('dZ').value = numZ.toString();
-      document.getElementById('targetLocationName').innerText = label;
+      if (drawerMap && drawerMarker && typeof drawerMap.setView === 'function') {
+        try {
+          drawerMap.setView([numLat, numLon], numBox <= 0.8 ? 16 : 13);
+          drawerMarker.setLatLng([numLat, numLon]);
+        } catch(e) {}
+      }
+      const dL = document.getElementById('dLat'); if (dL) dL.value = numLat.toFixed(4);
+      const dLo = document.getElementById('dLon'); if (dLo) dLo.value = numLon.toFixed(4);
+      const qL = document.getElementById('qLat'); if (qL) qL.value = numLat.toFixed(4);
+      const qLo = document.getElementById('qLon'); if (qLo) qLo.value = numLon.toFixed(4);
+      const dB = document.getElementById('dBox'); if (dB) dB.value = numBox.toString();
+      const dZ = document.getElementById('dZ'); if (dZ) dZ.value = numZ.toString();
+      const tL = document.getElementById('targetLocationName'); if (tL) tL.innerText = label;
 
       if (autoReconstruct) {
         window.triggerReconstruction();
@@ -11265,7 +11308,7 @@
         window.loadCurrent3DModel('nashik.glb', 'nashik_stats.json', 'nashik_buildings.json', 'nashik_hazard.png', 'nashik.jpg', label, { lat, lon, boxKm });
         showTacticalToast('MISSION // NASHIK VINEYARDS & WATERSHED TWIN LOADED');
         return;
-      } else if (label.includes('Cauvery') || label.includes('Delta')) {
+      } else if (label.includes('Cauvery') || label.includes('Delta') || label.includes('Thanjavur')) {
         window.loadCurrent3DModel('cauvery.glb', 'cauvery_stats.json', 'cauvery_buildings.json', 'cauvery_hazard.png', 'cauvery.jpg', label, { lat, lon, boxKm });
         showTacticalToast('MISSION // CAUVERY DELTA PADDY BASIN TWIN LOADED');
         return;
@@ -11277,11 +11320,15 @@
         window.loadCurrent3DModel('joshimath.glb', 'joshimath_stats.json', 'joshimath_buildings.json', 'joshimath_hazard.png', 'joshimath.jpg', label, { lat, lon, boxKm });
         showTacticalToast('MISSION // JOSHIMATH SUBSIDENCE DIGITAL TWIN LOADED');
         return;
-      } else if (label.includes('Mumbai') || label.includes('Marine Drive') || label.includes('Riviera') || label.includes('Nice') || label.includes('Cannes') || label.includes('RK Beach') || label.includes('Trivandrum') || label.includes('UB City') || label.includes('Connaught')) {
+      } else if (label.includes('Barren') || label.includes('Volcano') || label.includes('Caldera')) {
+        window.loadCurrent3DModel('kedarnath.glb', 'kedarnath_stats.json', 'kedarnath_buildings.json', 'kedarnath_hazard.png', 'kedarnath.jpg', label, { lat, lon, boxKm });
+        showTacticalToast('MISSION // BARREN ISLAND CALDERA DIGITAL TWIN LOADED');
+        return;
+      } else if (label.includes('Mumbai') || label.includes('Marine Drive') || label.includes('Riviera') || label.includes('Nice') || label.includes('Cannes') || label.includes('RK Beach') || label.includes('Visakhapatnam') || label.includes('Trivandrum') || label.includes('UB City') || label.includes('Bengaluru') || label.includes('Connaught') || label.includes('Delhi')) {
         window.loadCurrent3DModel('mumbai.glb', 'mumbai_stats.json', 'mumbai_buildings.json', 'current_hazard.png', 'mumbai.jpg', label, { lat, lon, boxKm });
         showTacticalToast(`MISSION // ${label.toUpperCase()} TWIN LOADED`);
         return;
-      } else if (label.includes('NIT Calicut') || label.includes('Kattangal') || label.includes('Chathamangalam') || label.includes('Kunnamangalam') || label.includes('Kozhikode') || label.includes('Calicut') || label.includes('Live GPS') || label.includes('GNSS')) {
+      } else if (label.includes('NIT Calicut') || label.includes('NITC') || label.includes('Kattangal') || label.includes('Chathamangalam') || label.includes('Kunnamangalam') || label.includes('Kozhikode') || label.includes('Calicut') || label.includes('Hostel') || label.includes('Live GPS') || label.includes('GNSS')) {
         window.loadCurrent3DModel('current.glb', 'nitc_stats.json', 'nitc_buildings.json', 'current_hazard.png', 'current.jpg', label, { lat, lon, boxKm });
         showTacticalToast(`MISSION // ${label.toUpperCase()} DIGITAL TWIN LOADED`);
         return;
@@ -11411,9 +11458,7 @@
     };
 
     // 3D Live GPS Civilian Beacon Group
-    const gpsBeacon3DGroup = new THREE.Group();
-    scene.add(gpsBeacon3DGroup);
-
+    // gpsBeacon3DGroup is initialized in main scene groups
     window.dropLiveGpsBeacon3D = function(lat, lon, acc, label = "YOU ARE HERE") {
       while (gpsBeacon3DGroup.children.length > 0) {
         gpsBeacon3DGroup.remove(gpsBeacon3DGroup.children[0]);
@@ -11889,6 +11934,20 @@
         focusEvacShelter();
       }
     };
+
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // Boot Initialization: Stream NIT Calicut Digital Twin on startup
+    // ══════════════════════════════════════════════════════════════════════════
+    window.loadCurrent3DModel(
+      'current.glb',
+      'nitc_stats.json',
+      'nitc_buildings.json',
+      'current_hazard.png',
+      'current.jpg',
+      'NIT Calicut Main Campus & IT Complex',
+      { lat: 11.3216, lon: 75.9336, boxKm: 2.5 }
+    );
 
 </script>
 </body>
