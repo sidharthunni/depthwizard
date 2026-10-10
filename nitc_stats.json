@@ -1,0 +1,20 @@
+{
+  "box_size_km": 2.5,
+  "lat": 11.3216,
+  "lon": 75.9336,
+  "location_name": "NIT Calicut Main Campus & Surrounding Sector (Kozhikode, Kerala)",
+  "width_m": 2500.0,
+  "grid_spacing_m": 12.5,
+  "min_elev_m": 35.0,
+  "max_elev_m": 58.0,
+  "relief_m": 23.0,
+  "high_risk_slope": "4.2%",
+  "avg_slope_deg": "6.5\u00b0",
+  "vertices": "35,344",
+  "triangles": "69,938",
+  "grid_w": 188,
+  "grid_h": 188,
+  "z_scale": 35.0,
+  "rmse": "0.082",
+  "correlation": "94.8% (Cartosat-3 High-Res)"
+}
