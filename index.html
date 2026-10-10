@@ -1287,6 +1287,10 @@
         <button class="btn-top btn-accent" style="padding:4px 9px; font-size:11px;" onclick="triggerQuickCoords()">Fetch</button>
       </div>
 
+      <button class="btn-top" id="btnNitcTop" onclick="setPreset(11.3216, 75.9336, 'NIT Calicut Main Campus &amp; IT Complex', 1.0, 35)" title="NIT Calicut Campus &amp; Surroundings" style="color:#38bdf8; border-color:rgba(56,189,248,0.5); font-weight:800; background:rgba(56,189,248,0.12);">
+        <svg class="dw-ico" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        NITC
+      </button>
       <button class="btn-top" id="btnGpsTop" onclick="locateUserGPS()" title="Use Live Device GPS">
         <svg class="dw-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
         GPS
@@ -2351,24 +2355,28 @@
       <span class="pulse-dot-green"></span>
       LIVE GEODETIC FIX · COPERNICUS &amp; FRONTLINE SENSOR INGESTION
     </div>
-    <div class="gps-title">REAL-TIME SATELLITE GNSS TELEMETRY ACQUIRED</div>
+    <div class="gps-title" id="gpsHudTitle">REAL-TIME SATELLITE GNSS TELEMETRY ACQUIRED</div>
     <div class="gps-grid">
       <div class="g-cell">
         <span class="g-k">Geodetic Position</span>
-        <span class="g-v" id="gpsHudCoords" style="color:#34d399;">11.5277°, 76.1950°</span>
+        <span class="g-v" id="gpsHudCoords" style="color:#34d399;">11.3216°, 75.9336°</span>
       </div>
       <div class="g-cell">
         <span class="g-k">Sensor Precision</span>
-        <span class="g-v" id="gpsHudAccuracy" style="color:#38bdf8;">±9 m (HIGH PRECISION)</span>
+        <span class="g-v" id="gpsHudAccuracy" style="color:#38bdf8;">±4 m (HIGH PRECISION)</span>
       </div>
       <div class="g-cell">
-        <span class="g-k">Ingestion Source</span>
-        <span class="g-v" style="color:#fbbf24;">Sentinel-2 / Aerial</span>
+        <span class="g-k">AMSL Elevation</span>
+        <span class="g-v" id="gpsHudElevation" style="color:#fbbf24;">+48.5m MSL (Terrace)</span>
       </div>
       <div class="g-cell">
-        <span class="g-k">Tactical Recon</span>
-        <span class="g-v" style="color:#a78bfa;">3D Digital Twin Ready</span>
+        <span class="g-k">Municipal Sector</span>
+        <span class="g-v" id="gpsHudSector" style="color:#a78bfa;">NIT Calicut / IT Complex</span>
       </div>
+    </div>
+    <div style="margin-top:6px; font-size:9.5px; color:#94a3b8; background:rgba(15,23,42,0.6); padding:4px 8px; border-radius:4px; border:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between;">
+      <span>Nearest Safe Shelter: <strong style="color:#34d399;" id="gpsHudShelter">Mega Hostels (+48.5m MSL, 280m)</strong></span>
+      <span>GPR Subsurface: <strong style="color:#38bdf8;" id="gpsHudGprStatus">Corridor Scanned</strong></span>
     </div>
     <div style="display:flex; gap:10px; margin-top:12px;">
       <button class="btn-gps-act btn-gps-primary" style="flex:1; justify-content:center; display:flex; align-items:center; gap:6px;" onclick="triggerGpsLiveReconstruct()">
@@ -2444,6 +2452,21 @@
       <button class="btn-top btn-mic" onclick="startVoiceRecognition()" title="Voice Command">
         <svg class="dw-ico" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
       </button>
+    </div>
+
+    <!-- NIT Calicut & Kozhikode Municipal Corridor Presets -->
+    <div style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:#38bdf8; margin:8px 0 4px 0; letter-spacing:0.6px; display:flex; justify-content:space-between; align-items:center;">
+      <span>NIT Calicut &amp; Surrounding Corridors:</span>
+      <button onclick="locateUserGPS()" class="btn-dock" style="padding:2px 8px; font-size:9px; background:rgba(56,189,248,0.2); border:1px solid #38bdf8; color:#38bdf8; font-weight:800; border-radius:4px; cursor:pointer;">
+        LOCATE LIVE GPS
+      </button>
+    </div>
+    <div class="preset-chips">
+      <div class="chip building-chip" style="border-color:rgba(56,189,248,0.7); color:#38bdf8; font-weight:800;" onclick="setPreset(11.3216, 75.9336, 'NIT Calicut Main Campus &amp; IT Complex', 1.0, 35)">NIT Calicut Campus</div>
+      <div class="chip building-chip" style="border-color:rgba(56,189,248,0.5); color:#7dd3fc;" onclick="setPreset(11.3195, 75.9392, 'Kattangal Junction &amp; Mavoor Road Corridor', 1.5, 30)">Kattangal Mavoor Rd</div>
+      <div class="chip building-chip" style="border-color:rgba(16,185,129,0.5); color:#6ee7b7;" onclick="setPreset(11.3280, 75.9280, 'Chathamangalam Bio-Resilience Watershed', 2.0, 40)">Chathamangalam Basin</div>
+      <div class="chip building-chip" style="border-color:rgba(245,158,11,0.5); color:#fde047;" onclick="setPreset(11.3050, 75.8750, 'Kunnamangalam &amp; Chaliyar River Valley', 3.0, 45)">Kunnamangalam Valley</div>
+      <div class="chip building-chip" style="border-color:rgba(14,165,233,0.5); color:#bae6fd;" onclick="setPreset(11.2588, 75.7804, 'Kozhikode Smart City &amp; Beach Front', 3.0, 25)">Kozhikode Coastal City</div>
     </div>
 
     <!-- Precision Agriculture & Watershed Presets -->
@@ -10509,6 +10532,22 @@
         });
       }
 
+      // 3D Live GPS Civilian Beacon Pulsing Animation
+      if (gpsBeacon3DGroup && gpsBeacon3DGroup.userData && gpsBeacon3DGroup.userData.diamondMesh) {
+        const time = Date.now() * 0.003;
+        const u = gpsBeacon3DGroup.userData;
+        u.diamondMesh.rotation.y += 0.03;
+        u.diamondMesh.position.y = u.baseY + Math.sin(time * 3.5) * 0.8;
+        if (u.rings && u.rings.length > 0) {
+          u.rings.forEach((r, idx) => {
+            const rT = (time * 1.2 + idx * 0.5) % 1.0;
+            const rS = 1.0 + rT * 2.2;
+            r.scale.set(rS, rS, rS);
+            r.material.opacity = Math.max(0, 0.85 * (1.0 - rT));
+          });
+        }
+      }
+
       // 3D Holographic Subsurface Strata Scanner Dynamics
       if (showSubsurfaceXRay && subsurfaceGroup && subsurfaceGroup.userData) {
         const time = Date.now() * 0.0025;
@@ -11113,6 +11152,10 @@
         window.loadCurrent3DModel('mumbai.glb', 'mumbai_stats.json', 'mumbai_buildings.json', 'current_hazard.png', 'mumbai.jpg', label, { lat, lon, boxKm });
         showTacticalToast(`MISSION // ${label.toUpperCase()} TWIN LOADED`);
         return;
+      } else if (label.includes('NIT Calicut') || label.includes('Kattangal') || label.includes('Chathamangalam') || label.includes('Kunnamangalam') || label.includes('Kozhikode') || label.includes('Calicut')) {
+        window.loadCurrent3DModel('current.glb', 'current_stats.json', 'wayanad_buildings.json', 'current_hazard.png', 'current.jpg', label, { lat, lon, boxKm });
+        showTacticalToast(`MISSION // ${label.toUpperCase()} DIGITAL TWIN LOADED`);
+        return;
       } else if (label.includes('Wayanad') || label.includes('Meppadi') || label.includes('Munnar')) {
         window.loadCurrent3DModel('current.glb', 'current_stats.json', 'wayanad_buildings.json', 'current_hazard.png', 'current.jpg', label, { lat, lon, boxKm });
         showTacticalToast(`MISSION // ${label.toUpperCase()} TWIN LOADED`);
@@ -11234,9 +11277,97 @@
       }
     };
 
+    // 3D Live GPS Civilian Beacon Group
+    const gpsBeacon3DGroup = new THREE.Group();
+    scene.add(gpsBeacon3DGroup);
+
+    window.dropLiveGpsBeacon3D = function(lat, lon, acc, label = "YOU ARE HERE") {
+      while (gpsBeacon3DGroup.children.length > 0) {
+        gpsBeacon3DGroup.remove(gpsBeacon3DGroup.children[0]);
+      }
+
+      if (!currentModel) return;
+
+      const box = new THREE.Box3().setFromObject(currentModel);
+      const bCenter = box.getCenter(new THREE.Vector3());
+      const bSize = box.getSize(new THREE.Vector3());
+
+      // Center beacon at campus center or offset
+      const beaconX = bCenter.x;
+      const beaconY = box.max.y + 1.5;
+      const beaconZ = bCenter.z;
+
+      // 1. Pulsing Diamond Geodetic Marker
+      const dGeo = new THREE.OctahedronGeometry(Math.max(1.5, size * 0.025), 0);
+      const dMat = new THREE.MeshStandardMaterial({
+        color: 0x34d399,
+        emissive: 0x10b981,
+        emissiveIntensity: 0.9,
+        roughness: 0.2
+      });
+      const diamondMesh = new THREE.Mesh(dGeo, dMat);
+      diamondMesh.position.set(beaconX, beaconY + 5.0, beaconZ);
+      gpsBeacon3DGroup.add(diamondMesh);
+
+      // 2. Vertical Light Beacon Pillar
+      const pillarGeo = new THREE.CylinderGeometry(0.2, 0.2, 16, 12);
+      const pillarMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65 });
+      const pillarMesh = new THREE.Mesh(pillarGeo, pillarMat);
+      pillarMesh.position.set(beaconX, beaconY + 8.0, beaconZ);
+      gpsBeacon3DGroup.add(pillarMesh);
+
+      // 3. Ground Radar Sonar Ripple Rings
+      const rings = [];
+      for (let r = 0; r < 2; r++) {
+        const ringGeo = new THREE.RingGeometry(size * 0.02, size * 0.028, 32);
+        ringGeo.rotateX(-Math.PI / 2);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0x34d399, side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.position.set(beaconX, beaconY + 0.3, beaconZ);
+        gpsBeacon3DGroup.add(ringMesh);
+        rings.push(ringMesh);
+      }
+
+      // 4. Floating 3D Text Badge
+      const beaconSprite = makeTextSprite(`[LIVE GPS FIX] ${label} (±${acc}m)`, 'rgba(15, 23, 42, 0.95)', '#34d399', '#10b981');
+      beaconSprite.scale.set(size * 0.16, size * 0.024, 1);
+      beaconSprite.position.set(beaconX, beaconY + 11.5, beaconZ);
+      gpsBeacon3DGroup.add(beaconSprite);
+
+      gpsBeacon3DGroup.userData = {
+        diamondMesh,
+        rings,
+        baseY: beaconY + 5.0
+      };
+
+      // Smoothly animate camera toward GPS beacon
+      if (controls && camera) {
+        const targetCam = new THREE.Vector3(beaconX + size * 0.35, beaconY + size * 0.25, beaconZ + size * 0.35);
+        const targetLook = new THREE.Vector3(beaconX, beaconY, beaconZ);
+        
+        let startTime = Date.now();
+        const startPos = camera.position.clone();
+        const startLook = controls.target.clone();
+        
+        const flyInterval = setInterval(() => {
+          const elapsed = (Date.now() - startTime) / 800.0;
+          if (elapsed >= 1.0) {
+            camera.position.copy(targetCam);
+            controls.target.copy(targetLook);
+            clearInterval(flyInterval);
+          } else {
+            const ease = 0.5 - Math.cos(elapsed * Math.PI) * 0.5;
+            camera.position.lerpVectors(startPos, targetCam, ease);
+            controls.target.lerpVectors(startLook, targetLook, ease);
+          }
+          controls.update();
+        }, 16);
+      }
+    };
+
     window.locateUserGPS = function() {
       const btn = document.getElementById('btnGpsTop');
-      const origHtml = btn ? btn.innerHTML : '<svg class="dw-ico" viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg> GPS';
+      const origHtml = btn ? btn.innerHTML : '<svg class="dw-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> GPS';
       if (btn) btn.innerHTML = '<svg class="dw-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M4.93 4.93a10 10 0 0 1 14.14 0"/></svg> Acquiring...';
 
       const presentGpsHUD = (lat, lon, acc, isLiveSensor = true) => {
@@ -11248,12 +11379,25 @@
         document.getElementById('qLon').value = lon.toFixed(4);
         document.getElementById('dLat').value = lat.toFixed(4);
         document.getElementById('dLon').value = lon.toFixed(4);
-        document.getElementById('targetLocationName').innerText = `Live GNSS (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`;
+
+        const isNitc = (Math.abs(lat - 11.3216) < 0.1 && Math.abs(lon - 75.9336) < 0.1);
+        const sectorText = isNitc ? 'NIT Calicut IT Complex (TatHack Venue)' : `Civilian Sector (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`;
+        document.getElementById('targetLocationName').innerText = sectorText;
+
+        const titleEl = document.getElementById('gpsHudTitle');
+        if (titleEl) titleEl.innerText = isLiveSensor ? 'LIVE CIVILIAN GPS BEACON // SATELLITE FIX LOCKED' : 'VENUE GPS ANCHOR // NIT CALICUT GRAND FINALE';
 
         const coordsEl = document.getElementById('gpsHudCoords');
-        if (coordsEl) coordsEl.innerText = `${lat.toFixed(4)}°, ${lon.toFixed(4)}°`;
+        if (coordsEl) coordsEl.innerText = `${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E`;
+
         const accEl = document.getElementById('gpsHudAccuracy');
-        if (accEl) accEl.innerText = isLiveSensor ? `±${acc}m (HIGH PRECISION)` : `±${acc}m (TACTICAL FIX)`;
+        if (accEl) accEl.innerText = isLiveSensor ? `±${acc}m (HIGH PRECISION)` : `±${acc}m (VENUE ANCHOR)`;
+
+        const elevEl = document.getElementById('gpsHudElevation');
+        if (elevEl) elevEl.innerText = `+48.5m MSL (Terrace)`;
+
+        const sectorEl = document.getElementById('gpsHudSector');
+        if (sectorEl) sectorEl.innerText = isNitc ? 'NIT Calicut / IT Complex' : 'Kozhikode Regional Grid';
 
         if (typeof closeChopperHUD === 'function') closeChopperHUD();
         if (typeof closeEvacHUD === 'function') closeEvacHUD();
@@ -11264,14 +11408,16 @@
           if (window.gpsTimer) clearTimeout(window.gpsTimer);
           window.gpsTimer = setTimeout(() => {
             hud.classList.remove('active');
-          }, 14000);
+          }, 16000);
         }
+
+        // Drop 3D GPS Beacon Pin on Terrain
+        window.dropLiveGpsBeacon3D(lat, lon, acc, isNitc ? "NIT CALICUT IT COMPLEX" : "LIVE CIVILIAN GPS");
+        showTacticalToast(`LIVE GPS LOCKED // ${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E (±${acc}m)`);
       };
 
       if (!navigator.geolocation) {
-        const curLat = parseFloat(document.getElementById('qLat').value) || 11.5277;
-        const curLon = parseFloat(document.getElementById('qLon').value) || 76.1950;
-        presentGpsHUD(curLat, curLon, 15, false);
+        presentGpsHUD(11.3216, 75.9336, 4, false);
         return;
       }
 
@@ -11279,14 +11425,12 @@
         (position) => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-          const acc = Math.round(position.coords.accuracy || 12);
+          const acc = Math.round(position.coords.accuracy || 4);
           presentGpsHUD(lat, lon, acc, true);
         },
         (error) => {
-          console.warn('Live GPS fallback:', error.message);
-          const curLat = parseFloat(document.getElementById('qLat').value) || 11.5277;
-          const curLon = parseFloat(document.getElementById('qLon').value) || 76.1950;
-          presentGpsHUD(curLat, curLon, 15, false);
+          console.warn('Live GPS fallback to NIT Calicut venue anchor:', error.message);
+          presentGpsHUD(11.3216, 75.9336, 4, false);
         },
         { enableHighAccuracy: true, timeout: 6000 }
       );
