@@ -1959,13 +1959,13 @@
     <div style="margin-top:8px; padding:7px 9px; background:rgba(15,23,42,0.7); border:1px solid rgba(56,189,248,0.3); border-radius:8px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
         <span style="font-size:10px; font-weight:800; color:#38bdf8; letter-spacing:0.5px;">GPR RADAR PIPE DIAGNOSTIC (400 MHz)</span>
-        <span style="font-size:9px; background:rgba(239,68,68,0.25); color:#ef4444; border:1px solid rgba(239,68,68,0.4); padding:1px 5px; border-radius:4px; font-weight:700;">ANOMALY DETECTED</span>
+        <span id="ssGprStatusBadge" style="font-size:9px; background:rgba(239,68,68,0.25); color:#ef4444; border:1px solid rgba(239,68,68,0.4); padding:1px 5px; border-radius:4px; font-weight:700;">ANOMALY DETECTED</span>
       </div>
-      <div class="m-row" style="font-size:10.5px; margin-bottom:2px;"><span>Pipe Depth & Type:</span><span class="m-val" style="color:#f59e0b;">-1.4m · KWA 350mm Main Conduit</span></div>
-      <div class="m-row" style="font-size:10.5px; margin-bottom:2px;"><span>Radar Permittivity (εr):</span><span class="m-val" style="color:#38bdf8; font-weight:700;">24.2 (Water plume / Void)</span></div>
-      <div class="m-row" style="font-size:10.5px; margin-bottom:2px;"><span>Sub-Pavement Void:</span><span class="m-val" style="color:#ef4444; font-weight:700;">1.2m Diameter Washout Cavity</span></div>
-      <div class="m-row" style="font-size:10.5px; margin-bottom:4px;"><span>PWD Pre-Paving Audit:</span><span class="m-val" style="color:#f43f5e; font-weight:800; background:rgba(244,63,94,0.15); padding:1px 6px; border-radius:4px;">PERMIT LOCKED</span></div>
-      <div style="font-size:9.5px; color:#94a3b8; line-height:1.3; border-top:1px dashed rgba(255,255,255,0.1); padding-top:4px;">
+      <div class="m-row" style="font-size:10.5px; margin-bottom:2px;"><span>Pipe Depth & Type:</span><span class="m-val" id="ssPipeDepth" style="color:#f59e0b;">-1.4m · KWA 350mm Main Conduit</span></div>
+      <div class="m-row" style="font-size:10.5px; margin-bottom:2px;"><span>Radar Permittivity (εr):</span><span class="m-val" id="ssPermittivity" style="color:#38bdf8; font-weight:700;">24.2 (Water plume / Void)</span></div>
+      <div class="m-row" style="font-size:10.5px; margin-bottom:2px;"><span>Sub-Pavement Void:</span><span class="m-val" id="ssVoidVol" style="color:#ef4444; font-weight:700;">1.2m Diameter Washout Cavity</span></div>
+      <div class="m-row" style="font-size:10.5px; margin-bottom:4px;"><span>PWD Pre-Paving Audit:</span><span class="m-val" id="ssPavingAudit" style="color:#f43f5e; font-weight:800; background:rgba(244,63,94,0.15); padding:1px 6px; border-radius:4px;">PERMIT LOCKED</span></div>
+      <div id="ssInterAgencyText" style="font-size:9.5px; color:#94a3b8; line-height:1.3; border-top:1px dashed rgba(255,255,255,0.1); padding-top:4px;">
         Inter-Agency Lock: PWD repaving contract held until KWA excavates & repairs subterranean breach. Eliminates road cave-in after paving.
       </div>
     </div>
@@ -1974,9 +1974,9 @@
     <div style="margin-top:8px; padding:7px 9px; background:rgba(15,23,42,0.85); border:1px solid rgba(239,68,68,0.3); border-radius:8px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
         <span style="font-size:9.5px; font-weight:800; color:#fca5a5; letter-spacing:0.4px;">SCANNED PIPELINES DAMAGE MATRIX</span>
-        <span style="font-size:8.5px; color:#94a3b8; font-family:'JetBrains Mono';">5 CONDUITS AUDITED</span>
+        <span id="ssMatrixCountLabel" style="font-size:8.5px; color:#94a3b8; font-family:'JetBrains Mono';">5 CONDUITS AUDITED</span>
       </div>
-      <div style="display:flex; flex-direction:column; gap:4px; font-size:9.5px;">
+      <div id="ssDamageMatrixContainer" style="display:flex; flex-direction:column; gap:4px; font-size:9.5px;">
         <div style="display:flex; justify-content:space-between; align-items:center; padding:3px 6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:4px;">
           <span><strong>KWA 350mm Main Trunk</strong> (-1.4m)</span>
           <span style="color:#ef4444; font-weight:800;">DESTRUCTED (RUPTURED)</span>
@@ -6799,6 +6799,8 @@
       closeAllInspectionCards('subsurface-card');
       document.getElementById('subsurface-card').style.display = 'block';
       showTacticalToast('3D Subsurface & GPR Radar Active: Pipe Breach & Soil Strata Exposed');
+      const curVal = document.getElementById('subsurfaceSliceRange') ? document.getElementById('subsurfaceSliceRange').value : 0;
+      updateSubsurfaceSlice(curVal || 0);
     };
 
     function buildSubsurfaceStrataSlab(box, bSize) {
@@ -6959,16 +6961,19 @@
         subsurfaceGroup.add(flangeMesh);
       }
 
-      // GPR High-Dielectric Leak Plume & Washout Cavity Sphere (er = 24.2 anomaly)
+      // Dynamic Plume Factor across currentSliceOffset
+      const sliceNorm = (bSize.y * 0.42 > 0) ? (currentSliceOffset / (bSize.y * 0.42)) : 0; // -1.0 to +1.0
+      const slabPlume = Math.max(0, 1.0 - Math.abs(sliceNorm) * 1.85);
+
       const ruptureX = center.x + widthX * 0.12;
-      const voidRadius = Math.max(2.2, size * 0.038);
+      const voidRadius = Math.max(0.6, size * 0.038 * Math.max(0.2, slabPlume));
       const voidGeo = new THREE.SphereGeometry(voidRadius, 20, 20);
       const voidMat = new THREE.MeshStandardMaterial({
-        color: 0xef4444,
-        emissive: 0xef4444,
-        emissiveIntensity: 0.6,
+        color: slabPlume > 0.3 ? 0xef4444 : (slabPlume > 0.1 ? 0xf59e0b : 0x10b981),
+        emissive: slabPlume > 0.3 ? 0xef4444 : (slabPlume > 0.1 ? 0xf59e0b : 0x059669),
+        emissiveIntensity: slabPlume > 0.1 ? 0.6 : 0.2,
         transparent: true,
-        opacity: 0.70,
+        opacity: slabPlume > 0.1 ? 0.70 : 0.25,
         roughness: 0.2
       });
       const gprVoidMesh = new THREE.Mesh(voidGeo, voidMat);
@@ -6977,24 +6982,33 @@
 
       // GPR Reflected Radar Wavefront Ripples (Hyperbolic Echoes)
       const gprRadarRings = [];
-      for (let r = 0; r < 3; r++) {
-        const ringGeo = new THREE.RingGeometry(voidRadius * 0.8, voidRadius * 1.05, 32);
-        ringGeo.rotateX(-Math.PI / 2);
-        const ringMat = new THREE.MeshBasicMaterial({
-          color: 0x38bdf8,
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.75
-        });
-        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-        ringMesh.position.set(ruptureX, lineY + pipeRadius + 0.3, pipeZ);
-        subsurfaceGroup.add(ringMesh);
-        gprRadarRings.push(ringMesh);
+      if (slabPlume > 0.12) {
+        for (let r = 0; r < 3; r++) {
+          const ringGeo = new THREE.RingGeometry(voidRadius * 0.8, voidRadius * 1.05, 32);
+          ringGeo.rotateX(-Math.PI / 2);
+          const ringMat = new THREE.MeshBasicMaterial({
+            color: 0x38bdf8,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.75 * slabPlume
+          });
+          const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+          ringMesh.position.set(ruptureX, lineY + pipeRadius + 0.3, pipeZ);
+          subsurfaceGroup.add(ringMesh);
+          gprRadarRings.push(ringMesh);
+        }
       }
 
       // GPR Anomaly Label Sprite (Pipe 1)
-      const gprPipeLabel = "GPR 400MHz RADAR: KWA 350mm PIPE BREACH & WASHOUT VOID (-1.4m) [PWD PAVING LOCKED]";
-      const gprSprite = makeTextSprite(gprPipeLabel, 'rgba(15, 23, 42, 0.95)', '#ef4444', '#f43f5e');
+      const dynamicPipeDepth = (1.1 + Math.abs(sliceNorm) * 1.1).toFixed(1);
+      const gprPipeLabel = slabPlume > 0.3
+        ? `GPR 400MHz RADAR: KWA PIPE BREACH & WASHOUT VOID (-${dynamicPipeDepth}m) [PWD PAVING LOCKED]`
+        : (slabPlume > 0.1
+            ? `GPR 400MHz RADAR: SUBGRADE MOISTURE CAUTION (-${dynamicPipeDepth}m) [CONDITIONAL REVIEW]`
+            : `GPR 400MHz RADAR: SUBGRADE STABLE (-${dynamicPipeDepth}m) [PWD PAVING APPROVED]`);
+      const gprSpriteColor = slabPlume > 0.3 ? '#ef4444' : (slabPlume > 0.1 ? '#f59e0b' : '#10b981');
+      const gprSpriteBorder = slabPlume > 0.3 ? '#f43f5e' : (slabPlume > 0.1 ? '#d97706' : '#059669');
+      const gprSprite = makeTextSprite(gprPipeLabel, 'rgba(15, 23, 42, 0.95)', gprSpriteColor, gprSpriteBorder);
       gprSprite.scale.set(size * 0.18, size * 0.024, 1);
       gprSprite.position.set(ruptureX, lineY + voidRadius * 1.4, pipeZ);
       subsurfaceGroup.add(gprSprite);
@@ -7113,6 +7127,118 @@
         } else {
           elShearRisk.innerHTML = `<span style="color:#34d399; font-weight:800;">Nominal Hydro-Shear Stable (${shearKPa} kPa)</span>`;
         }
+      }
+
+      // Dynamically vary GPR Radar & Utility Conduits Damage Matrix across slider offset
+      const pDepthVal = (1.1 + Math.abs(normVal * 0.012) + Math.sin(normVal * 0.06) * 0.28).toFixed(1);
+      const pKey = getGeospatialPresetKey();
+      let pipeTypeName = "KWA 350mm Main Conduit";
+      if (pKey === 'wayanad') pipeTypeName = "KWA 300mm Hill-Trench Ductile Iron";
+      else if (pKey === 'punjab') pipeTypeName = "Irrigation Canal Siphon Main 450mm";
+      else if (pKey === 'joshimath') pipeTypeName = "Subterranean Drainage Culvert 400mm";
+
+      if (normVal < -45) pipeTypeName = "KWA 500mm Bulk Transmission Trunk";
+      else if (normVal > 55) pipeTypeName = "PWD 450mm Storm Invert Conduit";
+
+      const plumeFactor = Math.max(0, 1.0 - Math.abs(normVal) / 52.0);
+      let gprPermVal = 0;
+      let gprVoidText = "";
+      let gprAuditHtml = "";
+      let gprBadgeHtml = "";
+      let interAgencyHtml = "";
+
+      if (plumeFactor > 0.35) {
+        // Core anomaly / leak rupture sector
+        gprPermVal = (20.5 + plumeFactor * 22.0 + Math.sin(normVal * 0.3) * 3.0).toFixed(1);
+        const voidDia = (0.9 + plumeFactor * 1.3).toFixed(1);
+        gprVoidText = `${voidDia}m Diameter Washout Cavity`;
+        gprBadgeHtml = `<span style="font-size:9px; background:rgba(239,68,68,0.25); color:#ef4444; border:1px solid rgba(239,68,68,0.4); padding:1px 5px; border-radius:4px; font-weight:700;">ANOMALY DETECTED</span>`;
+        gprAuditHtml = `<span style="color:#f43f5e; font-weight:800; background:rgba(244,63,94,0.15); padding:1px 6px; border-radius:4px;">PERMIT LOCKED</span>`;
+        interAgencyHtml = `Inter-Agency Lock: PWD repaving contract held until KWA excavates & repairs subterranean breach. Eliminates road cave-in after paving.`;
+      } else if (plumeFactor > 0.08) {
+        // Peripheral moisture infiltration sector
+        gprPermVal = (9.2 + plumeFactor * 14.5).toFixed(1);
+        gprVoidText = `0.4m Sub-Base Aggregate Settlement`;
+        gprBadgeHtml = `<span style="font-size:9px; background:rgba(245,158,11,0.25); color:#f59e0b; border:1px solid rgba(245,158,11,0.4); padding:1px 5px; border-radius:4px; font-weight:700;">SUBGRADE CAUTION</span>`;
+        gprAuditHtml = `<span style="color:#fbbf24; font-weight:800; background:rgba(245,158,11,0.15); padding:1px 6px; border-radius:4px;">CONDITIONAL REVIEW</span>`;
+        interAgencyHtml = `Subgrade moisture elevated. PWD hot-mix paving held for mechanical drainage stabilization and sub-base re-compaction.`;
+      } else {
+        // Clean, dry, sound pavement foundation sector
+        gprPermVal = (4.8 + Math.abs(Math.sin(normVal * 0.15)) * 1.8).toFixed(1);
+        gprVoidText = `Nominal Subgrade (Zero Cavity Detected)`;
+        gprBadgeHtml = `<span style="font-size:9px; background:rgba(16,185,129,0.25); color:#10b981; border:1px solid rgba(16,185,129,0.4); padding:1px 5px; border-radius:4px; font-weight:700;">CLEAR / STABLE</span>`;
+        gprAuditHtml = `<span style="color:#10b981; font-weight:800; background:rgba(16,185,129,0.15); padding:1px 6px; border-radius:4px;">PERMIT APPROVED</span>`;
+        interAgencyHtml = `Subgrade integrity verified by 400 MHz GPR sweep. Zero subterranean void. PWD hot-mix paving authorized.`;
+      }
+
+      const elGprBadge = document.getElementById('ssGprStatusBadge');
+      if (elGprBadge) elGprBadge.outerHTML = `<span id="ssGprStatusBadge">${gprBadgeHtml}</span>`;
+
+      const elPipeDepth = document.getElementById('ssPipeDepth');
+      if (elPipeDepth) elPipeDepth.innerText = `-${pDepthVal}m · ${pipeTypeName}`;
+
+      const elPermittivity = document.getElementById('ssPermittivity');
+      if (elPermittivity) {
+        const permColor = plumeFactor > 0.35 ? '#38bdf8' : (plumeFactor > 0.08 ? '#f59e0b' : '#10b981');
+        const permNote = plumeFactor > 0.35 ? '(Water plume / Void)' : (plumeFactor > 0.08 ? '(Moisture Plume)' : '(Dry Granular Base)');
+        elPermittivity.innerHTML = `<span style="color:${permColor}; font-weight:700;">${gprPermVal} ${permNote}</span>`;
+      }
+
+      const elVoidVol = document.getElementById('ssVoidVol');
+      if (elVoidVol) {
+        const voidColor = plumeFactor > 0.35 ? '#ef4444' : (plumeFactor > 0.08 ? '#f59e0b' : '#10b981');
+        elVoidVol.innerHTML = `<span style="color:${voidColor}; font-weight:700;">${gprVoidText}</span>`;
+      }
+
+      const elPavingAudit = document.getElementById('ssPavingAudit');
+      if (elPavingAudit) elPavingAudit.innerHTML = gprAuditHtml;
+
+      const elInterAgency = document.getElementById('ssInterAgencyText');
+      if (elInterAgency) elInterAgency.innerText = interAgencyHtml;
+
+      // Update Damage Matrix items dynamically across the 5 conduits
+      const elMatrix = document.getElementById('ssDamageMatrixContainer');
+      if (elMatrix) {
+        const d1 = pDepthVal;
+        const d2 = (parseFloat(pDepthVal) * 0.72).toFixed(2);
+        const d3 = (parseFloat(pDepthVal) * 0.88).toFixed(2);
+        const d4 = (parseFloat(pDepthVal) * 0.44).toFixed(2);
+        const d5 = (parseFloat(pDepthVal) * 0.34).toFixed(2);
+
+        let row1Status = plumeFactor > 0.35 ? `<span style="color:#ef4444; font-weight:800;">DESTRUCTED (RUPTURED)</span>` : (plumeFactor > 0.08 ? `<span style="color:#f59e0b; font-weight:800;">COMPROMISED (SHEAR STRESS)</span>` : `<span style="color:#10b981; font-weight:700;">INTACT / SOUND CONDUIT</span>`);
+        let row1Bg = plumeFactor > 0.35 ? 'rgba(239,68,68,0.15)' : (plumeFactor > 0.08 ? 'rgba(245,158,11,0.12)' : 'rgba(16,185,129,0.1)');
+        let row1Border = plumeFactor > 0.35 ? 'rgba(239,68,68,0.3)' : (plumeFactor > 0.08 ? 'rgba(245,158,11,0.25)' : 'rgba(16,185,129,0.2)');
+
+        let row2Status = plumeFactor > 0.28 ? `<span style="color:#f59e0b; font-weight:800;">DESTRUCTED (LEAKING)</span>` : (plumeFactor > 0.08 ? `<span style="color:#eab308; font-weight:700;">VULNERABLE SEEPAGE</span>` : `<span style="color:#10b981; font-weight:700;">INTACT / SECURE</span>`);
+        let row2Bg = plumeFactor > 0.28 ? 'rgba(245,158,11,0.15)' : 'rgba(16,185,129,0.08)';
+        let row2Border = plumeFactor > 0.28 ? 'rgba(245,158,11,0.3)' : 'rgba(16,185,129,0.2)';
+
+        let row3Status = plumeFactor > 0.4 ? `<span style="color:#eab308; font-weight:700;">COMPROMISED (SCOURING)</span>` : `<span style="color:#10b981; font-weight:700;">INTACT / CLEAR FLOW</span>`;
+        let row3Bg = plumeFactor > 0.4 ? 'rgba(234,179,8,0.1)' : 'rgba(16,185,129,0.08)';
+        let row3Border = plumeFactor > 0.4 ? 'rgba(234,179,8,0.25)' : 'rgba(16,185,129,0.2)';
+
+        elMatrix.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:3px 6px; background:${row1Bg}; border:1px solid ${row1Border}; border-radius:4px;">
+            <span><strong>${pipeTypeName}</strong> (-${d1}m)</span>
+            ${row1Status}
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:3px 6px; background:${row2Bg}; border:1px solid ${row2Border}; border-radius:4px;">
+            <span><strong>KWA 150mm Feeder Line</strong> (-${d2}m)</span>
+            ${row2Status}
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:3px 6px; background:${row3Bg}; border:1px solid ${row3Border}; border-radius:4px;">
+            <span><strong>PWD 600mm Storm Drain</strong> (-${d3}m)</span>
+            ${row3Status}
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:3px 6px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); border-radius:4px;">
+            <span><strong>KSEB 100mm Power Cable</strong> (-${d4}m)</span>
+            <span style="color:#10b981; font-weight:700;">INTACT / SECURE</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:3px 6px; background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.25); border-radius:4px;">
+            <span><strong>BSNL 80mm OFC Telecom</strong> (-${d5}m)</span>
+            <span style="color:#06b6d4; font-weight:700;">INTACT / SECURE</span>
+          </div>
+        `;
       }
     };
 
