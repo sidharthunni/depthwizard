@@ -1969,6 +1969,36 @@
         Inter-Agency Lock: PWD repaving contract held until KWA excavates & repairs subterranean breach. Eliminates road cave-in after paving.
       </div>
     </div>
+
+    <!-- Scanned Utility Pipelines Damage Matrix -->
+    <div style="margin-top:8px; padding:7px 9px; background:rgba(15,23,42,0.85); border:1px solid rgba(239,68,68,0.3); border-radius:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+        <span style="font-size:9.5px; font-weight:800; color:#fca5a5; letter-spacing:0.4px;">SCANNED PIPELINES DAMAGE MATRIX</span>
+        <span style="font-size:8.5px; color:#94a3b8; font-family:'JetBrains Mono';">5 CONDUITS AUDITED</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px; font-size:9.5px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:3px 6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:4px;">
+          <span><strong>KWA 350mm Main Trunk</strong> (-1.4m)</span>
+          <span style="color:#ef4444; font-weight:800;">DESTRUCTED (RUPTURED)</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:3px 6px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); border-radius:4px;">
+          <span><strong>KWA 150mm Feeder Line</strong> (-0.95m)</span>
+          <span style="color:#f59e0b; font-weight:800;">DESTRUCTED (LEAKING)</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:3px 6px; background:rgba(234,179,8,0.1); border:1px solid rgba(234,179,8,0.25); border-radius:4px;">
+          <span><strong>PWD 600mm Storm Drain</strong> (-1.15m)</span>
+          <span style="color:#eab308; font-weight:700;">COMPROMISED (SCOURING)</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:3px 6px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); border-radius:4px;">
+          <span><strong>KSEB 100mm Power Cable</strong> (-0.60m)</span>
+          <span style="color:#10b981; font-weight:700;">INTACT / SECURE</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:3px 6px; background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.25); border-radius:4px;">
+          <span><strong>BSNL 80mm OFC Telecom</strong> (-0.45m)</span>
+          <span style="color:#06b6d4; font-weight:700;">INTACT / SECURE</span>
+        </div>
+      </div>
+    </div>
     <div id="ssBadgeContainer" style="margin-top:6px;"></div>
   </div>
 
@@ -6962,12 +6992,57 @@
         gprRadarRings.push(ringMesh);
       }
 
-      // GPR Anomaly Label Sprite
+      // GPR Anomaly Label Sprite (Pipe 1)
       const gprPipeLabel = "GPR 400MHz RADAR: KWA 350mm PIPE BREACH & WASHOUT VOID (-1.4m) [PWD PAVING LOCKED]";
       const gprSprite = makeTextSprite(gprPipeLabel, 'rgba(15, 23, 42, 0.95)', '#ef4444', '#f43f5e');
       gprSprite.scale.set(size * 0.18, size * 0.024, 1);
       gprSprite.position.set(ruptureX, lineY + voidRadius * 1.4, pipeZ);
       subsurfaceGroup.add(gprSprite);
+
+      // 7.6 Secondary Conduit: KWA 150mm Feeder Line (-0.95m depth, DESTRUCTED)
+      const pipe2Z = topZ - topH - subH * 0.18;
+      const pipe2Radius = pipeRadius * 0.65;
+      const pipe2Geo = new THREE.CylinderGeometry(pipe2Radius, pipe2Radius, pipeLength, 16);
+      pipe2Geo.rotateZ(Math.PI / 2);
+      const pipe2Mat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.35, emissive: 0xb45309, emissiveIntensity: 0.4 });
+      const pipe2Mesh = new THREE.Mesh(pipe2Geo, pipe2Mat);
+      pipe2Mesh.position.set(center.x, lineY + pipe2Radius * 0.5, pipe2Z);
+      subsurfaceGroup.add(pipe2Mesh);
+
+      const pipe2Sprite = makeTextSprite("KWA 150mm FEEDER: JOINT LEAK (-0.95m) [DESTRUCTED]", 'rgba(15, 23, 42, 0.92)', '#f59e0b', '#d97706');
+      pipe2Sprite.scale.set(size * 0.13, size * 0.018, 1);
+      pipe2Sprite.position.set(center.x - widthX * 0.22, lineY + pipe2Radius * 2.0, pipe2Z);
+      subsurfaceGroup.add(pipe2Sprite);
+
+      // 7.7 Tertiary Conduit: PWD 600mm Stormwater Drain (-1.15m depth, COMPROMISED)
+      const pipe3Z = topZ - topH - subH * 0.25;
+      const pipe3Radius = pipeRadius * 1.3;
+      const pipe3Geo = new THREE.CylinderGeometry(pipe3Radius, pipe3Radius, pipeLength, 18);
+      pipe3Geo.rotateZ(Math.PI / 2);
+      const pipe3Mat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.85, metalness: 0.2 });
+      const pipe3Mesh = new THREE.Mesh(pipe3Geo, pipe3Mat);
+      pipe3Mesh.position.set(center.x, lineY + pipe3Radius * 0.5, pipe3Z);
+      subsurfaceGroup.add(pipe3Mesh);
+
+      const pipe3Sprite = makeTextSprite("PWD 600mm DRAIN: FOUNDATION SCOURED (-1.15m) [COMPROMISED]", 'rgba(15, 23, 42, 0.92)', '#eab308', '#ca8a04');
+      pipe3Sprite.scale.set(size * 0.14, size * 0.018, 1);
+      pipe3Sprite.position.set(center.x + widthX * 0.22, lineY + pipe3Radius * 2.0, pipe3Z);
+      subsurfaceGroup.add(pipe3Sprite);
+
+      // 7.8 Quaternary Conduit: KSEB 100mm Power Cable (-0.60m depth, INTACT)
+      const pipe4Z = topZ - topH * 1.4;
+      const pipe4Radius = pipeRadius * 0.45;
+      const pipe4Geo = new THREE.CylinderGeometry(pipe4Radius, pipe4Radius, pipeLength, 12);
+      pipe4Geo.rotateZ(Math.PI / 2);
+      const pipe4Mat = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.3, emissive: 0x059669, emissiveIntensity: 0.35 });
+      const pipe4Mesh = new THREE.Mesh(pipe4Geo, pipe4Mat);
+      pipe4Mesh.position.set(center.x, lineY + pipe4Radius * 0.5, pipe4Z);
+      subsurfaceGroup.add(pipe4Mesh);
+
+      const pipe4Sprite = makeTextSprite("KSEB 100mm POWER: INTACT (-0.60m) [SECURE]", 'rgba(15, 23, 42, 0.92)', '#10b981', '#059669');
+      pipe4Sprite.scale.set(size * 0.12, size * 0.016, 1);
+      pipe4Sprite.position.set(center.x - widthX * 0.35, lineY + pipe4Radius * 2.2, pipe4Z);
+      subsurfaceGroup.add(pipe4Sprite);
 
       // 8. Overhead Strata Dimension Title Sprite
       const strataLabel = "Geotechnical Strata Cut: Topsoil (0-32cm) · Vadose Regolith · Phreatic Aquifer (-3.8m) · Basaltic Bedrock";
