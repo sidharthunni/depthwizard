@@ -1277,20 +1277,16 @@
     <div class="top-center">
       <div class="coords-pill" onclick="toggleDrawer()">
         <svg class="dw-ico" viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/></svg>
-        <span id="targetLocationName">NIT Calicut Main Campus &amp; IT Complex</span>
+        <span id="targetLocationName">Wayanad Landslide, Kerala</span>
         <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
       </div>
 
       <div class="quick-coords-bar">
-        <input type="number" step="0.0001" id="qLat" value="11.3216" title="Latitude">
-        <input type="number" step="0.0001" id="qLon" value="75.9336" title="Longitude">
+        <input type="number" step="0.0001" id="qLat" value="11.5277" title="Latitude">
+        <input type="number" step="0.0001" id="qLon" value="76.1950" title="Longitude">
         <button class="btn-top btn-accent" style="padding:4px 9px; font-size:11px;" onclick="triggerQuickCoords()">Fetch</button>
       </div>
 
-      <button class="btn-top" id="btnNitcTop" onclick="setPreset(11.3216, 75.9336, 'NIT Calicut Main Campus &amp; IT Complex', 1.0, 35)" title="NIT Calicut Campus &amp; Surroundings" style="color:#38bdf8; border-color:rgba(56,189,248,0.5); font-weight:800; background:rgba(56,189,248,0.12);">
-        <svg class="dw-ico" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-        NITC
-      </button>
       <button class="btn-top" id="btnGpsTop" onclick="locateUserGPS()" title="Use Live Device GPS">
         <svg class="dw-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
         GPS
@@ -1765,8 +1761,8 @@
         
         <!-- Crosshair & Coordinate Overlay -->
         <div class="pip-crosshair" id="pipCrosshair"></div>
-        <div class="pip-coords-badge" id="pipProbeBadge">Lat: 11.3216° | Lon: 75.9336°</div>
-        <div class="pip-loc-watermark" id="pipLocWatermark">NIT CALICUT CAMPUS</div>
+        <div class="pip-coords-badge" id="pipProbeBadge">Lat: 11.5277° | Lon: 76.1950°</div>
+        <div class="pip-loc-watermark" id="pipLocWatermark">WAYANAD HIGHLANDS</div>
       </div>
 
       <!-- Comparison Metrics Footer -->
@@ -2454,21 +2450,6 @@
       </button>
     </div>
 
-    <!-- NIT Calicut & Kozhikode Municipal Corridor Presets -->
-    <div style="font-size:10.5px; font-weight:800; text-transform:uppercase; color:#38bdf8; margin:8px 0 4px 0; letter-spacing:0.6px; display:flex; justify-content:space-between; align-items:center;">
-      <span>NIT Calicut &amp; Surrounding Corridors:</span>
-      <button onclick="locateUserGPS()" class="btn-dock" style="padding:2px 8px; font-size:9px; background:rgba(56,189,248,0.2); border:1px solid #38bdf8; color:#38bdf8; font-weight:800; border-radius:4px; cursor:pointer;">
-        LOCATE LIVE GPS
-      </button>
-    </div>
-    <div class="preset-chips">
-      <div class="chip building-chip" style="border-color:rgba(56,189,248,0.7); color:#38bdf8; font-weight:800;" onclick="setPreset(11.3216, 75.9336, 'NIT Calicut Main Campus &amp; IT Complex', 1.0, 35)">NIT Calicut Campus</div>
-      <div class="chip building-chip" style="border-color:rgba(56,189,248,0.5); color:#7dd3fc;" onclick="setPreset(11.3195, 75.9392, 'Kattangal Junction &amp; Mavoor Road Corridor', 1.5, 30)">Kattangal Mavoor Rd</div>
-      <div class="chip building-chip" style="border-color:rgba(16,185,129,0.5); color:#6ee7b7;" onclick="setPreset(11.3280, 75.9280, 'Chathamangalam Bio-Resilience Watershed', 2.0, 40)">Chathamangalam Basin</div>
-      <div class="chip building-chip" style="border-color:rgba(245,158,11,0.5); color:#fde047;" onclick="setPreset(11.3050, 75.8750, 'Kunnamangalam &amp; Chaliyar River Valley', 3.0, 45)">Kunnamangalam Valley</div>
-      <div class="chip building-chip" style="border-color:rgba(14,165,233,0.5); color:#bae6fd;" onclick="setPreset(11.2588, 75.7804, 'Kozhikode Smart City &amp; Beach Front', 3.0, 25)">Kozhikode Coastal City</div>
-    </div>
-
     <!-- Precision Agriculture & Watershed Presets -->
     <div style="font-size:10px; font-weight:700; text-transform:uppercase; color:#10b981; margin:8px 0 4px 0; letter-spacing:0.5px;">Agro-Resilience &amp; Catchment Presets:</div>
     <div class="preset-chips">
@@ -2477,15 +2458,6 @@
       <div class="chip" style="border-color:rgba(16,185,129,0.5); color:#6ee7b7;" onclick="setPreset(26.1850, 91.7500, 'Assam Brahmaputra River Floodplain', 4.0, 35)">Assam Floodplain</div>
       <div class="chip" style="border-color:rgba(16,185,129,0.5); color:#6ee7b7;" onclick="setPreset(19.9975, 73.7898, 'Nashik Vineyards &amp; Watershed (MH)', 3.0, 30)">Nashik Vineyards</div>
       <div class="chip" style="border-color:rgba(16,185,129,0.5); color:#6ee7b7;" onclick="setPreset(10.7870, 79.1378, 'Cauvery Delta Paddy Basin (TN)', 3.0, 25)">Cauvery Delta</div>
-    </div>
-
-    <!-- Landmark & Building Presets -->
-    <div style="font-size:10px; font-weight:700; text-transform:uppercase; color:#38bdf8; margin:8px 0 4px 0; letter-spacing:0.5px;">TatHack '26 Grand Finale &amp; Venue Presets:</div>
-    <div class="preset-chips">
-      <div class="chip" style="border-color:rgba(56,189,248,0.85); color:#38bdf8; font-weight:800; background:rgba(56,189,248,0.12);" onclick="setPreset(11.3216, 75.9336, 'NIT Calicut Main Campus &amp; IT Complex', 2.5, 35)">NIT Calicut Campus (Grand Finale)</div>
-      <div class="chip building-chip" style="border-color:rgba(56,189,248,0.7); color:#7dd3fc;" onclick="setPreset(11.3216, 75.9336, 'NIT Calicut IT Laboratory Complex (TatHack Venue)', 0.8, 30)">NITC IT Complex Venue</div>
-      <div class="chip building-chip" style="border-color:rgba(52,211,153,0.7); color:#6ee7b7;" onclick="setPreset(11.3236, 75.9356, 'NITC Mega Hostels Evacuation Safe Haven', 1.0, 35)">Mega Hostels Safe Haven</div>
-      <div class="chip building-chip" style="border-color:rgba(251,191,36,0.7); color:#fde047;" onclick="setPreset(11.3195, 75.9315, 'Kattangal Commercial Junction Corridor', 1.0, 30)">Kattangal Junction Corridor</div>
     </div>
 
     <div style="font-size:10px; font-weight:700; text-transform:uppercase; color:#64748b; margin:8px 0 4px 0; letter-spacing:0.5px;">Regional &amp; Hazard Presets:</div>
@@ -2509,6 +2481,7 @@
       <div class="chip building-chip" style="border-color:rgba(14,165,233,0.5); color:#38bdf8;" onclick="setPreset(17.7167, 83.3333, 'Visakhapatnam RK Beach Coast &amp; Ridge', 1.0, 35)">Visakhapatnam Coast &amp; Ridge</div>
       <div class="chip building-chip" style="border-color:rgba(52,211,153,0.5); color:#6ee7b7;" onclick="setPreset(12.9719, 77.5946, 'Bengaluru UB City &amp; CBD Towers', 0.8, 25)">Bengaluru CBD Towers</div>
       <div class="chip building-chip" style="border-color:rgba(56,189,248,0.5); color:#7dd3fc;" onclick="setPreset(28.6315, 77.2167, 'New Delhi Connaught Place Hub', 0.8, 25)">Delhi Connaught Place</div>
+      <div class="chip building-chip" style="border-color:rgba(56,189,248,0.7); color:#38bdf8;" onclick="setPreset(11.3216, 75.9336, 'NIT Calicut Campus Venue', 1.0, 35)">NIT Calicut Campus</div>
     </div>
 
     <div id="drawer-map"></div>
@@ -2516,11 +2489,11 @@
     <div class="drawer-inputs">
       <div class="d-field">
         <label>Latitude (°N)</label>
-        <input type="number" step="0.0001" id="dLat" value="11.3216">
+        <input type="number" step="0.0001" id="dLat" value="11.5277">
       </div>
       <div class="d-field">
         <label>Longitude (°E)</label>
-        <input type="number" step="0.0001" id="dLon" value="75.9336">
+        <input type="number" step="0.0001" id="dLon" value="76.1950">
       </div>
       <div class="d-field">
         <label>Coverage Box</label>
@@ -2622,10 +2595,10 @@
     let center = new THREE.Vector3();
     let size = 100;
     let stats = {
-      box_size_km: 2.5, lat: 11.3216, lon: 75.9336,
-      min_elev_m: 35.0, max_elev_m: 58.0, relief_m: 23.0,
-      grid_spacing_m: 12.5, grid_w: 188, grid_h: 188,
-      location_name: "NIT Calicut Main Campus & Surrounding Sector (Kozhikode, Kerala)"
+      box_size_km: 3.0, lat: 11.5277, lon: 76.1950,
+      min_elev_m: 650.0, max_elev_m: 1200.0, relief_m: 550.0,
+      grid_spacing_m: 16.04, grid_w: 188, grid_h: 188,
+      location_name: "Wayanad Landslide, Kerala"
     };
 
     let flightMode = 'none';
@@ -3197,8 +3170,8 @@
     };
 
     let activeGlbFile = 'current.glb';
-    let currentActiveBuildingsSource = 'nitc_buildings.json';
-    window.loadCurrent3DModel = function(modelFile = 'current.glb', statsFile = 'nitc_stats.json', buildingsSource = 'nitc_buildings.json', hazardFile = 'current_hazard.png', textureFile = null, customLocName = 'NIT Calicut Main Campus & IT Complex', customCoords = { lat: 11.3216, lon: 75.9336, boxKm: 2.5 }) {
+    let currentActiveBuildingsSource = 'wayanad_buildings.json';
+    window.loadCurrent3DModel = function(modelFile = 'current.glb', statsFile = 'current_stats.json', buildingsSource = 'wayanad_buildings.json', hazardFile = 'current_hazard.png', textureFile = null, customLocName = null, customCoords = null) {
       // Immediately prime stats and DOM coordinates to prevent race conditions during async GLTF load
       if (customCoords) {
         if (customCoords.lat != null) stats.lat = customCoords.lat;
@@ -4307,23 +4280,16 @@
 
     function getGeospatialPresetKey(modelFile) {
       const mf = (modelFile || activeGlbFile || '').toLowerCase();
-      const bSource = (typeof currentActiveBuildingsSource === 'string' ? currentActiveBuildingsSource : '').toLowerCase();
-      const ln = (stats && stats.location_name ? stats.location_name : '').toLowerCase();
-      const qLatVal = parseFloat(document.getElementById('qLat') ? document.getElementById('qLat').value : (stats ? stats.lat : 0));
-      const qLonVal = parseFloat(document.getElementById('qLon') ? document.getElementById('qLon').value : (stats ? stats.lon : 0));
-      const isCalicutCoords = (Math.abs(qLatVal - 11.32) < 0.35 && Math.abs(qLonVal - 75.93) < 0.35);
-
-      if (bSource.includes('nitc') || mf.includes('nitc') || mf.includes('calicut') || ln.includes('nit') || ln.includes('calicut') || ln.includes('kattangal') || ln.includes('chathamangalam') || isCalicutCoords) return 'nitc';
-      if (mf.includes('nashik') || ln.includes('nashik')) return 'nashik';
-      if (mf.includes('assam') || ln.includes('assam')) return 'assam';
-      if (mf.includes('punjab') || ln.includes('punjab') || ln.includes('ludhiana')) return 'punjab';
-      if (mf.includes('cauvery') || ln.includes('cauvery') || ln.includes('thanjavur')) return 'cauvery';
-      if (mf.includes('joshimath') || ln.includes('joshimath')) return 'joshimath';
-      if (mf.includes('kedarnath') || ln.includes('kedarnath')) return 'kedarnath';
-      if (mf.includes('munnar') || ln.includes('munnar')) return 'munnar';
-      if (mf.includes('mumbai') || ln.includes('mumbai')) return 'mumbai';
-      if (mf.includes('wayanad') || ln.includes('wayanad') || ln.includes('chooralmala') || ln.includes('meppadi')) return 'wayanad';
-      return 'nitc';
+      if (mf.includes('nashik')) return 'nashik';
+      if (mf.includes('assam')) return 'assam';
+      if (mf.includes('punjab')) return 'punjab';
+      if (mf.includes('cauvery')) return 'cauvery';
+      if (mf.includes('joshimath')) return 'joshimath';
+      if (mf.includes('kedarnath')) return 'kedarnath';
+      if (mf.includes('munnar')) return 'munnar';
+      if (mf.includes('mumbai')) return 'mumbai';
+      if (mf.includes('wayanad')) return 'wayanad';
+      return 'wayanad';
     }
 
     function createWaterFlowTexture() {
@@ -11104,6 +11070,7 @@
 
       try {
         if (controls) controls.update();
+      } catch (ctrlErr) {}
 
       if (splitLensActive) {
         renderer.setScissorTest(true);
@@ -11328,9 +11295,9 @@
         window.loadCurrent3DModel('mumbai.glb', 'mumbai_stats.json', 'mumbai_buildings.json', 'current_hazard.png', 'mumbai.jpg', label, { lat, lon, boxKm });
         showTacticalToast(`MISSION // ${label.toUpperCase()} TWIN LOADED`);
         return;
-      } else if (label.includes('NIT Calicut') || label.includes('NITC') || label.includes('Kattangal') || label.includes('Chathamangalam') || label.includes('Kunnamangalam') || label.includes('Kozhikode') || label.includes('Calicut') || label.includes('Hostel') || label.includes('Live GPS') || label.includes('GNSS')) {
+      } else if (label.includes('NIT Calicut') || label.includes('NITC') || label.includes('Kattangal')) {
         window.loadCurrent3DModel('current.glb', 'nitc_stats.json', 'nitc_buildings.json', 'current_hazard.png', 'current.jpg', label, { lat, lon, boxKm });
-        showTacticalToast(`MISSION // ${label.toUpperCase()} DIGITAL TWIN LOADED`);
+        showTacticalToast(`MISSION // ${label.toUpperCase()} TWIN LOADED`);
         return;
       } else if (label.includes('Wayanad') || label.includes('Meppadi') || label.includes('Munnar')) {
         window.loadCurrent3DModel('current.glb', 'current_stats.json', 'wayanad_buildings.json', 'current_hazard.png', 'current.jpg', label, { lat, lon, boxKm });
@@ -11771,7 +11738,6 @@
         if (sub) sub.innerText = `Calibrating multispectral terrain & OSM vectors for (${lat.toFixed(4)}, ${lon.toFixed(4)})...`;
 
         const STATIONS = [
-          { id: 'nitc', name: 'NIT Calicut Main Campus & Surrounding Sector (Kozhikode, Kerala)', lat: 11.3216, lon: 75.9336, glb: 'current.glb', stats: 'nitc_stats.json', bld: 'nitc_buildings.json', haz: 'current_hazard.png', tex: 'current.jpg' },
           { id: 'punjab', name: 'Punjab Wheat & Paddy Basin (Ludhiana)', lat: 30.9010, lon: 75.8573, glb: 'punjab.glb', stats: 'punjab_stats.json', bld: 'punjab_buildings.json', haz: 'punjab_hazard.png', tex: 'punjab.jpg' },
           { id: 'assam', name: 'Assam Brahmaputra River Floodplain', lat: 26.1850, lon: 91.7500, glb: 'assam.glb', stats: 'assam_stats.json', bld: 'assam_buildings.json', haz: 'assam_hazard.png', tex: 'assam.jpg' },
           { id: 'nashik', name: 'Nashik Vineyards & Watershed (MH)', lat: 19.9975, lon: 73.7898, glb: 'nashik.glb', stats: 'nashik_stats.json', bld: 'nashik_buildings.json', haz: 'nashik_hazard.png', tex: 'nashik.jpg' },
@@ -11937,16 +11903,16 @@
 
 
     // ══════════════════════════════════════════════════════════════════════════
-    // Boot Initialization: Stream NIT Calicut Digital Twin on startup
+    // Boot Initialization: Stream Default Proven Digital Twin on startup
     // ══════════════════════════════════════════════════════════════════════════
     window.loadCurrent3DModel(
       'current.glb',
-      'nitc_stats.json',
-      'nitc_buildings.json',
+      'current_stats.json',
+      'wayanad_buildings.json',
       'current_hazard.png',
       'current.jpg',
-      'NIT Calicut Main Campus & IT Complex',
-      { lat: 11.3216, lon: 75.9336, boxKm: 2.5 }
+      'Wayanad Landslide, Kerala',
+      { lat: 11.5277, lon: 76.1950, boxKm: 3.0 }
     );
 
 </script>
