@@ -2351,28 +2351,24 @@
       <span class="pulse-dot-green"></span>
       LIVE GEODETIC FIX · COPERNICUS &amp; FRONTLINE SENSOR INGESTION
     </div>
-    <div class="gps-title" id="gpsHudTitle">REAL-TIME SATELLITE GNSS TELEMETRY ACQUIRED</div>
+    <div class="gps-title">REAL-TIME SATELLITE GNSS TELEMETRY ACQUIRED</div>
     <div class="gps-grid">
       <div class="g-cell">
         <span class="g-k">Geodetic Position</span>
-        <span class="g-v" id="gpsHudCoords" style="color:#34d399;">11.3216°, 75.9336°</span>
+        <span class="g-v" id="gpsHudCoords" style="color:#34d399;">11.5277°, 76.1950°</span>
       </div>
       <div class="g-cell">
         <span class="g-k">Sensor Precision</span>
-        <span class="g-v" id="gpsHudAccuracy" style="color:#38bdf8;">±4 m (HIGH PRECISION)</span>
+        <span class="g-v" id="gpsHudAccuracy" style="color:#38bdf8;">±9 m (HIGH PRECISION)</span>
       </div>
       <div class="g-cell">
-        <span class="g-k">AMSL Elevation</span>
-        <span class="g-v" id="gpsHudElevation" style="color:#fbbf24;">+48.5m MSL (Terrace)</span>
+        <span class="g-k">Ingestion Source</span>
+        <span class="g-v" style="color:#fbbf24;">Sentinel-2 / Aerial</span>
       </div>
       <div class="g-cell">
-        <span class="g-k">Municipal Sector</span>
-        <span class="g-v" id="gpsHudSector" style="color:#a78bfa;">NIT Calicut / IT Complex</span>
+        <span class="g-k">Tactical Recon</span>
+        <span class="g-v" style="color:#a78bfa;">3D Digital Twin Ready</span>
       </div>
-    </div>
-    <div style="margin-top:6px; font-size:9.5px; color:#94a3b8; background:rgba(15,23,42,0.6); padding:4px 8px; border-radius:4px; border:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between;">
-      <span>Nearest Safe Shelter: <strong style="color:#34d399;" id="gpsHudShelter">Mega Hostels (+48.5m MSL, 280m)</strong></span>
-      <span>GPR Subsurface: <strong style="color:#38bdf8;" id="gpsHudGprStatus">Corridor Scanned</strong></span>
     </div>
     <div style="display:flex; gap:10px; margin-top:12px;">
       <button class="btn-gps-act btn-gps-primary" style="flex:1; justify-content:center; display:flex; align-items:center; gap:6px;" onclick="triggerGpsLiveReconstruct()">
@@ -2460,6 +2456,7 @@
       <div class="chip" style="border-color:rgba(16,185,129,0.5); color:#6ee7b7;" onclick="setPreset(10.7870, 79.1378, 'Cauvery Delta Paddy Basin (TN)', 3.0, 25)">Cauvery Delta</div>
     </div>
 
+    <!-- Landmark & Building Presets -->
     <div style="font-size:10px; font-weight:700; text-transform:uppercase; color:#64748b; margin:8px 0 4px 0; letter-spacing:0.5px;">Regional &amp; Hazard Presets:</div>
     <div class="preset-chips">
       <div class="chip" onclick="setPreset(11.5277, 76.1950, 'Wayanad Landslide, Kerala', 3.0, 50)">Wayanad Basin</div>
@@ -2481,7 +2478,6 @@
       <div class="chip building-chip" style="border-color:rgba(14,165,233,0.5); color:#38bdf8;" onclick="setPreset(17.7167, 83.3333, 'Visakhapatnam RK Beach Coast &amp; Ridge', 1.0, 35)">Visakhapatnam Coast &amp; Ridge</div>
       <div class="chip building-chip" style="border-color:rgba(52,211,153,0.5); color:#6ee7b7;" onclick="setPreset(12.9719, 77.5946, 'Bengaluru UB City &amp; CBD Towers', 0.8, 25)">Bengaluru CBD Towers</div>
       <div class="chip building-chip" style="border-color:rgba(56,189,248,0.5); color:#7dd3fc;" onclick="setPreset(28.6315, 77.2167, 'New Delhi Connaught Place Hub', 0.8, 25)">Delhi Connaught Place</div>
-      <div class="chip building-chip" style="border-color:rgba(56,189,248,0.7); color:#38bdf8;" onclick="setPreset(11.3216, 75.9336, 'NIT Calicut Campus Venue', 1.0, 35)">NIT Calicut Campus</div>
     </div>
 
     <div id="drawer-map"></div>
@@ -2596,9 +2592,8 @@
     let size = 100;
     let stats = {
       box_size_km: 3.0, lat: 11.5277, lon: 76.1950,
-      min_elev_m: 650.0, max_elev_m: 1200.0, relief_m: 550.0,
-      grid_spacing_m: 16.04, grid_w: 188, grid_h: 188,
-      location_name: "Wayanad Landslide, Kerala"
+      min_elev_m: 650, max_elev_m: 1200, relief_m: 550,
+      grid_spacing_m: 39.4, grid_w: 75, grid_h: 75
     };
 
     let flightMode = 'none';
@@ -2644,8 +2639,6 @@
     scene.add(subsurfaceGroup);
     const tractorSafetyGroup = new THREE.Group();
     scene.add(tractorSafetyGroup);
-    const gpsBeacon3DGroup = new THREE.Group();
-    scene.add(gpsBeacon3DGroup);
 
     let showSmartDitch = false;
     let showSubsurfaceXRay = false;
@@ -2700,17 +2693,13 @@
 
     function resetCamera() {
       flightMode = 'none';
-      if (typeof updateFlightButtons === 'function') updateFlightButtons();
-      if (!center || !size) return;
-      if (controls) controls.target.copy(center);
-      if (camera) {
-        camera.position.set(center.x, center.y - size * 0.75, size * 0.55);
-        camera.lookAt(center);
-        camera.far = Math.max(2000, size * 15);
-        camera.near = 0.1;
+      updateFlightButtons();
+      if (controls && center) controls.target.copy(center);
+      if (camera && center) {
+        camera.position.copy(center).add(new THREE.Vector3(0, -size * 0.75, size * 0.55));
+        camera.far = size * 10;
         camera.updateProjectionMatrix();
       }
-      if (controls) controls.update();
     }
     window.resetCamera = resetCamera;
 
@@ -3170,32 +3159,8 @@
     };
 
     let activeGlbFile = 'current.glb';
-    let currentActiveBuildingsSource = 'wayanad_buildings.json';
-    window.loadCurrent3DModel = function(modelFile = 'current.glb', statsFile = 'current_stats.json', buildingsSource = 'wayanad_buildings.json', hazardFile = 'current_hazard.png', textureFile = null, customLocName = null, customCoords = null) {
-      // Immediately prime stats and DOM coordinates to prevent race conditions during async GLTF load
-      if (customCoords) {
-        if (customCoords.lat != null) stats.lat = customCoords.lat;
-        if (customCoords.lon != null) stats.lon = customCoords.lon;
-        if (customCoords.boxKm != null) stats.box_size_km = customCoords.boxKm;
-        const numLat = parseFloat(stats.lat).toFixed(4);
-        const numLon = parseFloat(stats.lon).toFixed(4);
-        const qL = document.getElementById('qLat'); if (qL) qL.value = numLat;
-        const qLo = document.getElementById('qLon'); if (qLo) qLo.value = numLon;
-        const dL = document.getElementById('dLat'); if (dL) dL.value = numLat;
-        const dLo = document.getElementById('dLon'); if (dLo) dLo.value = numLon;
-        const bKm = document.getElementById('boxKm'); if (bKm && customCoords.boxKm) bKm.innerText = customCoords.boxKm + ' km';
-        try {
-          if (window.drawerMap && window.drawerMarker && typeof window.drawerMap.setView === 'function') {
-            window.drawerMap.setView([parseFloat(numLat), parseFloat(numLon)]);
-            window.drawerMarker.setLatLng([parseFloat(numLat), parseFloat(numLon)]);
-          }
-        } catch(e) {}
-      }
-      if (customLocName) {
-        stats.location_name = customLocName;
-        const tEl = document.getElementById('targetLocationName'); if (tEl) tEl.innerText = customLocName;
-        const pipW = document.getElementById('pipLocWatermark'); if (pipW) pipW.innerText = customLocName.toUpperCase();
-      }
+    let currentActiveBuildingsSource = 'current_buildings.json';
+    window.loadCurrent3DModel = function(modelFile = 'current.glb', statsFile = 'current_stats.json', buildingsSource = 'current_buildings.json', hazardFile = 'current_hazard.png', textureFile = null, customLocName = null, customCoords = null) {
       activeGlbFile = modelFile;
       currentActiveBuildingsSource = buildingsSource;
       texLoader.load(hazardFile + '?t=' + Date.now(), (tex) => {
@@ -3230,25 +3195,20 @@
           }
         });
 
-        try {
-          const box = new THREE.Box3().setFromObject(currentModel);
-          center = box.getCenter(new THREE.Vector3());
-          size = Math.max(10, box.getSize(new THREE.Vector3()).length());
-          try { createWaterPlane(box); } catch(e) { console.warn('WaterPlane error:', e); }
-          try { createDioramaPedestal(box); } catch(e) { console.warn('Diorama error:', e); }
-          try { loadAndExtrudeBuildings(box, buildingsSource); } catch(e) { console.warn('Building extrusion error:', e); }
-          try { createGeospatialWaterways(box, modelFile); } catch(e) { console.warn('Waterways error:', e); }
-          try { createGeospatialLandmarks(box, modelFile); } catch(e) { console.warn('Landmarks error:', e); }
-          try { createGeospatialVegetation(box, modelFile); } catch(e) { console.warn('Vegetation error:', e); }
-          try { createGeospatialMountainRidges(box, modelFile); } catch(e) { console.warn('Mountain ridges error:', e); }
-          if (typeof contourLinesActive !== 'undefined' && contourLinesActive) {
-            try { createContourMesh(); } catch(e) { console.warn('Contour error:', e); }
-          }
-          resetCamera();
-        } catch(procErr) {
-          console.error('Model post-processing error:', procErr);
-          resetCamera();
+        const box = new THREE.Box3().setFromObject(currentModel);
+        center = box.getCenter(new THREE.Vector3());
+        size = box.getSize(new THREE.Vector3()).length();
+        createWaterPlane(box);
+        try { createDioramaPedestal(box); } catch(e) { console.error('Diorama init error:', e); }
+        try { loadAndExtrudeBuildings(box, buildingsSource); } catch(e) { console.error('Building extrusion init error:', e); }
+        try { createGeospatialWaterways(box, modelFile); } catch(e) { console.error('Waterways init error:', e); }
+        try { createGeospatialLandmarks(box, modelFile); } catch(e) { console.error('Landmarks init error:', e); }
+        try { createGeospatialVegetation(box, modelFile); } catch(e) { console.error('Vegetation init error:', e); }
+        try { createGeospatialMountainRidges(box, modelFile); } catch(e) { console.error('Mountain ridges init error:', e); }
+        if (typeof contourLinesActive !== 'undefined' && contourLinesActive) {
+          try { createContourMesh(); } catch(e) { console.error('Contour init error:', e); }
         }
+        resetCamera();
       }, undefined, (err) => {
         console.error('GLTF loading error:', err);
       });
@@ -3297,7 +3257,7 @@
         .catch(() => {});
     };
 
-    // Initial loadCurrent3DModel deferred until all systems and constants are fully initialized
+    window.loadCurrent3DModel();
 
     function updatePrecautionText() {
       const floodEl = document.getElementById('precFloodText');
@@ -3358,106 +3318,6 @@
     // 3D Geospatial Waterways, Mountain Peaks & Regional Landmarks System
     // ══════════════════════════════════════════════════════════════════════════
     const REGIONAL_GEOSPATIAL_FEATURES = {
-      nitc: {
-        waterways: [
-          {
-            name: "Chathamangalam Bio-Swale Drainage Canal",
-            type: "Engineered Stormwater Bio-Retention Corridor",
-            flow: "120",
-            velocity: "1.2",
-            depth: "2.2",
-            margin: "+2.4 m Safe Freeboard",
-            alertLevel: "safe",
-            badgeText: "STORM DRAINAGE DISCHARGE NOMINAL",
-            widthFactor: 0.030,
-            channel: [
-              [-0.45, 0.25], [-0.25, 0.12], [-0.05, 0.02], [0.15, -0.08],
-              [0.32, -0.20], [0.45, -0.35]
-            ]
-          },
-          {
-            name: "Cherupuzha River Tributary (Kattangal Reach)",
-            type: "Natural Fluvial Drainage Channel",
-            flow: "340",
-            velocity: "2.1",
-            depth: "3.5",
-            margin: "+3.2 m Regulated",
-            alertLevel: "safe",
-            badgeText: "FLUVIAL CATCHMENT ACTIVE",
-            widthFactor: 0.040,
-            channel: [
-              [-0.48, -0.28], [-0.25, -0.32], [0.0, -0.35], [0.25, -0.38], [0.48, -0.42]
-            ]
-          }
-        ],
-        landmarks: [
-          {
-            name: "NIT Calicut IT Laboratory Complex",
-            category: "mandi",
-            type: "TatHack '26 Grand Finale Command Hub",
-            dimensions: "IT Complex: 75 m × 45 m | Plinth Ground: 48m AMSL",
-            capacity: "Grand Finale Venue | High-Density Network Backbone",
-            elev: 48,
-            prominence: 22,
-            status: "TatHack '26 Live Command Active",
-            badgeText: "HACKATHON VENUE",
-            icon: "commercial",
-            pos: [0.0, 0.0]
-          },
-          {
-            name: "NITC Mega Hostels Safe Evacuation Haven",
-            category: "silo",
-            type: "Designated High-Ground Emergency Refuge (+48.5m MSL)",
-            dimensions: "Hostel Blocks 1-8: 110 m × 65 m | 9 Levels",
-            capacity: "Emergency Capacity: 3,500 Persons | High Ground",
-            elev: 48.5,
-            prominence: 32,
-            status: "Autonomous Evacuation Safe Haven",
-            badgeText: "SAFE HAVEN (+48.5m)",
-            icon: "refuge",
-            pos: [0.22, 0.18]
-          },
-          {
-            name: "NITC Administrative Building & Central Core",
-            category: "heritage",
-            type: "Rajpath Central Secretariat & Deanery",
-            dimensions: "Main Building: 90 m × 50 m | 4 Storeys",
-            capacity: "Academic Administration & Command Operations",
-            elev: 46,
-            prominence: 18,
-            status: "Administrative Core Active",
-            badgeText: "RAJPATH CORE",
-            icon: "heritage",
-            pos: [-0.18, 0.12]
-          },
-          {
-            name: "Kattangal Commercial Junction Corridor",
-            category: "bridge",
-            type: "Mavoor Road Transit Arterial & Utility Trench",
-            dimensions: "Junction Corridor: 95 m × 45 m | Subsurface Conduit Zone",
-            capacity: "400 MHz GPR Ground Scan Zone | KWA Water Main Intersect",
-            elev: 42,
-            prominence: 15,
-            status: "GPR 400 MHz Subsurface Monitored (PWD Locked)",
-            badgeText: "ROAD CORRIDOR",
-            icon: "bridge",
-            pos: [-0.25, -0.20]
-          },
-          {
-            name: "Chathamangalam Bio-Retention Basin",
-            category: "dam",
-            type: "Low-Lying Water Runoff & Stagnation Catchment",
-            dimensions: "Retention Area: 220 m × 140 m | Water Depth: 2.2m",
-            capacity: "Peak Runoff Buffer: 45,000 m³ | Flood Prevention Sump",
-            elev: 36,
-            prominence: 12,
-            status: "Automated Drainage Flushing Active",
-            badgeText: "DRAINAGE BASIN",
-            icon: "dam",
-            pos: [0.10, -0.32]
-          }
-        ]
-      },
       nashik: {
         waterways: [
           {
@@ -4284,11 +4144,21 @@
       if (mf.includes('assam')) return 'assam';
       if (mf.includes('punjab')) return 'punjab';
       if (mf.includes('cauvery')) return 'cauvery';
+      if (mf.includes('wayanad')) return 'wayanad';
       if (mf.includes('joshimath')) return 'joshimath';
       if (mf.includes('kedarnath')) return 'kedarnath';
       if (mf.includes('munnar')) return 'munnar';
       if (mf.includes('mumbai')) return 'mumbai';
-      if (mf.includes('wayanad')) return 'wayanad';
+      const ln = (stats && stats.location_name ? stats.location_name : '').toLowerCase();
+      if (ln.includes('nashik')) return 'nashik';
+      if (ln.includes('assam')) return 'assam';
+      if (ln.includes('punjab') || ln.includes('ludhiana')) return 'punjab';
+      if (ln.includes('cauvery') || ln.includes('thanjavur')) return 'cauvery';
+      if (ln.includes('wayanad')) return 'wayanad';
+      if (ln.includes('joshimath')) return 'joshimath';
+      if (ln.includes('kedarnath')) return 'kedarnath';
+      if (ln.includes('munnar')) return 'munnar';
+      if (ln.includes('mumbai')) return 'mumbai';
       return 'wayanad';
     }
 
@@ -10512,8 +10382,7 @@
     function animate() {
       requestAnimationFrame(animate);
 
-      try {
-        if (flightMode === 'orbit') {
+      if (flightMode === 'orbit') {
         flightAngle += 0.006;
         const radius = size * 0.68;
         const height = size * 0.38 + Math.sin(flightAngle * 2) * (size * 0.06);
@@ -10638,23 +10507,6 @@
             p.waterMesh.material.opacity = 0.78 + Math.sin(time * 2 + idx) * 0.08;
           }
         });
-      }
-
-      // 3D Live GPS Civilian Beacon Pulsing Animation
-      if (gpsBeacon3DGroup && gpsBeacon3DGroup.userData && gpsBeacon3DGroup.userData.diamondMesh) {
-        const time = Date.now() * 0.003;
-        const u = gpsBeacon3DGroup.userData;
-        u.diamondMesh.rotation.z += 0.03;
-        const bZ = (u.baseZ != null) ? u.baseZ : (u.baseY != null ? u.baseY : 10);
-        u.diamondMesh.position.z = bZ + Math.sin(time * 3.5) * 0.8;
-        if (u.rings && u.rings.length > 0) {
-          u.rings.forEach((r, idx) => {
-            const rT = (time * 1.2 + idx * 0.5) % 1.0;
-            const rS = 1.0 + rT * 2.2;
-            r.scale.set(rS, rS, rS);
-            r.material.opacity = Math.max(0, 0.85 * (1.0 - rT));
-          });
-        }
       }
 
       // 3D Holographic Subsurface Strata Scanner Dynamics
@@ -11064,13 +10916,9 @@
             }
           });
         });
-      } catch (animErr) {
-        // Non-fatal animation dynamics notice
       }
 
-      try {
-        if (controls) controls.update();
-      } catch (ctrlErr) {}
+      controls.update();
 
       if (splitLensActive) {
         renderer.setScissorTest(true);
@@ -11131,11 +10979,8 @@
         }
         renderer.render(scene, camera);
       }
-    } catch (renderErr) {
-      console.warn('Render loop notice:', renderErr);
     }
-  }
-  animate();
+    animate();
 
     window.addEventListener('resize', () => {
       if (typeof updateRendererSize === 'function') {
@@ -11147,31 +10992,12 @@
       }
       if (splitLensActive) updateSplitDivider();
     });
+  </script>
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // Leaflet Drawer Map & Geodetic Controllers (Unified Module Scope)
-    // ══════════════════════════════════════════════════════════════════════════
+  <!-- Leaflet Drawer Script with Dark Matter Tiles & APIs -->
+  <script>
     let drawerMap = null;
     let drawerMarker = null;
-    window.drawerMap = drawerMap;
-    window.drawerMarker = drawerMarker;
-
-    // Expose helpers globally so HTML onclick handlers and external calls succeed seamlessly
-    window.showTacticalToast = showTacticalToast;
-    window.makeTextSprite = makeTextSprite;
-    window.clearLandmarkInspection = clearLandmarkInspection;
-    window.clearWaterwayInspection = clearWaterwayInspection;
-    window.initDefaultMeasurement = initDefaultMeasurement;
-    window.setTopDownView = function() {
-      if (!center || !size) return;
-      camera.position.set(center.x, center.y - 0.01, center.z + size * 1.05);
-      camera.lookAt(center);
-      if (controls) {
-        controls.target.copy(center);
-        controls.update();
-      }
-      if (typeof showTacticalToast === 'function') showTacticalToast('CAMERA // TOP-DOWN NADIR ORTHO PERSPECTIVE');
-    };
 
     function initDrawerMap() {
       if (drawerMap) return;
@@ -11218,25 +11044,21 @@
     };
 
     window.applyLocationSelection = function(lat, lon, label, boxKm = 1.0, z = 45, autoReconstruct = false) {
-      try { initDrawerMap(); } catch(e) {}
-      const numLat = parseFloat(lat) || 11.3216;
-      const numLon = parseFloat(lon) || 75.9336;
+      initDrawerMap();
+      const numLat = parseFloat(lat) || 11.5277;
+      const numLon = parseFloat(lon) || 76.1950;
       const numBox = parseFloat(boxKm) || 1.0;
       const numZ = parseFloat(z) || 45.0;
 
-      if (drawerMap && drawerMarker && typeof drawerMap.setView === 'function') {
-        try {
-          drawerMap.setView([numLat, numLon], numBox <= 0.8 ? 16 : 13);
-          drawerMarker.setLatLng([numLat, numLon]);
-        } catch(e) {}
-      }
-      const dL = document.getElementById('dLat'); if (dL) dL.value = numLat.toFixed(4);
-      const dLo = document.getElementById('dLon'); if (dLo) dLo.value = numLon.toFixed(4);
-      const qL = document.getElementById('qLat'); if (qL) qL.value = numLat.toFixed(4);
-      const qLo = document.getElementById('qLon'); if (qLo) qLo.value = numLon.toFixed(4);
-      const dB = document.getElementById('dBox'); if (dB) dB.value = numBox.toString();
-      const dZ = document.getElementById('dZ'); if (dZ) dZ.value = numZ.toString();
-      const tL = document.getElementById('targetLocationName'); if (tL) tL.innerText = label;
+      drawerMap.setView([numLat, numLon], numBox <= 0.8 ? 16 : 13);
+      drawerMarker.setLatLng([numLat, numLon]);
+      document.getElementById('dLat').value = numLat.toFixed(4);
+      document.getElementById('dLon').value = numLon.toFixed(4);
+      document.getElementById('qLat').value = numLat.toFixed(4);
+      document.getElementById('qLon').value = numLon.toFixed(4);
+      document.getElementById('dBox').value = numBox.toString();
+      document.getElementById('dZ').value = numZ.toString();
+      document.getElementById('targetLocationName').innerText = label;
 
       if (autoReconstruct) {
         window.triggerReconstruction();
@@ -11275,7 +11097,7 @@
         window.loadCurrent3DModel('nashik.glb', 'nashik_stats.json', 'nashik_buildings.json', 'nashik_hazard.png', 'nashik.jpg', label, { lat, lon, boxKm });
         showTacticalToast('MISSION // NASHIK VINEYARDS & WATERSHED TWIN LOADED');
         return;
-      } else if (label.includes('Cauvery') || label.includes('Delta') || label.includes('Thanjavur')) {
+      } else if (label.includes('Cauvery') || label.includes('Delta')) {
         window.loadCurrent3DModel('cauvery.glb', 'cauvery_stats.json', 'cauvery_buildings.json', 'cauvery_hazard.png', 'cauvery.jpg', label, { lat, lon, boxKm });
         showTacticalToast('MISSION // CAUVERY DELTA PADDY BASIN TWIN LOADED');
         return;
@@ -11287,16 +11109,8 @@
         window.loadCurrent3DModel('joshimath.glb', 'joshimath_stats.json', 'joshimath_buildings.json', 'joshimath_hazard.png', 'joshimath.jpg', label, { lat, lon, boxKm });
         showTacticalToast('MISSION // JOSHIMATH SUBSIDENCE DIGITAL TWIN LOADED');
         return;
-      } else if (label.includes('Barren') || label.includes('Volcano') || label.includes('Caldera')) {
-        window.loadCurrent3DModel('kedarnath.glb', 'kedarnath_stats.json', 'kedarnath_buildings.json', 'kedarnath_hazard.png', 'kedarnath.jpg', label, { lat, lon, boxKm });
-        showTacticalToast('MISSION // BARREN ISLAND CALDERA DIGITAL TWIN LOADED');
-        return;
-      } else if (label.includes('Mumbai') || label.includes('Marine Drive') || label.includes('Riviera') || label.includes('Nice') || label.includes('Cannes') || label.includes('RK Beach') || label.includes('Visakhapatnam') || label.includes('Trivandrum') || label.includes('UB City') || label.includes('Bengaluru') || label.includes('Connaught') || label.includes('Delhi')) {
+      } else if (label.includes('Mumbai') || label.includes('Marine Drive') || label.includes('Riviera') || label.includes('Nice') || label.includes('Cannes') || label.includes('RK Beach') || label.includes('Trivandrum') || label.includes('UB City') || label.includes('Connaught')) {
         window.loadCurrent3DModel('mumbai.glb', 'mumbai_stats.json', 'mumbai_buildings.json', 'current_hazard.png', 'mumbai.jpg', label, { lat, lon, boxKm });
-        showTacticalToast(`MISSION // ${label.toUpperCase()} TWIN LOADED`);
-        return;
-      } else if (label.includes('NIT Calicut') || label.includes('NITC') || label.includes('Kattangal')) {
-        window.loadCurrent3DModel('current.glb', 'nitc_stats.json', 'nitc_buildings.json', 'current_hazard.png', 'current.jpg', label, { lat, lon, boxKm });
         showTacticalToast(`MISSION // ${label.toUpperCase()} TWIN LOADED`);
         return;
       } else if (label.includes('Wayanad') || label.includes('Meppadi') || label.includes('Munnar')) {
@@ -11314,10 +11128,6 @@
 
       const lowerQ = q.toLowerCase();
       // Fast routing to pre-calibrated digital twins
-      if (lowerQ.includes('nit') || lowerQ.includes('calicut') || lowerQ.includes('kattangal') || lowerQ.includes('chathamangalam') || lowerQ.includes('kunnamangalam') || lowerQ.includes('kozhikode') || lowerQ.includes('tathack') || lowerQ.includes('tathva')) {
-        window.setPreset(11.3216, 75.9336, 'NIT Calicut Main Campus & IT Complex', 2.5, 35);
-        return;
-      }
       if (lowerQ.includes('punjab') || lowerQ.includes('ludhiana')) {
         window.setPreset(30.9010, 75.8573, 'Punjab Wheat & Paddy Basin (Ludhiana)', 3.0, 25, 'agro');
         return;
@@ -11424,100 +11234,9 @@
       }
     };
 
-    // 3D Live GPS Civilian Beacon Group
-    // gpsBeacon3DGroup is initialized in main scene groups
-    window.dropLiveGpsBeacon3D = function(lat, lon, acc, label = "YOU ARE HERE") {
-      while (gpsBeacon3DGroup.children.length > 0) {
-        gpsBeacon3DGroup.remove(gpsBeacon3DGroup.children[0]);
-      }
-
-      if (!currentModel) return;
-
-      const box = new THREE.Box3().setFromObject(currentModel);
-      const bCenter = box.getCenter(new THREE.Vector3());
-      const bSize = box.getSize(new THREE.Vector3());
-
-      // Center beacon at campus center or offset
-      const beaconX = bCenter.x;
-      const beaconY = bCenter.y;
-      let beaconZ = box.max.z + 1.5;
-      if (terrainMesh) {
-        const ray = new THREE.Raycaster(new THREE.Vector3(beaconX, beaconY, box.max.z + 100), new THREE.Vector3(0, 0, -1));
-        const hits = ray.intersectObject(terrainMesh);
-        if (hits.length > 0) beaconZ = hits[0].point.z;
-      }
-
-      // 1. Pulsing Diamond Geodetic Marker
-      const dGeo = new THREE.OctahedronGeometry(Math.max(1.5, size * 0.025), 0);
-      const dMat = new THREE.MeshStandardMaterial({
-        color: 0x34d399,
-        emissive: 0x10b981,
-        emissiveIntensity: 0.9,
-        roughness: 0.2
-      });
-      const diamondMesh = new THREE.Mesh(dGeo, dMat);
-      diamondMesh.position.set(beaconX, beaconY, beaconZ + 5.0);
-      gpsBeacon3DGroup.add(diamondMesh);
-
-      // 2. Vertical Light Beacon Pillar
-      const pillarGeo = new THREE.CylinderGeometry(0.2, 0.2, 12, 12);
-      pillarGeo.rotateX(Math.PI / 2);
-      const pillarMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65 });
-      const pillarMesh = new THREE.Mesh(pillarGeo, pillarMat);
-      pillarMesh.position.set(beaconX, beaconY, beaconZ + 6.0);
-      gpsBeacon3DGroup.add(pillarMesh);
-
-      // 3. Ground Radar Sonar Ripple Rings
-      const rings = [];
-      for (let r = 0; r < 2; r++) {
-        const ringGeo = new THREE.RingGeometry(size * 0.02, size * 0.028, 32);
-        const ringMat = new THREE.MeshBasicMaterial({ color: 0x34d399, side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
-        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-        ringMesh.position.set(beaconX, beaconY, beaconZ + 0.3);
-        gpsBeacon3DGroup.add(ringMesh);
-        rings.push(ringMesh);
-      }
-
-      // 4. Floating 3D Text Badge
-      const beaconSprite = makeTextSprite(`[LIVE GPS FIX] ${label} (±${acc}m)`, 'rgba(15, 23, 42, 0.95)', '#34d399', '#10b981');
-      beaconSprite.scale.set(size * 0.16, size * 0.024, 1);
-      beaconSprite.position.set(beaconX, beaconY, beaconZ + 11.5);
-      gpsBeacon3DGroup.add(beaconSprite);
-
-      gpsBeacon3DGroup.userData = {
-        diamondMesh,
-        rings,
-        baseZ: beaconZ + 5.0
-      };
-
-      // Smoothly animate camera toward GPS beacon
-      if (controls && camera) {
-        const targetCam = new THREE.Vector3(beaconX + size * 0.35, beaconY + size * 0.25, beaconZ + size * 0.35);
-        const targetLook = new THREE.Vector3(beaconX, beaconY, beaconZ);
-        
-        let startTime = Date.now();
-        const startPos = camera.position.clone();
-        const startLook = controls.target.clone();
-        
-        const flyInterval = setInterval(() => {
-          const elapsed = (Date.now() - startTime) / 800.0;
-          if (elapsed >= 1.0) {
-            camera.position.copy(targetCam);
-            controls.target.copy(targetLook);
-            clearInterval(flyInterval);
-          } else {
-            const ease = 0.5 - Math.cos(elapsed * Math.PI) * 0.5;
-            camera.position.lerpVectors(startPos, targetCam, ease);
-            controls.target.lerpVectors(startLook, targetLook, ease);
-          }
-          controls.update();
-        }, 16);
-      }
-    };
-
     window.locateUserGPS = function() {
       const btn = document.getElementById('btnGpsTop');
-      const origHtml = btn ? btn.innerHTML : '<svg class="dw-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> GPS';
+      const origHtml = btn ? btn.innerHTML : '<svg class="dw-ico" viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg> GPS';
       if (btn) btn.innerHTML = '<svg class="dw-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M4.93 4.93a10 10 0 0 1 14.14 0"/></svg> Acquiring...';
 
       const presentGpsHUD = (lat, lon, acc, isLiveSensor = true) => {
@@ -11529,25 +11248,12 @@
         document.getElementById('qLon').value = lon.toFixed(4);
         document.getElementById('dLat').value = lat.toFixed(4);
         document.getElementById('dLon').value = lon.toFixed(4);
-
-        const isNitc = (Math.abs(lat - 11.3216) < 0.1 && Math.abs(lon - 75.9336) < 0.1);
-        const sectorText = isNitc ? 'NIT Calicut IT Complex (TatHack Venue)' : `Civilian Sector (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`;
-        document.getElementById('targetLocationName').innerText = sectorText;
-
-        const titleEl = document.getElementById('gpsHudTitle');
-        if (titleEl) titleEl.innerText = isLiveSensor ? 'LIVE CIVILIAN GPS BEACON // SATELLITE FIX LOCKED' : 'VENUE GPS ANCHOR // NIT CALICUT GRAND FINALE';
+        document.getElementById('targetLocationName').innerText = `Live GNSS (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`;
 
         const coordsEl = document.getElementById('gpsHudCoords');
-        if (coordsEl) coordsEl.innerText = `${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E`;
-
+        if (coordsEl) coordsEl.innerText = `${lat.toFixed(4)}°, ${lon.toFixed(4)}°`;
         const accEl = document.getElementById('gpsHudAccuracy');
-        if (accEl) accEl.innerText = isLiveSensor ? `±${acc}m (HIGH PRECISION)` : `±${acc}m (VENUE ANCHOR)`;
-
-        const elevEl = document.getElementById('gpsHudElevation');
-        if (elevEl) elevEl.innerText = `+48.5m MSL (Terrace)`;
-
-        const sectorEl = document.getElementById('gpsHudSector');
-        if (sectorEl) sectorEl.innerText = isNitc ? 'NIT Calicut / IT Complex' : 'Kozhikode Regional Grid';
+        if (accEl) accEl.innerText = isLiveSensor ? `±${acc}m (HIGH PRECISION)` : `±${acc}m (TACTICAL FIX)`;
 
         if (typeof closeChopperHUD === 'function') closeChopperHUD();
         if (typeof closeEvacHUD === 'function') closeEvacHUD();
@@ -11558,22 +11264,14 @@
           if (window.gpsTimer) clearTimeout(window.gpsTimer);
           window.gpsTimer = setTimeout(() => {
             hud.classList.remove('active');
-          }, 16000);
+          }, 14000);
         }
-
-        // Load NIT Calicut digital twin model, buildings, and stats
-        window.loadCurrent3DModel('current.glb', 'nitc_stats.json', 'nitc_buildings.json', 'current_hazard.png', 'current.jpg', sectorText, { lat, lon, boxKm: 1.5 });
-
-        // Drop 3D GPS Beacon Pin on Terrain
-        setTimeout(() => {
-          window.dropLiveGpsBeacon3D(lat, lon, acc, isNitc ? "NIT CALICUT IT COMPLEX" : "LIVE CIVILIAN GPS");
-        }, 400);
-
-        showTacticalToast(`LIVE GPS LOCKED // NIT CALICUT SECTOR: ${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E (±${acc}m)`);
       };
 
       if (!navigator.geolocation) {
-        presentGpsHUD(11.3216, 75.9336, 4, false);
+        const curLat = parseFloat(document.getElementById('qLat').value) || 11.5277;
+        const curLon = parseFloat(document.getElementById('qLon').value) || 76.1950;
+        presentGpsHUD(curLat, curLon, 15, false);
         return;
       }
 
@@ -11581,12 +11279,14 @@
         (position) => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-          const acc = Math.round(position.coords.accuracy || 4);
+          const acc = Math.round(position.coords.accuracy || 12);
           presentGpsHUD(lat, lon, acc, true);
         },
         (error) => {
-          console.warn('Live GPS fallback to NIT Calicut venue anchor:', error.message);
-          presentGpsHUD(11.3216, 75.9336, 4, false);
+          console.warn('Live GPS fallback:', error.message);
+          const curLat = parseFloat(document.getElementById('qLat').value) || 11.5277;
+          const curLon = parseFloat(document.getElementById('qLon').value) || 76.1950;
+          presentGpsHUD(curLat, curLon, 15, false);
         },
         { enableHighAccuracy: true, timeout: 6000 }
       );
@@ -11723,7 +11423,7 @@
             setTimeout(() => {
               if (overlay) overlay.style.display = 'none';
               document.getElementById('pip-img').src = 'current.jpg?t=' + Date.now();
-              window.loadCurrent3DModel('current.glb', 'nitc_stats.json', 'nitc_buildings.json', 'current_hazard.png', 'current.jpg', currentLocName, { lat, lon, boxKm: box_size_km });
+              window.loadCurrent3DModel('current.glb', 'current_stats.json', 'current_buildings.json', 'current_hazard.png', 'current.jpg', currentLocName, { lat, lon, boxKm: box_size_km });
             }, 600);
             return;
           }
@@ -11900,20 +11600,6 @@
         focusEvacShelter();
       }
     };
-
-
-    // ══════════════════════════════════════════════════════════════════════════
-    // Boot Initialization: Stream Default Proven Digital Twin on startup
-    // ══════════════════════════════════════════════════════════════════════════
-    window.loadCurrent3DModel(
-      'current.glb',
-      'current_stats.json',
-      'wayanad_buildings.json',
-      'current_hazard.png',
-      'current.jpg',
-      'Wayanad Landslide, Kerala',
-      { lat: 11.5277, lon: 76.1950, boxKm: 3.0 }
-    );
 
 </script>
 </body>
